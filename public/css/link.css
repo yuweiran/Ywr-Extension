@@ -1,0 +1,107 @@
+#links {
+  width: 600px;
+  margin: 0 auto;
+}
+.links_position {
+  height: auto;
+  margin: 0px 14px;
+  position: relative;
+  /* backdrop-filter: blur(8px); */
+  /* background-color: rgba(64,0,64,0.4); */
+}
+.links-container {
+  height: 384px;
+  width: 100%;
+  margin: 14px 0;
+  padding: 0.5rem 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: auto;
+  justify-content: flex-start;
+}
+
+.links-td {
+  display: inline-block;
+  height: 84px;
+  width: 84px;
+  text-align: center;
+  margin-bottom: 16px;
+  margin-right: calc((100% - 428px) / 4);
+  border-radius: 2rem;
+  box-shadow: 0.3rem 0.3rem 0.6rem var(--greyLight-2),
+    -0.2rem -0.2rem 0.5rem var(--white);
+}
+.links-td:nth-child(5n) {
+  margin-right: 0;
+}
+
+.links-td > a {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--greyDark);
+  /* box-shadow: 0 0 2px rgb(0,0,0); */
+}
+.links-td > a:hover {
+  text-decoration: none;
+}
+.links-td:hover,
+.links-td:hover > a {
+  cursor: pointer;
+  color: var(--primary) !important;
+  filter: brightness(1.2);
+  font-weight: bold;
+}
+.links-td > a:link {
+  text-decoration: none;
+  color: var(--greyDark);
+}
+
+.link_name {
+  padding: 0 0.3rem;
+  text-align: center;
+  font-size: 13px;
+  margin-bottom: 0px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.icon_img {
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
+}
+.add-link-icon {
+  height: 100%;
+  width: 100%;
+}
+
+#iconjia {
+  line-height: 80px;
+  font-size: 50px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.add-link-icon:hover #iconjia {
+  color: rgba(255, 255, 255, 1);
+}
+
+.indicator {
+  position: absolute;
+  height: 6px;
+  bottom: 10px;
+  left: 50%;
+  display: inline-flex;
+  transform: translate(-50%, -50%);
+}
+.indicator .indicator-dot {
+  height: 8px;
+  width: 8px;
+  background-color: cadetblue;
+  margin-left: 1rem;
+}
+.indicator .indicator-dot :first {
+  margin-left: unset;
+}

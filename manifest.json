@@ -1,0 +1,54 @@
+{
+  "name": "ywr的第一个扩展程序",
+  "description": "一个很牛的扩展程序",
+  "version": "1.0",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "alarms"
+  ],
+  "chrome_url_overrides": {
+    "newtab": "new-tab.html"
+  },
+  "options_page": "options.html",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "/images/icon.png",
+      "32": "/images/icon.png",
+      "64": "/images/icon.png",
+      "128": "/images/icon.png"
+    }
+  },
+  "icons": {
+    "16": "/images/icon.png",
+    "32": "/images/icon.png",
+    "64": "/images/icon.png",
+    "128": "/images/icon.png"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "/js/content.js"
+      ],
+      "matches": [
+        "https://developer.chrome.com/docs/extensions/*",
+        "https://developer.chrome.com/docs/webstore/*",
+        "http://127.0.0.1:5500/*"
+      ]
+    }
+  ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+B",
+        "mac": "Command+B"
+      }
+    }
+  }
+}

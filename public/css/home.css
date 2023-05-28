@@ -1,0 +1,60 @@
+@import "./normalize.css"; /*样式统一*/
+@import "./variable.css"; /*样式变量文件*/
+@import "./iconfont.css"; /*字体图标*/
+@import "./base.css"; /*比较公共的样式*/
+@import "./link.css"; /*快捷链接*/
+@import "./search.css"; /*检索区*/
+@import "./task.css"; /*任务清单*/
+@import "./edit-form.css"; /*编辑框*/
+@import "./notification.css"; /*提示框*/
+@import "./project-manage.css"; /*项目列表*/
+
+.content-area {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(228, 235, 245);
+}
+.content-area .ipage-header {
+  display: flex;
+  padding: 1rem;
+  margin-bottom: 10px;
+}
+.ipage-header .signature {
+  padding: 0.5rem;
+  box-shadow: 0.3rem 0.3rem 0.6rem var(--greyLight-2),
+    -0.2rem -0.2rem 0.5rem var(--white);
+}
+.content-area .ipage-body {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+}
+.ipage-body .ipage-body-left {
+  width: 24rem;
+  padding: 0.5rem;
+  display: flex;
+}
+.ipage-body .ipage-body-center {
+  flex: 1;
+  padding: 1rem 10px;
+}
+.ipage-body .ipage-body-right {
+  width: 24rem;
+  padding: 0.5rem;
+  overflow: auto;
+}
+
+.avatar {
+  height: 6rem;
+  width: 6rem;
+  border-radius: 50%;
+  padding: 0.3rem;
+  overflow: hidden;
+  box-shadow: 0.3rem 0.3rem 0.6rem var(--greyLight-2),
+    -0.2rem -0.2rem 0.5rem var(--white);
+}

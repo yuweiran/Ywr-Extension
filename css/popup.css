@@ -1,0 +1,10 @@
+body {
+  height: 24rem;
+  width: 16rem;
+}
+
+button{
+  background-color: cyan;
+  color: white;
+  font-weight: bold;
+}
