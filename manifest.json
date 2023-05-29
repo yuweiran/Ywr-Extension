@@ -31,18 +31,6 @@
     "64": "/images/icon.png",
     "128": "/images/icon.png"
   },
-  "content_scripts": [
-    {
-      "js": [
-        "/js/content.js"
-      ],
-      "matches": [
-        "https://developer.chrome.com/docs/extensions/*",
-        "https://developer.chrome.com/docs/webstore/*",
-        "http://127.0.0.1:5500/*"
-      ]
-    }
-  ],
   "commands": {
     "_execute_action": {
       "suggested_key": {
