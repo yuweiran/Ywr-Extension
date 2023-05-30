@@ -1,10 +1,10 @@
-.task-h {
+.section-h {
   padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 0.3rem 0.3rem 0.6rem var(--greyLight-2),
     -0.2rem -0.2rem 0.5rem var(--white);
 }
-.task-item {
+.section-item {
   color: var(--greyDark);
   line-height: 2rem;
   height: 2rem;
@@ -21,7 +21,7 @@
   margin-left: auto;
 }
 
-.task-area h3 {
+.section-area h3 {
   background-color: var(--primary);
   color: #fff;
   padding: 0.5rem 0.3rem;

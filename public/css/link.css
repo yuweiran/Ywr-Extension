@@ -99,9 +99,14 @@
 .indicator .indicator-dot {
   height: 8px;
   width: 8px;
+  cursor: pointer;
   background-color: cadetblue;
   margin-left: 1rem;
 }
 .indicator .indicator-dot :first {
   margin-left: unset;
+}
+
+.indicator .indicator-dot-active {
+  background-color: aquamarine;
 }
