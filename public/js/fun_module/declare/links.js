@@ -8,7 +8,7 @@ const $linksEles = (function () {
   const renderLinks = ({
     pageNum,//页码
     pageSize,//页面link数
-    indicatorCallback } = {
+    indicatorCallback } = {//点击dot时事件
       pageNum: 1,//页码
       pageSize: 15,//页面link数
       indicatorCallback: () => { }
@@ -17,26 +17,28 @@ const $linksEles = (function () {
     if (!localStorage.linksinfo) {
       let linksinfo = [
         { href: "https://www.bilibili.com/", name: "bilibili" },
-        { href: "https://leetcode-cn.com/", name: "LeetCode" },
-        { href: "https://github.com/", name: "GitHub" },
+        { href: "https://leetcode-cn.com/", name: "leetcode" },
+        { href: "https://github.com/", name: "gitHub" },
+        { href: "https://gitee.com/", name: "gitee" },
         { href: "https://www.iconfont.cn/", name: "iconfont" },
-        { href: "https://cn.vuejs.org/", name: "Vue2" },
-        {
-          href: "https://developers.weixin.qq.com/miniprogram/dev/framework/",
-          name: "微信小程序",
-        },
-        { href: "https://www.sass.hk/docs/", name: "Scss" },
+        { href: "https://cn.vuejs.org/", name: "vue" },
+        { href: "https://www.sass.hk/docs/", name: "scss" },
         { href: "https://es6.ruanyifeng.com/", name: "ES6入门" },
         { href: "https://stackoverflow.com/", name: "stackoverflow" },
-        { href: "https://mp.weixin.qq.com/", name: "微信公众平台" },
         { href: "https://juejin.cn/", name: "掘金" },
+        { href: "https://npmjs.com/", name: "npmjs" },
+        { href: "https://unpkg.com/", name: "unpkg" },
+        { href: "https://www.jsdelivr.com/", name: "jsdelivr" },
+        { href: "https://developer.mozilla.org/zh-CN/", name: "MDN" },
+        { href: "https://threejs.org/", name: "threejs" },
+        { href: "https://www.wangeditor.com/", name: "wangeditor" },
       ];
       localStorage.setItem("linksinfo", JSON.stringify(linksinfo));
       // console.log(JSON.parse(localStorage.getItem("linksinfo"))||"[]");
     }
     let render_arr = [];
     let linksinfo = JSON.parse(localStorage.getItem("linksinfo"));
-    for (let ind = (pageNum - 1) * pageSize; ind < pageNum * 15; ind++) {
+    for (let ind = (pageNum - 1) * pageSize; ind < pageNum * pageSize; ind++) {
       let link = linksinfo[ind]
       if (link) {
         render_arr.push(`<div class="links-td" >

@@ -9,7 +9,9 @@ const $form = (function () {
       url: '',
       name: ''
     },
-    confirmCallBack = () => { }
+    showRemoveButton = false,
+    confirmCallback = () => { },
+    removeCallback = () => { }
   }) => {
     const formInstance = document.createElement('div')
     formInstance.setAttribute('class', 'form-mask')
@@ -30,10 +32,15 @@ const $form = (function () {
     })).join('')}
     <div class= "edit-form-footer" >
       <button
-        style="margin-left: auto"
         class="edit-button edit-cancel-button"
       >
         取消
+      </button>
+      <button
+        style="margin-left: auto;visibility:${showRemoveButton ? 'visible' : 'hidden'} "
+        class="edit-button edit-remove-button"
+      >
+      删除
       </button>
       <button
         style="margin-left: 1rem"
@@ -55,7 +62,14 @@ const $form = (function () {
           data[property] = inputInstance.value
         })
         formInstance.parentNode.removeChild(formInstance)
-        confirmCallBack(data)
+        confirmCallback(data)
+      } else if (e.target.classList[1] === 'edit-remove-button') {
+        formInstance.querySelectorAll('input').forEach(inputInstance => {
+          let property = inputInstance.dataset.property
+          data[property] = inputInstance.value
+        })
+        formInstance.parentNode.removeChild(formInstance)
+        removeCallback(data)
       }
     })
   }

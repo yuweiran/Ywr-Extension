@@ -10,7 +10,7 @@ $linksEles.linksContainer.addEventListener('click', (e) => {
         name: '',
         url: ''
       },
-      confirmCallBack: (data) => {
+      confirmCallback: (data) => {
         const linksInfo = JSON.parse(localStorage.getItem('linksinfo'))
         linksInfo.push({ href: data.url, name: data.name })
         localStorage.setItem('linksinfo', JSON.stringify(linksInfo))
@@ -32,6 +32,7 @@ $linksEles.linksContainer.addEventListener('contextmenu', (e) => {
         name = e.target.parentNode.dataset.name
         url = e.target.parentNode.dataset.url
       } else {
+        ind = e.target.dataset.ind
         name = e.target.dataset.name
         url = e.target.dataset.url
       }
@@ -47,14 +48,20 @@ $linksEles.linksContainer.addEventListener('contextmenu', (e) => {
           name,
           url
         },
-        confirmCallBack: (data) => {
+        showRemoveButton: true,
+        confirmCallback: (data) => {
           const linksInfo = JSON.parse(localStorage.getItem('linksinfo'))
           linksInfo[data.ind] = { href: data.url, name: data.name }
           localStorage.setItem('linksinfo', JSON.stringify(linksInfo))
           $linksEles.renderLinks()
+        },
+        removeCallback: (data) => {
+          const linksInfo = JSON.parse(localStorage.getItem('linksinfo'))
+          linksInfo.splice(data.ind, 1)
+          localStorage.setItem('linksinfo', JSON.stringify(linksInfo))
+          $linksEles.renderLinks()
         }
       })
-      // $formEles.pageMask.style.display = 'block';
     }
   }
 })
