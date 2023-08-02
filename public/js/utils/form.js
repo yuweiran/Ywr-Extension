@@ -28,7 +28,7 @@ const $form = (function () {
       </div>
     </div>
     ${config.map((c => {
-      return '<div><label>' + c.label + '</label> <input  data-property="' + c.property + '" type="text" value="' + data[c.property] + '"  /></div>'
+      return '<div><label>' + c.label + '</label> <input spellcheck="false" data-property="' + c.property + '" type="text" value="' + data[c.property] + '"  /></div>'
     })).join('')}
     <div class= "edit-form-footer" >
       <button

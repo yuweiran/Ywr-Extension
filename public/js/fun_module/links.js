@@ -37,7 +37,7 @@ $linksEles.linksContainer.addEventListener('contextmenu', (e) => {
         url = e.target.dataset.url
       }
       $form.create({
-        title: '编辑网站',
+        title: '编辑网址',
         config: [
           { property: 'url', label: 'URL' },
           { property: 'name', label: '名称', }
