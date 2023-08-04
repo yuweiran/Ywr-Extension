@@ -69,7 +69,7 @@ chrome.alarms.create({ delayInMinutes: 3 });
 
 chrome.alarms.onAlarm.addListener(() => {
   chrome.action.setIcon({
-    path: "./images/icon.png",
+    path: "/images/icon.png",
   });
 });
 //#endregion

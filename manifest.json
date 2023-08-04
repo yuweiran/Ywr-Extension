@@ -4,7 +4,8 @@
   "version": "1.0",
   "manifest_version": 3,
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "/service-worker/index.js",
+    "type":"module"
   },
   "permissions": [
     "storage",
@@ -13,11 +14,11 @@
     "alarms"
   ],
   "chrome_url_overrides": {
-    "newtab": "new-tab.html"
+    "newtab": "/tab/index.html"
   },
-  "options_page": "options.html",
+  "options_page": "/options/index.html",
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "/popup/index.html",
     "default_icon": {
       "16": "/images/icon.png",
       "32": "/images/icon.png",
