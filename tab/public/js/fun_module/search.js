@@ -50,20 +50,15 @@ $searchEles.btnRetrievalContent.addEventListener("click", (e) => {
 });
 
 //输入
-// $searchEles.userContent.addEventListener('input', (e) => {
-//   if ($searchEles.timer) {
-//     clearTimeout($searchEles.timer)
-//   }
-//   $searchEles.timer = setTimeout(() => {
-//     const keyword = e.target.value
-//     fetchJsonp(`http://suggestion.baidu.com/su?wd=${keyword}&&p=3&&cb=$searchEles.handleAssociation`,
-//       {
-//         jsonpCallback: "saa",
-//         method: "get",
-//         mode: "no-cors",
-//       })
-//   }, 400)
-// })
+$searchEles.userContent.addEventListener('input', (e) => {
+  if ($searchEles.timer) {
+    clearTimeout($searchEles.timer)
+  }
+  $searchEles.timer = setTimeout(() => {
+    const keyword = e.target.value
+    chrome.runtime.sendMessage({ keyword: keyword });
+  }, 400)
+})
 
 $searchEles.userContent.addEventListener("keyup", (e) => {
   if (e.keyCode === 13) {
