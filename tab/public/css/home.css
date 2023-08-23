@@ -7,23 +7,22 @@
 @import "./task.css"; /*任务清单*/
 @import "./edit-form.css"; /*编辑框*/
 @import "./notification.css"; /*提示框*/
+@import "./tabs.css"; /*tab区*/
 
 .content-area {
   position: absolute;
-  width: 100%;
-  height: 100%;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
-  flex-direction: column;
-  background-color: rgb(228, 235, 245);
 }
-.content-area .ipage-header {
+.content-area .ipage-aside {
   display: flex;
   padding: 1rem;
-  margin-bottom: 10px;
+  border-right: 0.3px  solid  var(--borderGrey);
 }
-.ipage-header .signature {
+.ipage-aside .signature {
   padding: 0.5rem;
   box-shadow: 0.3rem 0.3rem 0.6rem var(--greyLight-2),
     -0.2rem -0.2rem 0.5rem var(--white);
@@ -40,17 +39,20 @@
 }
 .ipage-body .ipage-body-center {
   flex: 1;
-  padding: 1rem 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
 }
 .ipage-body .ipage-body-right {
-  width: 24rem;
+  width: 16rem;
   padding: 0.5rem;
+  border-left: 0.3px solid var(--borderGrey);
   overflow: auto;
 }
 
 .avatar {
-  height: 6rem;
-  width: 6rem;
+  height: 3rem;
+  width: 3rem;
   border-radius: 50%;
   padding: 0.3rem;
   overflow: hidden;

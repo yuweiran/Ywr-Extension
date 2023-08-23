@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="shortcut icon" href="./public/img/icon/snow.png" />
-    <title>初始页</title>
+    <title>INIT</title>
     <link rel="stylesheet" href="./public/css/home.css" />
   </head>
 
@@ -13,181 +13,126 @@
     <!-- <div id="clock"></div> -->
     <!-- -------------------------内容区域 -------------------------------->
     <div class="content-area">
-      <div class="ipage-header">
-        <!-- <div style="display: flex; align-items: center">
-          <div class="signature">
-            不是所有人都能做自己想做的事，成为自己想成为的人
-          </div>
-        </div> -->
-        <div style="margin-left: auto; display: flex; align-items: center">
+      <div class="ipage-aside">
+        <div >
           <img class="avatar" src="./public/img/icon/g.jpg" />
         </div>
       </div>
       <div class="ipage-body">
-        <div class="ipage-body-left">
-          <div class="engine_change">
-            <div
-              id="baiduengine"
-              data-engine="baidu"
-              data-index="0"
-              class="engine-item"
-            >
-              <span class="iconfont icon-baidu"></span>
-            </div>
-            <div
-              id="googleengine"
-              data-engine="google"
-              data-index="1"
-              class="engine-item"
-            >
-              <span class="iconfont icon-guge"></span>
-            </div>
-            <div
-              id="bingengine"
-              data-engine="bing"
-              data-index="2"
-              class="engine-item"
-            >
-              <span class="iconfont icon-bing1"></span>
-            </div>
-            <div
-              id="sougouengine"
-              data-engine="sougou"
-              data-index="3"
-              class="engine-item"
-            >
-              <span class="iconfont icon-weibiaoti-2"></span>
-            </div>
-            <div
-              id="360engine"
-              data-engine="360"
-              data-index="4"
-              class="engine-item"
-            >
-              <span class="iconfont icon--o"></span>
-            </div>
-          </div>
-        </div>
         <div class="ipage-body-center">
+          
           <div id="user_search_area">
             <div id="user_input_area">
+              <button id="btn-retrieval-engine">
+                <span class="iconfont icon-baidu"></span>
+                <div class="engine_change">
+                  <div
+                    id="baiduengine"
+                    data-engine="baidu"
+                    data-index="0"
+                    class="engine-item"
+                  >
+                    <span class="iconfont icon-baidu"></span><span class="engine-text">百度</span>
+                  </div>
+                  <div
+                    id="googleengine"
+                    data-engine="google"
+                    data-index="1"
+                    class="engine-item"
+                  >
+                    <span class="iconfont icon-guge"></span><span class="engine-text">谷歌</span>
+                  </div>
+                  <div
+                    id="bingengine"
+                    data-engine="bing"
+                    data-index="2"
+                    class="engine-item"
+                  >
+                    <span class="iconfont icon-bing1"></span><span class="engine-text">必应</span>
+                  </div>
+                  <div
+                    id="sougouengine"
+                    data-engine="sougou"
+                    data-index="3"
+                    class="engine-item"
+                  >
+                    <span class="iconfont icon-weibiaoti-2"></span><span class="engine-text">搜狗</span>
+                  </div>
+                  <div
+                    id="360engine"
+                    data-engine="360"
+                    data-index="4"
+                    class="engine-item"
+                  >
+                    <span class="iconfont icon--o"></span><span class="engine-text">360</span>
+                  </div>
+                </div>
+              </button>
               <input type="text" spellcheck="false" id="user-content" />
               <button id="btn-retrieval-content">
                 <span class="iconfont icon-icon-search"></span>
               </button>
             </div>
           </div>
+          <div id="ipage-tabs">
+            <div class="tab-item">LAYOUT</div>
+            <div class="tab-item">HISTORY</div>
+            <div class="tab-item">TAB</div>
+            <div class="tab-item">THEME</div>
+            <div class="tab-item">TASK</div>
+            <button class="tab-btn-add-collection">ADD COLLECTION</button>
+          </div>
           <!----------------------------- 快捷链接 --------------------------->
-          <div id="links">
-            <div class="links_position">
-              <div class="links-container">
-                <div class="links-td iconhover td-jia">
-                  <a>
-                    <div class="add-link-icon">
-                      <span class="iconfont icon-jia" id="iconjia"></span>
-                    </div>
-                  </a>
+          <div id="ipage-collections">
+            <div class="collection">
+              <div class="collection-name">前端开发</div>
+              <div class="collection-links">
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="ipage-body-right">
-          <!-- <div class="section-manage">
-            <h2 class="section-h">清单</h2>
-            <div class="segmented-control">
-              <input type="radio" name="radio2" value="3" id="tab-1" checked />
-              <label for="tab-1" class="segmented-control__1">
-                <p>全部</p>
-              </label>
-              <input type="radio" name="radio2" value="4" id="tab-2" />
-              <label for="tab-2" class="segmented-control__2">
-                <p>今日</p>
-              </label>
-              <input type="radio" name="radio2" value="5" id="tab-3" />
-              <div class="segmented-control__color"></div>
-            </div>
-            <div class="section-area">
-              <div class="section-card">
-                <h3>旧账</h3>
-                <div class="section-item">
-                  <div>着色器语法</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-                <div class="section-item">
-                  <div>blender建模</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-                <div class="section-item">
-                  <div>webgpu</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-              </div>
-              <div class="section-card">
-                <h3>今日任务</h3>
-                <div class="section-item">
-                  <div>chrome扩展api学习</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-              </div>
-              <div class="section-card">
-                <h3>历史记录</h3>
-                <div class="section-item">
-                  <div>vvv,悟已往之不鉴，知来者之可追</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="section-manage">
-            <h2 class="section-h">项目管理</h2>
-            <div class="section-area">
-              <div class="section-card">
-                <h3>项目名称</h3>
-                <div class="section-item">
-                  <div>vvv,悟已往之不鉴，知来者之可追</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-                <div class="section-item">
-                  <div>vvv,悟已往之不鉴，知来者之可追</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-              </div>
-              <div class="section-card">
-                <h3>项目名称</h3>
-                <div class="section-item">
-                  <div>vvv,悟已往之不鉴，知来者之可追</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-                <div class="section-item">
-                  <div>vvv,悟已往之不鉴，知来者之可追</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-              </div>
-              <div class="section-card">
-                <h3>项目名称</h3>
-                <div class="section-item">
-                  <div>vvv,悟已往之不鉴，知来者之可追</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-                <div class="section-item">
-                  <div>vvv,悟已往之不鉴，知来者之可追</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-              </div>
-              <div class="section-card">
-                <h3>项目名称</h3>
-                <div class="section-item">
-                  <div>vvv,悟已往之不鉴，知来者之可追</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-                <div class="section-item">
-                  <div>vvv,悟已往之不鉴，知来者之可追</div>
-                  <div class="ml-auto">设置状态</div>
-                </div>
-              </div>
-            </div>
-          </div> -->
+          
         </div>
       </div>
     </div>
@@ -200,11 +145,11 @@
     <script src="./public/js/utils/declare_element.js"></script>
     <!-- 元素获取 -->
     <script src="./public/js/fun_module/declare/search.js"></script>
-    <script src="./public/js/fun_module/declare/links.js"></script>
+    <!-- <script src="./public/js/fun_module/declare/links.js"></script> -->
     <!-- load -->
     <script src="./public/js/load.js"></script>
     <!-- 模块的一些操作 -->
     <script src="./public/js/fun_module/search.js"></script>
-    <script src="./public/js/fun_module/links.js"></script>
+    <!-- <script src="./public/js/fun_module/links.js"></script> -->
   </body>
 </html>

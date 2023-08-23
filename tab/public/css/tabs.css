@@ -1,0 +1,17 @@
+#ipage-tabs{
+  padding: 1rem;
+  display: flex;
+  border-top: 0.3px solid var(--borderGrey);
+  border-bottom: 0.3px solid var(--borderGrey);
+  margin-bottom: 1rem;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+#ipage-tabs .tab-btn-add-collection{
+  padding: 0.5rem;
+  margin-left: auto;
+  background-color: var(--primary);
+  color: white;
+  font-weight: bold;
+}
