@@ -13,5 +13,13 @@
   margin-left: auto;
   background-color: var(--primary);
   color: white;
+}
+
+.add-collection-text{
   font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.add-collection-icon{
+  font-size: 12px;
 }

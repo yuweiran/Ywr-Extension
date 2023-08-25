@@ -19,13 +19,15 @@
 }
 .content-area .ipage-aside {
   display: flex;
+  flex-direction: column;
   padding: 1rem;
   border-right: 0.3px  solid  var(--borderGrey);
 }
-.ipage-aside .signature {
-  padding: 0.5rem;
-  box-shadow: 0.3rem 0.3rem 0.6rem var(--greyLight-2),
-    -0.2rem -0.2rem 0.5rem var(--white);
+
+.ipage-aside .ipage-aside-setting{
+  margin-top: auto;
+  text-align: center;
+  font-size: 24px;
 }
 .content-area .ipage-body {
   flex: 1;
@@ -43,12 +45,7 @@
   flex-direction: column;
   padding: 1rem 0;
 }
-.ipage-body .ipage-body-right {
-  width: 16rem;
-  padding: 0.5rem;
-  border-left: 0.3px solid var(--borderGrey);
-  overflow: auto;
-}
+
 
 .avatar {
   height: 3rem;

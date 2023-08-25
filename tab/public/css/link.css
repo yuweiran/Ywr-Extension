@@ -1,33 +1,45 @@
 #ipage-collections{
+  position: relative;
   flex: 1;
-}
-#ipage-collections .collection{
+  overflow: auto;
 }
 
-#ipage-collections .collection .collection-name{
+#ipage-collections .collection .collection-head{
   padding: 1rem;
   font-size: 16px;
+  display: flex;
+}
+
+.collection-head .collection-handle{
+  margin-left: auto;
+}
+
+.collection-head .collection-handle button {
+  background-color: transparent;
+  margin-left: 1rem;
 }
 
 #ipage-collections .collection .collection-links{
+  position: relative;
   display: flex;
   padding: 1rem;
   flex-wrap: wrap;
 }
 
 #ipage-collections .collection .collection-links .collection-link{
+  position: relative;
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  width:13rem;
+  width:12rem;
   aspect-ratio: 4/2;
   margin-right: 1rem;
   margin-bottom: 1rem;
   border-radius: 0.2rem;
-  box-shadow: rgba(94, 93, 102, 0.08) 1px 1px 0px 0px, rgba(94, 93, 102, 0.1) 2px 2px 3px 0px;
+  box-shadow: rgba(94, 93, 102, 0.1) 1px 1px 0px 0px, rgba(94, 93, 102, 0.14) 2px 2px 3px 0px;
 }
 #ipage-collections .collection .collection-links .collection-link:hover{
-  box-shadow: rgba(94, 93, 102, 0.08) 1px 1px 0px 0px, rgba(94, 93, 102, 0.2) 2px 5px 10px 0px
+  box-shadow: rgba(94, 93, 102, 0.1) 1px 1px 0px 0px, rgba(94, 93, 102, 0.2) 2px 5px 10px 0px
 }
 
 .collection-links .collection-link-name{
@@ -46,4 +58,26 @@
   color: #b9b9b9;
   display: flex;
   align-items: center;
+}
+
+.collection-link-handle{
+  visibility: hidden;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(50%,-50%);
+}
+.collection-link-handle .link-tool-remove{
+  cursor: pointer;
+  font-size: 20px;
+  color: unset;
+}
+.collection-link-handle .link-tool-edit{
+  cursor: pointer;
+  font-size: 20px;
+  margin-top: 1rem;
+}
+
+.collection-link:hover .collection-link-handle{
+  visibility: visible;
 }

@@ -7,6 +7,7 @@
     <link rel="shortcut icon" href="./public/img/icon/snow.png" />
     <title>INIT</title>
     <link rel="stylesheet" href="./public/css/home.css" />
+    <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_2691375_w7x3bl28uc8.css">
   </head>
 
   <body style="height: 100vh">
@@ -14,8 +15,11 @@
     <!-- -------------------------内容区域 -------------------------------->
     <div class="content-area">
       <div class="ipage-aside">
-        <div >
+        <div class="ipage-aside-avatar">
           <img class="avatar" src="./public/img/icon/g.jpg" />
+        </div>
+        <div class="ipage-aside-setting">
+          <span class="icon-setting"></span>
         </div>
       </div>
       <div class="ipage-body">
@@ -24,7 +28,7 @@
           <div id="user_search_area">
             <div id="user_input_area">
               <button id="btn-retrieval-engine">
-                <span class="iconfont icon-baidu"></span>
+                <span class="icon-baidu"></span>
                 <div class="engine_change">
                   <div
                     id="baiduengine"
@@ -32,7 +36,7 @@
                     data-index="0"
                     class="engine-item"
                   >
-                    <span class="iconfont icon-baidu"></span><span class="engine-text">百度</span>
+                    <span class="icon-baidu"></span><span class="engine-text">百度</span>
                   </div>
                   <div
                     id="googleengine"
@@ -40,7 +44,7 @@
                     data-index="1"
                     class="engine-item"
                   >
-                    <span class="iconfont icon-guge"></span><span class="engine-text">谷歌</span>
+                    <span class="icon-google"></span><span class="engine-text">谷歌</span>
                   </div>
                   <div
                     id="bingengine"
@@ -48,7 +52,7 @@
                     data-index="2"
                     class="engine-item"
                   >
-                    <span class="iconfont icon-bing1"></span><span class="engine-text">必应</span>
+                    <span class="icon-bing"></span><span class="engine-text">必应</span>
                   </div>
                   <div
                     id="sougouengine"
@@ -56,7 +60,7 @@
                     data-index="3"
                     class="engine-item"
                   >
-                    <span class="iconfont icon-weibiaoti-2"></span><span class="engine-text">搜狗</span>
+                    <span class="icon-sougou"></span><span class="engine-text">搜狗</span>
                   </div>
                   <div
                     id="360engine"
@@ -64,28 +68,174 @@
                     data-index="4"
                     class="engine-item"
                   >
-                    <span class="iconfont icon--o"></span><span class="engine-text">360</span>
+                    <span class="icon-icon360"></span><span class="engine-text">360</span>
                   </div>
                 </div>
               </button>
               <input type="text" spellcheck="false" id="user-content" />
               <button id="btn-retrieval-content">
-                <span class="iconfont icon-icon-search"></span>
+                <span class="icon-search"></span>
               </button>
             </div>
           </div>
           <div id="ipage-tabs">
-            <div class="tab-item">LAYOUT</div>
-            <div class="tab-item">HISTORY</div>
-            <div class="tab-item">TAB</div>
-            <div class="tab-item">THEME</div>
-            <div class="tab-item">TASK</div>
-            <button class="tab-btn-add-collection">ADD COLLECTION</button>
+            <div class="tab-item"><span class="icon-layout"></span><span class="tab-item-text">LAYOUT</span></div>
+            <div class="tab-item"><span class="icon-history"></span><span class="tab-item-text">HISTORY</span></div>
+            <div class="tab-item"><span class="icon-tabs"></span><span class="tab-item-text">TAB</span></div>
+            <div class="tab-item"><span class="icon-theme"></span><span class="tab-item-text">THEME</span></div>
+            <div class="tab-item"><span class="icon-task"></span><span class="tab-item-text">TASK</span></div>
+            <button class="tab-btn-add-collection"><span class="icon-plus add-collection-icon "></span><span class="add-collection-text">ADD COLLECTION</span></button>
           </div>
           <!----------------------------- 快捷链接 --------------------------->
           <div id="ipage-collections">
             <div class="collection">
-              <div class="collection-name">前端开发</div>
+              <div class="collection-head">
+                <div>前端开发</div>
+                <div class="collection-handle">
+                  <button><span class="icon-delete"></span></button>
+                  <button><span class="icon-edit-fill"></span></button>
+                  <button><span class="icon-add"></span></button>
+                </div>
+              </div>
+              <div class="collection-links">
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                  <div class="collection-link-handle">
+                    <div class="icon-fill-delete link-tool-remove"></div>
+                    <div class="icon-fill-edit link-tool-edit"></div>
+                  </div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+              </div>
+            </div>
+            <div class="collection">
+              <div class="collection-head">前端开发</div>
+              <div class="collection-links">
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+              </div>
+            </div>
+            <div class="collection">
+              <div class="collection-head">前端开发</div>
+              <div class="collection-links">
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+                <div class="collection-link">
+                  <div class="collection-link-name">链接名称</div>
+                  <div class="collection-link-remark">备注信息</div>
+                </div>
+              </div>
+            </div>
+            <div class="collection">
+              <div class="collection-head">前端开发</div>
               <div class="collection-links">
                 <div class="collection-link">
                   <div class="collection-link-name">链接名称</div>
@@ -132,7 +282,14 @@
           </div>
         </div>
         <div class="ipage-body-right">
-          
+          <div class="ipage-aside-header">
+            
+          </div>
+          <div class="ipage-sections">
+            <div class="section">Tabs</div>
+            <div class="section">Tasks</div>
+            <div class="section">History</div>
+          </div>
         </div>
       </div>
     </div>

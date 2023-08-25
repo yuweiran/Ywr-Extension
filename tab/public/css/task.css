@@ -1,0 +1,29 @@
+.ipage-body .ipage-body-right {
+  width: 16rem;
+  border-left: 0.3px solid var(--borderGrey);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+.ipage-body-right .ipage-aside-header{
+  height: 5rem;
+}
+.ipage-sections{
+  flex:1;
+  padding: 0.5rem;
+  border-top: 0.3px solid var(--borderGrey);
+}
+.ipage-sections .section{
+  height: 3rem;
+  line-height: 3rem;
+  border-radius: 0.3rem;
+  padding: 0 1rem;
+  margin: 0.5rem 0;
+  box-shadow: 0.2rem 0.2rem 0.6rem var(--greyLight-1),
+  -0.2rem -0.2rem 0.5rem var(--white);
+  background-color:#fff ;
+}
+.ipage-sections .section:hover{
+  box-shadow: 0.2rem 0.2rem 0.6rem var(--greyLight-2),
+  -0.2rem -0.2rem 0.5rem var(--white);
+}
