@@ -61,10 +61,24 @@ class IndexedModel {
       }
     })
   }
-  update = async (record) => {
+  update = async (data) => {
     const store = this.database.transaction([this.model], "readwrite")
       .objectStore(this.model);
-    store.put(record);
+    const record = await new Promise((res, rej) => {
+      const request = store.get(data.id)
+      request.onsuccess = () => {
+        res(request.result)
+      }
+      request.onerror = () => {
+        res(request.result)
+      }
+    })
+    if (record) {
+      for (let property in data) {
+        record[property] = data[property]
+      }
+      store.put(record);
+    }
   }
 }
 

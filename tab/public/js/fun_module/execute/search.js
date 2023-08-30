@@ -20,9 +20,8 @@ const retrieveContent = (content) => {
     bing: "https://cn.bing.com/search?q=",
   };
   base_url = engineReflect[engine];
-  console.log(base_url + content)
-  window.open(base_url + content);
   $searchEles.userContent.value = "";
+  window.open(base_url + content);
 };
 
 $searchEles.contentArea.addEventListener("mouseover", (e) => {
@@ -47,7 +46,6 @@ $searchEles.btnRetrievalContent.addEventListener("click", (e) => {
   if ($searchEles.userContent.value.length > 0) {
     retrieveContent($searchEles.userContent.value);
   }
-  location.reload();
 });
 
 //输入
@@ -66,6 +64,5 @@ $searchEles.userContent.addEventListener("keyup", (e) => {
     if (e.target.value.length > 0) {
       retrieveContent($searchEles.userContent.value);
     }
-    location.reload();
   }
 });

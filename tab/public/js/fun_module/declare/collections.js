@@ -6,6 +6,7 @@ const $collections = (function () {
     let render_arr = [];
     //拿到collection列表
     let collectionsRecords = await $apis.getCollectionsAndLinks()
+    console.log(collectionsRecords)
     for (let ind = 0; ind < collectionsRecords.length; ind++) {
       let collection = collectionsRecords[ind]
       if (collection) {
