@@ -1,38 +1,74 @@
 
-var $indexDB = null
+var $indexedDB = null
 
-class IndexModel {
+class IndexedModel {
   database = null
   model = null
   constructor(db, modelName) {
     this.database = db
     this.model = modelName
   }
-  add = (record) => {
+  add = async (record) => {
+    const id = (new Date()).getTime()
     const store = this.database.transaction([this.model], "readwrite")
       .objectStore(this.model);
+    record.id = id
     store.add(record);
   }
-  delete = (id) => {
+  delete = async (id) => {
     const store = this.database.transaction([this.model], "readwrite")
       .objectStore(this.model);
     store.delete(id);
   }
-  list = () => {
+  list = async (condition = null) => {
     const store = this.database.transaction([this.model], "readwrite")
       .objectStore(this.model);
-    const request = store.getAll();
-    const records = request.result
-    return records
+
+    return await new Promise((res, rej) => {
+      if (!condition) {
+        const request = store.getAll();
+        request.onsuccess = (event) => {
+          res(request.result)
+        }
+        request.onerror = () => {
+          rej()
+        }
+      } else {
+        //条件查
+        const request = store.openCursor();
+        const records = []
+        request.onsuccess = (event) => {
+          const cursor = event.target.result;
+          if (cursor) {
+            let isValid = true
+            for (let property in condition) {
+              if (cursor.value[property] !== condition[property]) {
+                isValid = false
+                break
+              }
+            }
+            if (isValid) {
+              records.push(cursor.value)
+            }
+            cursor.continue();
+          } else {
+            res(records)
+          }
+        }
+        request.onerror = () => {
+          rej()
+        }
+      }
+    })
   }
-  update = (record) => {
+  update = async (record) => {
     const store = this.database.transaction([this.model], "readwrite")
       .objectStore(this.model);
     store.put(record);
   }
 }
 
-const initIndexDB = async () => {
+const initIndexedDB = async () => {
   const databse = await new Promise((resolve, reject) => {
     const dbName = "initDB";
     const dbConnectHandle = indexedDB.open(dbName, 1);
@@ -58,7 +94,7 @@ const initIndexDB = async () => {
   return databse
 }
 
-const initIndexDBStructure = async (db, models) => {
+const initIndexedDBStructure = async (db, models) => {
   for (let model in models) {
     const key = models[model].key
     const modelStore = db.createObjectStore(model, { keyPath: key });
@@ -67,19 +103,20 @@ const initIndexDBStructure = async (db, models) => {
     }
   }
 }
-const initIndexDBFunction = (db, models) => {
+const initIndexedDBFunction = (db, models) => {
   db.$tables = {}
   for (let model in models) {
-    db.$tables[model] = new IndexModel(db, model)
+    db.$tables[model] = new IndexedModel(db, model)
   }
 }
-initIndexDB().then(({
+
+initIndexedDB().then(({
   type, result: db
 }) => {
-  $indexDB = db
+  $indexedDB = db
   if (type === 'upgradeneeded') {
-    initIndexDBStructure(db, $indexDBModel)
+    initIndexedDBStructure(db, $indexedDBModel)
   } else {
-    initIndexDBFunction(db, $indexDBModel)
+    initIndexedDBFunction(db, $indexedDBModel)
   }
 })

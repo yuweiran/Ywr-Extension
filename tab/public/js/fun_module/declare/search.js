@@ -7,18 +7,16 @@ const $searchEles = (function () {
   const btnRetrievalContent = $el.__("#btn-retrieval-content");
   const contentArea = $el.__(".content-area");
 
-  //防抖
-  const timer = null
 
   const handleAssociation = (response) => {
     console.log(response)
   }
+
   return {
     userContent,
     engineItem,
     btnRetrievalContent,
     contentArea,
-    timer,
     handleAssociation
   };
 })();

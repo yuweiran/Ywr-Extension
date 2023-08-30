@@ -47,5 +47,5 @@ window.onload = () => {
       ? v.classList.add("selected-engine-item")
       : v.classList.remove("selected-engine-item");
   });
-  // $linksEles.renderLinks()
+  $collections.renderCollections()
 };
