@@ -9,8 +9,11 @@
   font-size: 16px;
   display: flex;
 }
-
+#ipage-collections .collection .collection-head:hover .collection-handle{
+  visibility: visible;
+}
 .collection-head .collection-handle{
+  visibility:hidden;
   margin-left: auto;
 }
 

@@ -7,7 +7,13 @@
 }
 .ipage-body-right .ipage-aside-header{
   height: 5rem;
+  line-height: 5rem;
+  padding: 0 1.5rem;
 }
+.ipage-aside-header .btn-aside-fold{
+  transform: rotate(180deg);
+}
+
 .ipage-sections{
   flex:1;
   padding: 0.5rem;
