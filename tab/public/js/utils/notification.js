@@ -1,8 +1,6 @@
 const $notify = (function () {
   let dataInd = 0
-  const notificationList = [
-
-  ]
+  const notificationList = []
   const notifyFunc = ({ type, message, duration }) => {
     const notificationInstance = document.createElement('div')
     notificationInstance.setAttribute('class', 'notification')
@@ -12,14 +10,14 @@ const $notify = (function () {
     <div class="icon-bulb">
       <img
         style="height: 1.2rem; width: 1.2rem"
-        src="/public/img/svg/bulb.svg"
+        src="./public/img/svg/bulb.svg"
       />
     </div>
     <div style="margin-left: 4px; color: #47f8b1f7">Tip</div>
     <div style="margin-left: auto">
       <img
         style="height: 1.2rem; width: 1.2rem"
-        src="/public/img/svg/close.svg"
+        src="./public/img/svg/close.svg"
       />
     </div>
   </div>

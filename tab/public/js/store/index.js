@@ -1,0 +1,4 @@
+const $store = {
+  collections: {},
+  links: {}
+}
