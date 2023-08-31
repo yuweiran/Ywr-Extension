@@ -28,7 +28,7 @@ const $form = (function () {
       </div>
     </div>
     ${config.map((c => {
-      return '<div><label>' + c.label + '</label> <input spellcheck="false" data-property="' + c.property + '" type="text" value="' + data[c.property] + '"  /></div>'
+      return '<div><label>' + c.label + '</label> <input class="' + (c.type === 'file' ? 'is-upload' : '') + '" spellcheck="false" data-property="' + c.property + '" type="' + (c.type || 'text') + '" value="' + data[c.property] + '"  /></div>'
     })).join('')}
     <div class= "edit-form-footer" >
       <button
@@ -59,7 +59,11 @@ const $form = (function () {
         //如何拿到数据
         formInstance.querySelectorAll('input').forEach(inputInstance => {
           let property = inputInstance.dataset.property
-          data[property] = inputInstance.value
+          if (inputInstance.className.indexOf('is-upload') !== -1) {
+            data[property] = inputInstance.files
+          } else {
+            data[property] = inputInstance.value
+          }
         })
         formInstance.parentNode.removeChild(formInstance)
         confirmCallback(data)

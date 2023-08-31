@@ -15,6 +15,13 @@ class IndexedModel {
     record.id = id
     store.add(record);
   }
+  addMuch = async (records) => {
+    const store = this.database.transaction([this.model], "readwrite")
+      .objectStore(this.model);
+    records.forEach(record => {
+      store.add(record);
+    })
+  }
   delete = async (id) => {
     const store = this.database.transaction([this.model], "readwrite")
       .objectStore(this.model);
@@ -91,11 +98,8 @@ const initIndexedDB = async () => {
       reject()
     };
     dbConnectHandle.onupgradeneeded = (event) => {
-      console.log('onupgradeneeded', event)
-      resolve({
-        type: 'upgradeneeded',
-        result: event.target.result
-      })
+      //第一次时执行
+      initIndexedDBStructure(event.target.result, $indexedDBModel)
     };
     dbConnectHandle.onsuccess = (event) => {
       console.log('onsuccess', event)
@@ -117,20 +121,10 @@ const initIndexedDBStructure = async (db, models) => {
     }
   }
 }
-const initIndexedDBFunction = (db, models) => {
+const initIndexedDBFunction = async (db, models) => {
   db.$tables = {}
   for (let model in models) {
     db.$tables[model] = new IndexedModel(db, model)
   }
 }
 
-initIndexedDB().then(({
-  type, result: db
-}) => {
-  $indexedDB = db
-  if (type === 'upgradeneeded') {
-    initIndexedDBStructure(db, $indexedDBModel)
-  } else {
-    initIndexedDBFunction(db, $indexedDBModel)
-  }
-})
