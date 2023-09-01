@@ -103,10 +103,7 @@ const initIndexedDB = async () => {
     };
     dbConnectHandle.onsuccess = (event) => {
       console.log('onsuccess', event)
-      resolve({
-        type: 'success',
-        result: event.target.result
-      })
+      resolve(event.target.result)
     }
   })
   return databse

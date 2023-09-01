@@ -12,17 +12,10 @@ window.onload = () => {
       ? v.classList.add("selected-engine-item")
       : v.classList.remove("selected-engine-item");
   });
-  initIndexedDB().then(({
-    type, result: db
-  }) => {
+  initIndexedDB().then((db) => {
     $indexedDB = db
-    if (type === 'upgradeneeded') {
-
-    } else {
-      console.log('==')
-      initIndexedDBFunction(db, $indexedDBModel).then(() => {
-        $collections.renderCollections()
-      })
-    }
+    initIndexedDBFunction(db, $indexedDBModel).then(() => {
+      $collections.renderCollections()
+    })
   })
 };
