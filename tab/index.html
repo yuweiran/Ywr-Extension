@@ -75,7 +75,6 @@
         <div class="ipage-sections">
           <div class="section">Tabs</div>
           <div><input-file id="test-file"></input-file></div>
-          <div><button id="test">Test</button></div>
           <div class="section">Tasks</div>
           <div class="section">History</div>
         </div>
@@ -107,12 +106,6 @@
   <script src="./public/js/apis/index.js"></script>
   <!-- load -->
   <script src="./public/js/load.js"></script>
-  <script>
-    document.getElementById("test").addEventListener('click', () => {
-      const res = document.getElementById("test-file").getFiles()
-      console.log(res)
-    })
-  </script>
 </body>
 
 </html>

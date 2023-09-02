@@ -7,7 +7,7 @@ $tools.exportConfig.addEventListener("click", async (event) => {
 })
 
 $tools.importConfig.addEventListener("click", async (event) => {
-  $form.create({
+  $modal.form({
     title: '导入配置文件',
     config: [
       { property: 'file', label: '', type: "file" }

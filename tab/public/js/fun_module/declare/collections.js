@@ -2,6 +2,10 @@ const $collections = (function () {
   const collectionsContainer = $el.__("#ipage-collections");
   const btnLinkDelete = "link-tool-remove"
   const btnLinkEdit = "link-tool-edit"
+  const btnLinkAdd = "link-tool-add"
+  const btnCollectionDelete = "link-collection-delete"
+  const btnCollectionEdit = "link-collection-edit"
+  const btnAddCollecation = $el.__(".tab-btn-add-collection")
 
   const renderCollections = async () => {
     //collections渲染列表
@@ -16,9 +20,9 @@ const $collections = (function () {
         <div class="collection-head">
           <div>${collection.name}</div>
           <div class="collection-handle">
-            <button><span class="icon-delete"></span></button>
-            <button><span class="icon-edit-fill"></span></button>
-            <button><span class="icon-add"></span></button>
+            <button><span data-id="${collection.id}" class="icon-delete ${btnCollectionDelete}"></span></button>
+            <button><span data-id="${collection.id}" class="icon-edit-fill ${btnCollectionEdit}"></span></button>
+            <button><span data-id="${collection.id}" class="icon-add ${btnLinkAdd}"></span></button>
           </div>
         </div>
         <div class="collection-links">
@@ -45,6 +49,10 @@ const $collections = (function () {
     collectionsContainer,
     btnLinkDelete,
     btnLinkEdit,
+    btnAddCollecation,
+    btnLinkAdd,
+    btnCollectionDelete,
+    btnCollectionEdit,
     renderCollections
   };
 })();

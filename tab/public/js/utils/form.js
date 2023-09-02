@@ -1,4 +1,4 @@
-const $form = (function () {
+const $modal = (function () {
   const formFunc = ({
     title,
     config = [
@@ -28,7 +28,13 @@ const $form = (function () {
       </div>
     </div>
     ${config.map((c => {
-      return '<div><label>' + c.label + '</label> <input class="' + (c.type === 'file' ? 'is-upload' : '') + '" spellcheck="false" data-property="' + c.property + '" type="' + (c.type || 'text') + '" value="' + data[c.property] + '"  /></div>'
+      let inputHtml
+      if (c.type !== "file") {
+        inputHtml = `<input  spellcheck="false" data-property="${c.property}" type="${c.type || 'text'}" value="${data[c.property]}"  />`
+      } else {
+        inputHtml = `<input-file class="input-file"  data-property="${c.property}"  value="${data[c.property]}"  />`
+      }
+      return `<div><label>${c.label}</label> ${inputHtml}</div>`
     })).join('')}
     <div class= "edit-form-footer" >
       <button
@@ -59,11 +65,11 @@ const $form = (function () {
         //如何拿到数据
         formInstance.querySelectorAll('input').forEach(inputInstance => {
           let property = inputInstance.dataset.property
-          if (inputInstance.className.indexOf('is-upload') !== -1) {
-            data[property] = inputInstance.files
-          } else {
-            data[property] = inputInstance.value
-          }
+          data[property] = inputInstance.value
+        })
+        formInstance.querySelectorAll('.input-file').forEach(inputInstance => {
+          let property = inputInstance.dataset.property
+          data[property] = inputInstance.files
         })
         formInstance.parentNode.removeChild(formInstance)
         confirmCallback(data)
@@ -77,8 +83,53 @@ const $form = (function () {
       }
     })
   }
-
+  const confirmFunc = ({
+    title,
+    message,
+    confirmCallback = () => { }
+  }) => {
+    const formInstance = document.createElement('div')
+    formInstance.setAttribute('class', 'form-mask')
+    formInstance.innerHTML = `    
+    <div class="eidt-form">
+    <div class="edit-form-header">
+      <div>${title || '标题'}</div>
+      <div class="header-icon-close">
+        <img
+          class="icon-close"
+          style="height: 1.2rem; width: 1.2rem;cursor:pointer"
+          src="./public/img/svg/close.svg"
+        />
+      </div>
+    </div>
+    ${message}
+    <div class= "edit-form-footer" >
+      <button
+        class="edit-button edit-cancel-button"
+      >
+        取消
+      </button>
+      <button
+        style="margin-left: auto"
+        class="edit-button edit-confirm-button"
+      >
+        确定
+      </button>
+    </ >
+  </div >
+    `
+    document.body.appendChild(formInstance)
+    formInstance.addEventListener('click', (e) => {
+      if (e.target.classList[1] === 'edit-cancel-button' || e.target.classList[0] === 'icon-close') {
+        formInstance.parentNode.removeChild(formInstance)
+      } else if (e.target.classList[1] === 'edit-confirm-button') {
+        formInstance.parentNode.removeChild(formInstance)
+        confirmCallback()
+      }
+    })
+  }
   return {
-    create: formFunc
+    form: formFunc,
+    confirm: confirmFunc
   }
 })()

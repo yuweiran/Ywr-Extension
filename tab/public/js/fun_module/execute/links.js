@@ -1,6 +1,6 @@
 $linksEles.linksContainer.addEventListener('click', (e) => {
   if (e.target.classList[0] === "add-link-icon" || e.target.id === 'iconjia') {
-    $form.create({
+    $modal.form({
       title: '添加网站',
       config: [
         { property: 'url', label: 'URL' },
@@ -36,7 +36,7 @@ $linksEles.linksContainer.addEventListener('contextmenu', (e) => {
         name = e.target.dataset.name
         url = e.target.dataset.url
       }
-      $form.create({
+      $modal.form({
         title: '编辑网址',
         config: [
           { property: 'url', label: 'URL' },

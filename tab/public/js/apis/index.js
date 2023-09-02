@@ -39,6 +39,14 @@ const $apis = (() => {
   }
 
   const importConfig = async (file) => {
+    console.log(file.type !== "application/json")
+    if (file.type !== "application/json") {
+      $notify.error({
+        message: "文件格式不支持！",
+        duration: 2000
+      })
+      return
+    }
     return new Promise((res, rej) => {
       // 创建一个FileReader对象
       const reader = new FileReader();

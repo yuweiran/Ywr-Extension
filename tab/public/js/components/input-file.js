@@ -10,14 +10,16 @@ class InputFile extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(this.inputFileTemplate.content.cloneNode(true))
     this.isMultiple = this.hasAttribute("multiple") ? this.getAttribute('multiple') !== 'false' : false
-    console.log(this.isMultiple)
     this.shadowRoot.querySelector('.is-upload').setAttribute('multiple', this.isMultiple)
+    this.shadowRoot.querySelector('.is-upload').setAttribute('value', this.getAttribute('value'))
   }
   initInputFileTemplate = () => {
     this.inputFileTemplate.innerHTML = `
     <style>
       .is-upload{
        position:relative; 
+       width:100%;
+       visibility:hidden;
        background-color:transparent;
       }
       .is-upload:before{
@@ -27,6 +29,7 @@ class InputFile extends HTMLElement {
         justify-content:center;
         background-color:#fff;
         text-align:center;
+        visibility:visible;
         position:absolute;
         top:0;
         left:0;
@@ -51,7 +54,7 @@ class InputFile extends HTMLElement {
         content:"";
         height:3px;
         width:100%;
-        background-color:#000;
+        background-color:#ccc;
         position:absolute;
         left:0;
         top:50%;
