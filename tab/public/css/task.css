@@ -20,7 +20,6 @@
   border-top: 0.3px solid var(--borderGrey);
 }
 .ipage-sections .section{
-  height: 3rem;
   line-height: 3rem;
   border-radius: 0.3rem;
   padding: 0 1rem;
@@ -32,4 +31,22 @@
 .ipage-sections .section:hover{
   box-shadow: 0.2rem 0.2rem 0.6rem var(--greyLight-2),
   -0.2rem -0.2rem 0.5rem var(--white);
+}
+.section .section-tab-item{
+  display: flex;
+  align-items: center;
+  color: #444;
+}
+.section .section-tab-item .tab-item-favicon,.section .section-tab-item .tab-item-close{
+  height: 1.2rem;
+  width: 1.2rem;
+  line-height:1.2rem;
+  text-align: center;
+}
+.section .section-tab-item .tab-item-title{
+  flex: 1;
+  margin-left: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

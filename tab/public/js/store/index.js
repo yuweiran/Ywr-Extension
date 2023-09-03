@@ -1,4 +1,5 @@
 const $store = {
   collections: {},
-  links: {}
+  links: {},
+  tabs: {}
 }

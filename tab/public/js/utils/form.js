@@ -20,11 +20,10 @@ const $modal = (function () {
     <div class="edit-form-header">
       <div>${title || '标题'}</div>
       <div class="header-icon-close">
-        <img
+        <div
           class="icon-close"
           style="height: 1.2rem; width: 1.2rem;cursor:pointer"
-          src="./public/img/svg/close.svg"
-        />
+        ></div>
       </div>
     </div>
     ${config.map((c => {
@@ -95,11 +94,10 @@ const $modal = (function () {
     <div class="edit-form-header">
       <div>${title || '标题'}</div>
       <div class="header-icon-close">
-        <img
+        <div
           class="icon-close"
           style="height: 1.2rem; width: 1.2rem;cursor:pointer"
-          src="./public/img/svg/close.svg"
-        />
+        ></div>
       </div>
     </div>
     ${message}

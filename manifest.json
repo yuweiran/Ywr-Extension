@@ -8,10 +8,12 @@
     "type":"module"
   },
   "permissions": [
+    "tabs",
     "storage",
     "activeTab",
     "scripting",
-    "alarms"
+    "alarms",
+    "webNavigation"
   ],
   "chrome_url_overrides": {
     "newtab": "/tab/index.html"

@@ -102,7 +102,6 @@ const initIndexedDB = async () => {
       initIndexedDBStructure(event.target.result, $indexedDBModel)
     };
     dbConnectHandle.onsuccess = (event) => {
-      console.log('onsuccess', event)
       resolve(event.target.result)
     }
   })

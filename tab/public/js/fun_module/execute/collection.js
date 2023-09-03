@@ -15,18 +15,15 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
   } else if (currentClassName.indexOf($collections.btnLinkEdit) !== -1) {
     //链接编辑
     const record = $store.links[parseInt(event.target.dataset.id)]
-    const { name, url } = record
     $modal.form({
-      title: '编辑网址',
+      title: 'Edit Link',
       config: [
         { property: 'url', label: 'URL' },
-        { property: 'name', label: '名称', }
+        { property: 'name', label: '名称', },
+        { property: 'remark', label: '描述' },
       ]
       ,
-      data: {
-        name,
-        url
-      },
+      data: record,
       confirmCallback: (data) => {
         console.log(data)
       }
@@ -63,11 +60,13 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
       title: 'Create Link',
       config: [
         { property: 'url', label: 'URL' },
-        { property: 'name', label: '名称' }
+        { property: 'name', label: '名称' },
+        { property: 'remark', label: '描述' },
       ],
       data: {
         name: "",
         url: "",
+        remark: "",
         collection
       },
       confirmCallback: (data) => {

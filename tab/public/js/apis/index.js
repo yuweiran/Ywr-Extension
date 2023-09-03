@@ -1,4 +1,5 @@
 const $apis = (() => {
+  //链接列表
   const getCollectionsAndLinks = async () => {
     const collections = await $indexedDB.$tables.collections.list()
     for (let collection of collections) {
@@ -13,6 +14,7 @@ const $apis = (() => {
     }
     return collections
   }
+  //配置导出
   const exportConfig = async () => {
     const collections = await $indexedDB.$tables.collections.list()
     const links = await $indexedDB.$tables.links.list()
@@ -37,7 +39,7 @@ const $apis = (() => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
-
+  //配置导入
   const importConfig = async (file) => {
     console.log(file.type !== "application/json")
     if (file.type !== "application/json") {
@@ -65,9 +67,14 @@ const $apis = (() => {
       reader.readAsText(file);
     })
   }
+  //列表
+  const updateTabsList = (activeTab) => {
+
+  }
   return {
     getCollectionsAndLinks,
     exportConfig,
-    importConfig
+    importConfig,
+    updateTabsList
   }
 })()
