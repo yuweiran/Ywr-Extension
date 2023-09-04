@@ -41,7 +41,6 @@ const $apis = (() => {
   }
   //配置导入
   const importConfig = async (file) => {
-    console.log(file.type !== "application/json")
     if (file.type !== "application/json") {
       $notify.error({
         message: "文件格式不支持！",
@@ -68,13 +67,11 @@ const $apis = (() => {
     })
   }
   //列表
-  const updateTabsList = (activeTab) => {
 
-  }
+
   return {
     getCollectionsAndLinks,
     exportConfig,
-    importConfig,
-    updateTabsList
+    importConfig
   }
 })()

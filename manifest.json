@@ -9,6 +9,7 @@
   },
   "permissions": [
     "tabs",
+    "windows",
     "storage",
     "activeTab",
     "scripting",

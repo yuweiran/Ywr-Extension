@@ -4,7 +4,7 @@ $linksEles.linksContainer.addEventListener('click', (e) => {
       title: '添加网站',
       config: [
         { property: 'url', label: 'URL' },
-        { property: 'name', label: '名称', }
+        { property: 'name', label: 'Name', }
       ],
       data: {
         name: '',
@@ -40,7 +40,7 @@ $linksEles.linksContainer.addEventListener('contextmenu', (e) => {
         title: '编辑网址',
         config: [
           { property: 'url', label: 'URL' },
-          { property: 'name', label: '名称', }
+          { property: 'name', label: 'Name', }
         ]
         ,
         data: {

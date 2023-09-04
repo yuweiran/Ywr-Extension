@@ -4,10 +4,10 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
     //链接删除
     $modal.confirm({
       title: "warning",
-      message: "确定删除当前链接？",
+      message: "Are you sure to delete current link?",
       confirmCallback: () => {
         $notify.success({
-          message: '删除成功！',
+          message: 'operate success!',
           duration: 2000
         })
       }
@@ -19,8 +19,8 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
       title: 'Edit Link',
       config: [
         { property: 'url', label: 'URL' },
-        { property: 'name', label: '名称', },
-        { property: 'remark', label: '描述' },
+        { property: 'name', label: 'Name', },
+        { property: 'remark', label: 'Description' },
       ]
       ,
       data: record,
@@ -32,10 +32,10 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
     //collection删除
     $modal.confirm({
       title: "warning",
-      message: "确定删除当前collection？",
+      message: "Are you sure to delete current collection?",
       confirmCallback: () => {
         $notify.success({
-          message: '删除成功！',
+          message: 'operate success!',
           duration: 2000
         })
       }
@@ -44,9 +44,9 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
     //collection编辑
     const record = $store.collections[parseInt(event.target.dataset.id)]
     $modal.form({
-      title: '编辑collection',
+      title: 'Edit Collection',
       config: [
-        { property: 'name', label: '名称', }
+        { property: 'name', label: 'Name', }
       ]
       ,
       data: record,
@@ -60,8 +60,8 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
       title: 'Create Link',
       config: [
         { property: 'url', label: 'URL' },
-        { property: 'name', label: '名称' },
-        { property: 'remark', label: '描述' },
+        { property: 'name', label: 'Name' },
+        { property: 'remark', label: 'Description' },
       ],
       data: {
         name: "",
