@@ -27,6 +27,39 @@ class IndexedModel {
       .objectStore(this.model);
     store.delete(id);
   }
+  deleteWithCondition = async (condition) => {
+    const store = this.database.transaction([this.model], "readwrite")
+      .objectStore(this.model);
+    const records = await new Promise((res, rej) => {
+      const request = store.openCursor();
+      const records = []
+      request.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          let isValid = true
+          for (let property in condition) {
+            if (cursor.value[property] !== condition[property]) {
+              isValid = false
+              break
+            }
+          }
+          if (isValid) {
+            records.push(cursor.value)
+          }
+          cursor.continue();
+        } else {
+          res(records)
+        }
+      }
+      request.onerror = () => {
+        rej()
+      }
+    })
+    console.log(records)
+    records.forEach(r => {
+      store.delete(r.id);
+    })
+  }
   list = async (condition = null) => {
     const store = this.database.transaction([this.model], "readwrite")
       .objectStore(this.model);

@@ -1,11 +1,15 @@
-$collections.collectionsContainer.addEventListener('click', (event) => {
+$collections.collectionsContainer.addEventListener('click', async (event) => {
   const currentClassName = event.target.className
   if (currentClassName.indexOf($collections.btnLinkDelete) !== -1) {
+    event.preventDefault()
     //链接删除
     $modal.confirm({
       title: "warning",
       message: "Are you sure to delete current link?",
-      confirmCallback: () => {
+      confirmCallback: async () => {
+        const linkId = parseInt(event.target.dataset.id)
+        await $apis.link.delete(linkId)
+        $collections.renderCollections()
         $notify.success({
           message: 'operate success!',
           duration: 2000
@@ -13,6 +17,7 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
       }
     })
   } else if (currentClassName.indexOf($collections.btnLinkEdit) !== -1) {
+    event.preventDefault()
     //链接编辑
     const record = $store.links[parseInt(event.target.dataset.id)]
     $modal.form({
@@ -24,8 +29,13 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
       ]
       ,
       data: record,
-      confirmCallback: (data) => {
-        console.log(data)
+      confirmCallback: async (data) => {
+        await $apis.link.edit(data)
+        $collections.renderCollections()
+        $notify.success({
+          message: 'operate success!',
+          duration: 2000
+        })
       }
     })
   } else if (currentClassName.indexOf($collections.btnCollectionDelete) !== -1) {
@@ -33,7 +43,10 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
     $modal.confirm({
       title: "warning",
       message: "Are you sure to delete current collection?",
-      confirmCallback: () => {
+      confirmCallback: async () => {
+        const collectionId = parseInt(event.target.dataset.id)
+        await $apis.collection.delete(collectionId)
+        $collections.renderCollections()
         $notify.success({
           message: 'operate success!',
           duration: 2000
@@ -50,12 +63,17 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
       ]
       ,
       data: record,
-      confirmCallback: (data) => {
-        console.log(data)
+      confirmCallback: async (data) => {
+        await $apis.collection.edit(data)
+        $collections.renderCollections()
+        $notify.success({
+          message: 'operate success!',
+          duration: 2000
+        })
       }
     })
   } else if (currentClassName.indexOf($collections.btnLinkAdd) !== -1) {
-    const collection = event.target.dataset.id
+    const collection = parseInt(event.target.dataset.id)
     $modal.form({
       title: 'Create Link',
       config: [
@@ -69,8 +87,14 @@ $collections.collectionsContainer.addEventListener('click', (event) => {
         remark: "",
         collection
       },
-      confirmCallback: (data) => {
+      confirmCallback: async (data) => {
         console.log(data)
+        await $apis.link.add(data)
+        $collections.renderCollections()
+        $notify.success({
+          message: 'operate success!',
+          duration: 2000
+        })
       }
     })
   }
@@ -85,8 +109,13 @@ $collections.btnAddCollecation.addEventListener('click', () => {
     data: {
       name: ''
     },
-    confirmCallback: (data) => {
-      console.log(data)
+    confirmCallback: async (data) => {
+      await $apis.collection.add(data)
+      $collections.renderCollections()
+      $notify.success({
+        message: 'operate success!',
+        duration: 2000
+      })
     }
   })
 })

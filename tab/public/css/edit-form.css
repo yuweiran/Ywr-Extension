@@ -2,7 +2,7 @@
   padding: 1rem;
   color: var(--greyDark);
   width: 30rem;
-  border-radius: 0.5rem;
+  border-radius: 0.3rem;
   background-color: #fff;
   position: absolute;
   top: 50%;
@@ -41,7 +41,6 @@
   background-color: transparent;
   box-shadow: inset 0.2rem 0.2rem 0.5rem #c8d0e7,
     inset -0.2rem -0.2rem 0.5rem #fff;
-  border-radius: 0.5rem;
   color: var(--greyDark);
 }
 .form-mask input:focus {

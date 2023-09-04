@@ -28,14 +28,14 @@ const $collections = (function () {
         <div class="collection-links">
           ${collection.children.map(link => {
           return `
-            <div div class= "collection-link" >
-            <div class="collection-link-name">${link.name}</div>
-            <div class="collection-link-remark">${link.remark}</div>
-            <div class="collection-link-handle">
-              <div data-id="${link.id}"  class="icon-fill-delete  ${btnLinkDelete}"></div>
-              <div data-id="${link.id}"  class="icon-fill-edit ${btnLinkEdit}"></div>
-            </div>
-          </div >
+            <a class= "collection-link" href="${link.url}" target="__blank">
+              <div class="collection-link-name">${link.name}</div>
+              <div class="collection-link-remark">${link.remark}</div>
+              <div class="collection-link-handle">
+                <div data-id="${link.id}"  class="icon-fill-delete  ${btnLinkDelete}"></div>
+                <div data-id="${link.id}"  class="icon-fill-edit ${btnLinkEdit}"></div>
+              </div>
+            </a>
             `
         }).join('')
           }

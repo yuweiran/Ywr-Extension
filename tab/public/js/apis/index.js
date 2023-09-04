@@ -66,12 +66,40 @@ const $apis = (() => {
       reader.readAsText(file);
     })
   }
-  //列表
 
+  //新建collection
+  const collection = {
+    add: async (collection) => {
+      await $indexedDB.$tables.collections.add(collection)
+    },
+    edit: async (collection) => {
+      await $indexedDB.$tables.collections.update(collection)
+    },
+    delete: async (id) => {
+      //级联删除链接
+      await $indexedDB.$tables.collections.delete(id)
+      await $indexedDB.$tables.links.deleteWithCondition({
+        collection: id
+      })
+    }
+  }
+  const link = {
+    add: async (link) => {
+      await $indexedDB.$tables.links.add(link)
+    },
+    edit: async (link) => {
+      await $indexedDB.$tables.links.update(link)
+    },
+    delete: async (id) => {
+      await $indexedDB.$tables.links.delete(id)
+    }
+  }
 
   return {
     getCollectionsAndLinks,
     exportConfig,
-    importConfig
+    importConfig,
+    collection,
+    link
   }
 })()
