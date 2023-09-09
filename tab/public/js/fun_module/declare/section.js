@@ -23,7 +23,10 @@ $sections = (() => {
             }
             tabsList.push(`
             <div data-id="${tab.id}" class="${sectionTabsItem}">
-              ${faviconTemplate}<div data-id="${tab.id}" class="${sectionTabsTitle}">${tab.title}</div><div data-id="${tab.id}" class="icon-close ${sectionTabsClose}"></div>
+              ${faviconTemplate}
+              <div data-id="${tab.id}" class="${sectionTabsTitle}">${tab.title}</div>
+              <div data-id="${tab.id}" class="icon-close ${sectionTabsClose}"></div>
+              <div class="tab-item-remark">${tab.title}</div>
             </div>
           `)
           }
