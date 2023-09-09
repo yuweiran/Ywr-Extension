@@ -58,8 +58,8 @@ const $apis = (() => {
         console.log(jsonData)
         // const stringContent = JSON.stringify(jsonData, null, 2)
         const { collections, links } = jsonData
-        await $indexedDB.$tables.collections.addMuch(collections)
-        await $indexedDB.$tables.links.addMuch(links)
+        await $indexedDB.$tables.collections.addMany(collections, true)
+        await $indexedDB.$tables.links.addMany(links, true)
         res()
       };
       // 读取文件内容
@@ -81,6 +81,11 @@ const $apis = (() => {
       await $indexedDB.$tables.links.deleteWithCondition({
         collection: id
       })
+    },
+    updateOrder: async (records) => {
+      for (let r of records) {
+        await $indexedDB.$tables.update(r)
+      }
     }
   }
   const link = {
@@ -92,6 +97,11 @@ const $apis = (() => {
     },
     delete: async (id) => {
       await $indexedDB.$tables.links.delete(id)
+    },
+    updateOrder: async (records) => {
+      for (let r of records) {
+        await $indexedDB.$tables.update(r)
+      }
     }
   }
 

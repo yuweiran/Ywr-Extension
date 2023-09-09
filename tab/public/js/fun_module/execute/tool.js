@@ -15,10 +15,11 @@ $tools.importConfig.addEventListener("click", async (event) => {
     data: {
       file: ''
     },
-    confirmCallback: (data) => {
+    confirmCallback: async (data) => {
       const file = data.file
       if (file.length > 0) {
-        $apis.importConfig(file[0])
+        await $apis.importConfig(file[0])
+        $collections.renderCollections()
       }
     }
   })

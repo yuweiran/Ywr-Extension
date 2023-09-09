@@ -104,12 +104,14 @@ $collections.btnAddCollecation.addEventListener('click', () => {
   $modal.form({
     title: 'Create Collection',
     config: [
-      { property: 'name', label: 'Collection Name', }
+      { property: 'name', label: 'Collection Name' }
     ],
     data: {
       name: ''
     },
     confirmCallback: async (data) => {
+      const maxOrder = await $collections.getMaxOrder()
+      data.order = maxOrder + 1
       await $apis.collection.add(data)
       $collections.renderCollections()
       $notify.success({

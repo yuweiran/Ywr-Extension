@@ -22,9 +22,9 @@ $sections = (() => {
               faviconTemplate = `<div data-id="${tab.id}" class="${sectionTabsFavicon}">${tab.title[0]}</div>`
             }
             tabsList.push(`
-            <li data-id="${tab.id}" class="${sectionTabsItem}">
+            <div data-id="${tab.id}" class="${sectionTabsItem}">
               ${faviconTemplate}<div data-id="${tab.id}" class="${sectionTabsTitle}">${tab.title}</div><div data-id="${tab.id}" class="icon-close ${sectionTabsClose}"></div>
-            </li>
+            </div>
           `)
           }
         }))
@@ -38,25 +38,21 @@ $sections = (() => {
         `)
       })
       sectionTabsShow.innerHTML = windowsList.join("")
+      new Sortable(sectionTabsShow, {
+        animation: 150,
+      })
+      const tabSectiona = $el.__all(".window-item-tabs")
+      for (let tabSection of tabSectiona) {
+        new Sortable(tabSection, {
+          group: {
+            name: 'linkShared',
+            pull: 'clone',
+            put: false // 不允许拖拽进这个列表
+          },
+          animation: 150,
+        })
+      }
     })
-    // chrome.tabs.query({}, function (tabs) {
-    //   const tabsList = []
-    //   tabs.forEach((tab => {
-    //     $store.tabs[tab.id] = tab
-    //     if (!(tab.favIconUrl && tab.favIconUrl.startsWith("chrome-extension://"))) {
-    //       let faviconTemplate = `<img data-id="${tab.id}" class="${sectionTabsFavicon}" src="${tab.favIconUrl}" />`
-    //       if (!tab.favIconUrl) {
-    //         faviconTemplate = `<div data-id="${tab.id}" class="${sectionTabsFavicon}">${tab.title[0]}</div>`
-    //       }
-    //       tabsList.push(`
-    //       <li data-id="${tab.id}" class="${sectionTabsItem}">
-    //         ${faviconTemplate}<div data-id="${tab.id}" class="${sectionTabsTitle}">${tab.title}</div><div data-id="${tab.id}" class="icon-close ${sectionTabsClose}"></div>
-    //       </li>
-    //     `)
-    //     }
-    //   }))
-    //   sectionTabsShow.innerHTML = tabsList.join("")
-    // });
   }
   return {
     sectionContainer,

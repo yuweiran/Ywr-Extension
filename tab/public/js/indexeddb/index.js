@@ -15,10 +15,13 @@ class IndexedModel {
     record.id = id
     store.add(record);
   }
-  addMuch = async (records) => {
+  addMany = async (records, useOrder = false) => {
     const store = this.database.transaction([this.model], "readwrite")
       .objectStore(this.model);
-    records.forEach(record => {
+    records.forEach((record, ind) => {
+      if (useOrder) {
+        record.order = ind
+      }
       store.add(record);
     })
   }

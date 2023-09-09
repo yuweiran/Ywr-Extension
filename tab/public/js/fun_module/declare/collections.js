@@ -6,15 +6,19 @@ const $collections = (function () {
   const btnCollectionDelete = "link-collection-delete"
   const btnCollectionEdit = "link-collection-edit"
   const btnAddCollecation = $el.__(".tab-btn-add-collection")
+  let collections = []
 
+  const getCollections = async () => {
+    collections = await $apis.getCollectionsAndLinks()
+    collections.sort((a, b) => a.order - b.order)
+  }
   const renderCollections = async () => {
+    await getCollections()
     //collections渲染列表
-    let render_arr = [];
-    //拿到collection列表
-    let collectionsRecords = await $apis.getCollectionsAndLinks()
-
-    for (let ind = 0; ind < collectionsRecords.length; ind++) {
-      let collection = collectionsRecords[ind]
+    let render_arr = []
+    //得保证有order
+    for (let ind = 0; ind < collections.length; ind++) {
+      let collection = collections[ind]
       if (collection) {
         render_arr.push(`<div class="collection">
         <div class="collection-head">
@@ -28,7 +32,7 @@ const $collections = (function () {
         <div class="collection-links">
           ${collection.children.map(link => {
           return `
-            <a class= "collection-link" href="${link.url}" target="__blank">
+            <a class= "collection-link" href="${link.url}" target="_blank">
               <div class="collection-link-name">${link.name}</div>
               <div class="collection-link-remark">${link.remark}</div>
               <div class="collection-link-handle">
@@ -44,6 +48,23 @@ const $collections = (function () {
       }
     }
     collectionsContainer.innerHTML = render_arr.join('');
+    new Sortable(collectionsContainer, {
+      animation: 150,
+    })
+    const linksSections = $el.__all(".collection-links")
+    for (let linksSection of linksSections) {
+      linksSection
+      new Sortable(linksSection, {
+        animation: 150,
+        group: {
+          name: 'linkShared',
+          pull: 'clone',
+        },
+      })
+    }
+  }
+  const getMaxOrder = async () => {
+    return collections[collections.length - 1].order || 0
   }
   return {
     collectionsContainer,
@@ -53,6 +74,8 @@ const $collections = (function () {
     btnLinkAdd,
     btnCollectionDelete,
     btnCollectionEdit,
-    renderCollections
+    renderCollections,
+    collections,
+    getMaxOrder
   };
 })();

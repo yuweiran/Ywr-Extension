@@ -4,12 +4,17 @@
   overflow: auto;
 }
 
+#ipage-collections .collection{
+  position: relative;
+  width: 100%;
+}
+
 #ipage-collections .collection .collection-head{
   padding: 1rem;
   font-size: 16px;
   display: flex;
 }
-#ipage-collections .collection .collection-head:hover .collection-handle{
+#ipage-collections .collection:hover .collection-handle{
   visibility: visible;
 }
 .collection-head .collection-handle{
@@ -29,7 +34,7 @@
   flex-wrap: wrap;
 }
 
-#ipage-collections .collection .collection-links .collection-link{
+.collection-link{
   position: relative;
   display: flex;
   flex-direction: column;
@@ -45,7 +50,7 @@
   box-shadow: rgba(94, 93, 102, 0.1) 1px 1px 0px 0px, rgba(94, 93, 102, 0.2) 2px 5px 10px 0px
 }
 
-.collection-links .collection-link-name{
+.collection-link .collection-link-name{
   padding: 0.5rem;
   font-size: 14px;
   flex: 3;
@@ -54,7 +59,7 @@
   display: flex;
   align-items: center;
 }
-.collection-links .collection-link-remark{
+.collection-link .collection-link-remark{
   padding: 0.5rem;
   font-size: 12px;
   flex: 2;
@@ -83,4 +88,12 @@
 
 .collection-link:hover .collection-link-handle{
   visibility: visible;
+}
+.is-dragging{
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.is-dragging .collection-link-handle{
+  display: none;
 }
