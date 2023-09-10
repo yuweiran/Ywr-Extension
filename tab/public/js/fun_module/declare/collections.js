@@ -10,8 +10,6 @@ const $collections = (function () {
 
   const getCollections = async () => {
     collections = await $apis.getCollectionsAndLinks()
-    collections.sort((a, b) => { return a.order - b.order })
-    console.log(collections)
   }
   const renderCollections = async () => {
     await getCollections()
@@ -21,7 +19,7 @@ const $collections = (function () {
     for (let ind = 0; ind < collections.length; ind++) {
       let collection = collections[ind]
       if (collection) {
-        render_arr.push(`<div class="collection">
+        render_arr.push(`<div data-id="${collection.id}" class="collection">
         <div class="collection-head">
           <div>${collection.name}</div>
           <div class="collection-handle">
@@ -51,6 +49,16 @@ const $collections = (function () {
     collectionsContainer.innerHTML = render_arr.join('');
     new Sortable(collectionsContainer, {
       animation: 150,
+      onUpdate: async function () {
+        //同一组类排序
+        const sortedItems = this.toArray();
+        for (let item in sortedItems) {
+          await $apis.collection.edit({
+            order: parseInt(item),
+            id: parseInt(sortedItems[item])
+          })
+        }
+      }
     })
     const linksSections = $el.__all(".collection-links")
     for (let linksSection of linksSections) {
@@ -135,8 +143,7 @@ const $collections = (function () {
 
     }
   }
-  const getMaxOrder = async () => {
-    e
+  const getCollectionsMaxOrder = async () => {
     return collections[collections.length - 1].ordr || 0
   }
   return {
@@ -149,6 +156,6 @@ const $collections = (function () {
     btnCollectionEdit,
     renderCollections,
     collections,
-    getMaxOrder
+    getCollectionsMaxOrder
   };
 })();

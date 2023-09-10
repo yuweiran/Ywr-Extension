@@ -110,7 +110,7 @@ $collections.btnAddCollecation.addEventListener('click', () => {
       name: ''
     },
     confirmCallback: async (data) => {
-      const maxOrder = await $collections.getMaxOrder()
+      const maxOrder = await $collections.getCollectionsMaxOrder()
       data.order = maxOrder + 1
       await $apis.collection.add(data)
       $collections.renderCollections()
