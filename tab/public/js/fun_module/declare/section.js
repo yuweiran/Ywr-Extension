@@ -32,7 +32,7 @@ $sections = (() => {
           }
         }))
         windowsList.push(`
-          <li class="${sectionWindowItem}">
+          <li data-id="${window.id}" class="${sectionWindowItem}">
             <div class="window-item-title">WINDOW${winInd + 1}</div>
             <div class="window-item-tabs">
               ${tabsList.join("")}
@@ -43,6 +43,11 @@ $sections = (() => {
       sectionTabsShow.innerHTML = windowsList.join("")
       new Sortable(sectionTabsShow, {
         animation: 150,
+        onUpdate: async function () {
+          //顺序更新，修改浏览器tab顺序
+          const sortedItems = this.toArray();
+
+        }
       })
       const tabSectiona = $el.__all(".window-item-tabs")
       for (let tabSection of tabSectiona) {
@@ -51,6 +56,13 @@ $sections = (() => {
             name: 'linkShared',
             pull: 'clone',
             put: false // 不允许拖拽进这个列表
+          },
+          onUpdate: async function () {
+            //顺序更新，修改浏览器tab顺序
+            const sortedItems = this.toArray();
+            sortedItems.forEach((v, i) => {
+              chrome.tabs.move(parseInt(v), { index: i + 1 });
+            })
           },
           animation: 150,
         })
