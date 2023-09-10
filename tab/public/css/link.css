@@ -34,7 +34,7 @@
   flex-wrap: wrap;
 }
 
-.collection-link{
+.collection-link,.collection-links .sortable-chosen{
   position: relative;
   display: flex;
   flex-direction: column;
@@ -46,10 +46,32 @@
   border-radius: 0.2rem;
   box-shadow: rgba(94, 93, 102, 0.1) 1px 1px 0px 0px, rgba(94, 93, 102, 0.14) 2px 2px 3px 0px;
 }
+.collection-links .sortable-chosen .tab-item-close,
+.collection-links .sortable-chosen .tab-item-favicon{
+  display: none;
+}
+.collection-links .sortable-chosen{
+  color: #444444;
+  display: flex;
+}
+.collection-links .sortable-chosen .tab-item-title{
+  display: flex;
+  align-items: center;
+  flex: 3;
+  padding: 0.5rem;
+  font-size: 14px;
+  border-bottom:0.3px solid var(--borderGrey);
+}
+.collection-links .sortable-chosen .tab-item-remark{
+  display: flex;
+  align-items: center;
+  flex: 2;
+  color: #b9b9b9;
+  padding: 0.5rem;
+}
 #ipage-collections .collection .collection-links .collection-link:hover{
   box-shadow: rgba(94, 93, 102, 0.1) 1px 1px 0px 0px, rgba(94, 93, 102, 0.2) 2px 5px 10px 0px
 }
-
 .collection-link .collection-link-name{
   padding: 0.5rem;
   font-size: 14px;

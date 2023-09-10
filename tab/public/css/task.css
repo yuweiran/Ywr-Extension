@@ -50,6 +50,9 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.section .section-tab-item .tab-item-remark{
+  display: none;
+}
 .section .section-window-item{
   list-style: none;
 }

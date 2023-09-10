@@ -1,7 +1,7 @@
 const $apis = (() => {
   //链接列表
   const getCollectionsAndLinks = async () => {
-    const collections = await $indexedDB.$tables.collections.list()
+    const collections = (await $indexedDB.$tables.collections.list()).sort((a, b) => a.order - b.order)
     for (let collection of collections) {
       $store.collections[collection.id] = structuredClone(collection)
       const links = await $indexedDB.$tables.links.list({
@@ -10,7 +10,7 @@ const $apis = (() => {
       links.forEach(l => {
         $store.links[l.id] = structuredClone(l)
       })
-      collection.children = links
+      collection.children = links.sort((a, b) => a.order - b.order)
     }
     return collections
   }

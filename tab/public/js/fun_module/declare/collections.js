@@ -10,7 +10,8 @@ const $collections = (function () {
 
   const getCollections = async () => {
     collections = await $apis.getCollectionsAndLinks()
-    collections.sort((a, b) => a.order - b.order)
+    collections.sort((a, b) => { return a.order - b.order })
+    console.log(collections)
   }
   const renderCollections = async () => {
     await getCollections()
@@ -29,10 +30,10 @@ const $collections = (function () {
             <button><span data-id="${collection.id}" class="icon-add ${btnLinkAdd}"></span></button>
           </div>
         </div>
-        <div class="collection-links">
+        <div data-id="${collection.id}" class="collection-links">
           ${collection.children.map(link => {
           return `
-            <a class= "collection-link" href="${link.url}" target="_blank">
+            <a data-id="${link.id}" class= "collection-link" href="${link.url}" target="_blank">
               <div class="collection-link-name">${link.name}</div>
               <div class="collection-link-remark">${link.remark}</div>
               <div class="collection-link-handle">
@@ -58,13 +59,85 @@ const $collections = (function () {
         animation: 150,
         group: {
           name: 'linkShared',
-          pull: 'clone',
         },
+        onAdd: async function (ev) {
+          const targetEl = this.el;
+          const draggingEl = ev.item
+          const collectionId = parseInt(targetEl.dataset.id)
+          const sortedItems = this.toArray();
+          if (ev.from.className !== "collection-links") {
+            const id = draggingEl.dataset.id//当前的tab
+            const link = $store.tabs[id]
+            const newLink = document.createElement("a")
+            newLink.className = "collection-link"
+            newLink.href = link.url
+            newLink.target = "_blank"
+            newLink.innerHTML =
+              `<div class="collection-link-name">${link.title}</div>
+                <div class="collection-link-remark">${link.title}</div>
+                <div class="collection-link-handle">
+                  <div  class="icon-fill-delete  ${btnLinkDelete}"></div>
+                  <div  class="icon-fill-edit ${btnLinkEdit}"></div>
+                </div>`
+            // 获取拖拽后的位置
+            const newIndex = Array.from(targetEl.children).indexOf(draggingEl);
+            // 使用 insertBefore 将元素插入到目标组的特定位置
+            const referenceElement = targetEl.children[newIndex + 1];
+            targetEl.insertBefore(newLink, referenceElement);
+            draggingEl.parentNode.removeChild(draggingEl)
+            //新加一项， 更新数据库,涉及到的order都需要更新，所有link数据都要更新，如何优化
+            for (let item in sortedItems) {
+              if (parseInt(item) === newIndex) {
+                await $apis.link.add({
+                  order: newIndex,
+                  name: link.title,
+                  remark: link.title,
+                  url: link.url,
+                  collection: collectionId
+                })
+              } else {
+                await $apis.link.edit({
+                  order: parseInt(item),
+                  id: parseInt(sortedItems[item])
+                })
+              }
+            }
+            renderCollections()
+          } else {
+            const linkId = draggingEl.dataset.id
+            for (let item in sortedItems) {
+              if (sortedItems[item] === linkId) {
+                await $apis.link.edit({
+                  order: parseInt(item),
+                  id: parseInt(sortedItems[item]),
+                  collection: collectionId
+                })
+              } else {
+                await $apis.link.edit({
+                  order: parseInt(item),
+                  id: parseInt(sortedItems[item])
+                })
+              }
+            }
+          }
+        },
+        onUpdate: async function () {
+          //同一组类排序
+          const sortedItems = this.toArray();
+          for (let item in sortedItems) {
+            await $apis.link.edit({
+              order: parseInt(item),
+              id: parseInt(sortedItems[item])
+            })
+          }
+        }
       })
+
     }
   }
   const getMaxOrder = async () => {
-    return collections[collections.length - 1].order || 0
+    e
+    return collections[collections.length - 1].ordr || 0
   }
   return {
     collectionsContainer,
