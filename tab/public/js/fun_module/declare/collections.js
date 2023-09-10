@@ -30,9 +30,15 @@ const $collections = (function () {
         </div>
         <div data-id="${collection.id}" class="collection-links">
           ${collection.children.map(link => {
+          let iconTemplate = `<span class="icon-favicon collection-link-icon"></span>`
+          if (link.icon) {
+            iconTemplate = `<img class="collection-link-icon" src="${link.icon}" />`
+          }
           return `
             <a data-id="${link.id}" class= "collection-link" href="${link.url}" target="_blank">
-              <div class="collection-link-name">${link.name}</div>
+              <div class="collection-link-name">
+                ${iconTemplate}<span class="collection-link-title">${link.name}</span>
+              </div>
               <div class="collection-link-remark">${link.remark}</div>
               <div class="collection-link-handle">
                 <div data-id="${link.id}"  class="icon-fill-delete  ${btnLinkDelete}"></div>
@@ -101,7 +107,8 @@ const $collections = (function () {
                   name: link.title,
                   remark: link.title,
                   url: link.url,
-                  collection: collectionId
+                  collection: collectionId,
+                  icon: link.favIconUrl || ''
                 })
               } else {
                 await $apis.link.edit({

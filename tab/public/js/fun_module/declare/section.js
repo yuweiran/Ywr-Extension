@@ -19,12 +19,14 @@ $sections = (() => {
           if (!(tab.favIconUrl && tab.favIconUrl.startsWith("chrome-extension://"))) {
             let faviconTemplate = `<img data-id="${tab.id}" class="${sectionTabsFavicon}" src="${tab.favIconUrl}" />`
             if (!tab.favIconUrl) {
-              faviconTemplate = `<div data-id="${tab.id}" class="${sectionTabsFavicon}">${tab.title[0]}</div>`
+              faviconTemplate = `<div data-id="${tab.id}" class="icon-favicon ${sectionTabsFavicon}"></div>`
             }
             tabsList.push(`
             <div data-id="${tab.id}" class="${sectionTabsItem}">
-              ${faviconTemplate}
-              <div data-id="${tab.id}" class="${sectionTabsTitle}">${tab.title}</div>
+              <div class="tab-item-prefixer">
+                ${faviconTemplate}
+                <div data-id="${tab.id}" class="${sectionTabsTitle}">${tab.title}</div>
+              </div>
               <div data-id="${tab.id}" class="icon-close ${sectionTabsClose}"></div>
               <div class="tab-item-remark">${tab.title}</div>
             </div>

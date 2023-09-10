@@ -104,7 +104,7 @@ $collections.btnAddCollecation.addEventListener('click', () => {
   $modal.form({
     title: 'Create Collection',
     config: [
-      { property: 'name', label: 'Collection Name' }
+      { property: 'name', label: 'Name' }
     ],
     data: {
       name: ''

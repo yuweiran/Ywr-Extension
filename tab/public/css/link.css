@@ -46,29 +46,50 @@
   border-radius: 0.2rem;
   box-shadow: rgba(94, 93, 102, 0.1) 1px 1px 0px 0px, rgba(94, 93, 102, 0.14) 2px 2px 3px 0px;
 }
-.collection-links .sortable-chosen .tab-item-close,
-.collection-links .sortable-chosen .tab-item-favicon{
+.collection-links .sortable-chosen .tab-item-close{
   display: none;
 }
 .collection-links .sortable-chosen{
   color: #444444;
   display: flex;
 }
+.collection-links .sortable-chosen .tab-item-favicon{
+  height: 1.2rem;
+  width: 1.2rem;
+  font-size: 1.2rem;
+  color: var(--primary);
+  flex-shrink: 0;
+}
 .collection-links .sortable-chosen .tab-item-title{
+  padding: 0.5rem;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.collection-links .sortable-chosen .tab-item-prefixer{
+  padding: 0.5rem;
   display: flex;
   align-items: center;
   flex: 3;
-  padding: 0.5rem;
-  font-size: 14px;
   border-bottom:0.3px solid var(--borderGrey);
+  overflow: hidden;
 }
 .collection-links .sortable-chosen .tab-item-remark{
-  display: flex;
-  align-items: center;
   flex: 2;
   color: #b9b9b9;
   padding: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
 }
+.collection-links .sortable-chosen .tab-item-remark::after,.collection-links .sortable-chosen .tab-item-remark::before,.collection-link .collection-link-remark::after,.collection-link .collection-link-remark::before {
+  content: "";
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
 #ipage-collections .collection .collection-links .collection-link:hover{
   box-shadow: rgba(94, 93, 102, 0.1) 1px 1px 0px 0px, rgba(94, 93, 102, 0.2) 2px 5px 10px 0px
 }
@@ -77,17 +98,31 @@
   font-size: 14px;
   flex: 3;
   color: #444444;
-  border-bottom:0.3px solid var(--borderGrey);
   display: flex;
   align-items: center;
+}
+.collection-link .collection-link-name .collection-link-icon{
+  height: 1.2rem;
+  width: 1.2rem;
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  color: var(--primary);
+} 
+.collection-link .collection-link-name  .collection-link-title{
+  white-space: nowrap;
+  margin-left: 0.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .collection-link .collection-link-remark{
   padding: 0.5rem;
   font-size: 12px;
   flex: 2;
   color: #b9b9b9;
-  display: flex;
-  align-items: center;
+  border-top:0.3px solid var(--borderGrey);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .collection-link-handle{

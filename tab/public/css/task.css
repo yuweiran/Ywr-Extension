@@ -37,11 +37,16 @@
   align-items: center;
   color: #444;
 }
+.section .section-tab-item .tab-item-favicon{
+  color: var(--primary);
+}
 .section .section-tab-item .tab-item-favicon,.section .section-tab-item .tab-item-close{
   height: 1.2rem;
   width: 1.2rem;
   line-height:1.2rem;
   text-align: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
 }
 .section .section-tab-item .tab-item-title{
   flex: 1;
@@ -55,4 +60,10 @@
 }
 .section .section-window-item{
   list-style: none;
+}
+.section .section-tab-item .tab-item-prefixer{
+  display: flex;
+  align-items: center;
+  flex: 1;
+  overflow: hidden;
 }
