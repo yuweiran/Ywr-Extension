@@ -82,23 +82,7 @@ const $collections = (function () {
           if (ev.from.className !== "collection-links") {
             const id = draggingEl.dataset.id//当前的tab
             const link = $store.tabs[id]
-            const newLink = document.createElement("a")
-            newLink.className = "collection-link"
-            newLink.href = link.url
-            newLink.target = "_blank"
-            newLink.innerHTML =
-              `<div class="collection-link-name">${link.title}</div>
-                <div class="collection-link-remark">${link.title}</div>
-                <div class="collection-link-handle">
-                  <div  class="icon-fill-delete  ${btnLinkDelete}"></div>
-                  <div  class="icon-fill-edit ${btnLinkEdit}"></div>
-                </div>`
-            // 获取拖拽后的位置
             const newIndex = Array.from(targetEl.children).indexOf(draggingEl);
-            // 使用 insertBefore 将元素插入到目标组的特定位置
-            const referenceElement = targetEl.children[newIndex + 1];
-            targetEl.insertBefore(newLink, referenceElement);
-            draggingEl.parentNode.removeChild(draggingEl)
             //新加一项， 更新数据库,涉及到的order都需要更新，所有link数据都要更新，如何优化
             for (let item in sortedItems) {
               if (parseInt(item) === newIndex) {

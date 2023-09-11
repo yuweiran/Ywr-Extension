@@ -1,0 +1,11 @@
+.dropdown{
+  position: absolute;
+  background-color: #fff;
+  box-shadow: rgba(94, 93, 102, 0.1) 1px 1px 0px 0px, rgba(94, 93, 102, 0.14) 2px 2px 3px 0px;
+}
+.dropdown .dropdown-item{
+  padding: 0.5rem 0.8rem;
+}
+.dropdown-item .dropdown-item-icon{
+  margin-right: 0.5rem;
+}

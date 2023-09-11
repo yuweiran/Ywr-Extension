@@ -39,19 +39,19 @@ const $modal = (function () {
       <button
         class="edit-button edit-cancel-button"
       >
-        取消
+        Cancel
       </button>
       <button
         style="margin-left: auto;visibility:${showRemoveButton ? 'visible' : 'hidden'} "
         class="edit-button edit-remove-button"
       >
-      删除
+      Delete
       </button>
       <button
         style="margin-left: 1rem"
         class="edit-button edit-confirm-button"
       >
-        确定
+        Confirm
       </button>
     </ >
   </div >

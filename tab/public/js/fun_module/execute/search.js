@@ -66,3 +66,20 @@ $searchEles.userContent.addEventListener("keyup", (e) => {
     }
   }
 });
+
+$searchEles.engineBtn.addEventListener("click", () => {
+  $dropdown.show($searchEles.engineBtn, {
+    tag: "engine",
+    data: [
+      { id: "", icon: "baidu", value: "baidu", label: "Baidu" },
+      { id: "", icon: "google", value: "google", label: "Google" },
+      { id: "", icon: "icon360", value: "icon360", label: "360" },
+      { id: "", icon: "sougou", value: "sougou", label: "Sogou" },
+      { id: "", icon: "bing", value: "bing", label: "Bing" },
+    ],
+    callback: (value) => {
+      localStorage.setItem("engine", value);
+      $searchEles.initEngineIcon(value)
+    }
+  })
+})

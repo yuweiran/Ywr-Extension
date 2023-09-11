@@ -55,7 +55,6 @@ const $apis = (() => {
       reader.onload = async (event) => {
         const fileContent = event.target.result; // 获取文件内容
         const jsonData = JSON.parse(fileContent); // 解析JSON内容
-        console.log(jsonData)
         // const stringContent = JSON.stringify(jsonData, null, 2)
         const { collections, links } = jsonData
         await $indexedDB.$tables.collections.addMany(collections, true)

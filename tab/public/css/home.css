@@ -8,6 +8,7 @@
 @import "./edit-form.css"; /*编辑框*/
 @import "./notification.css"; /*提示框*/
 @import "./tabs.css"; /*tab区*/
+@import "./dropdown.css"; /*drowpdown区*/
 
 .content-area {
   position: absolute;
