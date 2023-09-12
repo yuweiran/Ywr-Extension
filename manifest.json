@@ -14,7 +14,8 @@
     "activeTab",
     "scripting",
     "alarms",
-    "webNavigation"
+    "webNavigation",
+    "history"
   ],
   "chrome_url_overrides": {
     "newtab": "/tab/index.html"

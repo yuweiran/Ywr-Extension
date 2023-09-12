@@ -66,13 +66,14 @@ $dropdown = (() => {
       dropdowns.push(new Dropdown(el, option))
     }
   }
-  const handleHidden = (el) => {
+  const handleHidden = () => {
     dropdownsMap.forEach(dp => {
       dp.hidden()
     })
-    dropdowns.forEach(dp => {
+    while (dropdowns.length > 0) {
+      const dp = dropdowns.pop()
       dp.remove()
-    })
+    }
   }
   return {
     show: handleShow,

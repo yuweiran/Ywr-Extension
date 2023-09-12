@@ -5,12 +5,9 @@ window.onload = () => {
   }
   const engine = localStorage.getItem("engine");
   $searchEles.initEngineIcon(engine)
-  // let selectedEngine = localStorage.getItem("engine");
-  // $searchEles.engineItem.forEach((v, i) => {
-  //   v.getAttribute("data-engine") === selectedEngine
-  //     ? v.classList.add("selected-engine-item")
-  //     : v.classList.remove("selected-engine-item");
-  // });
+  document.body.addEventListener("click", () => {
+    $dropdown.hidden()
+  }, true)
   initIndexedDB().then((db) => {
     $indexedDB = db
     initIndexedDBFunction(db, $indexedDBModel).then(() => {

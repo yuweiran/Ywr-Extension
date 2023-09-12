@@ -8,6 +8,9 @@
   position: relative;
   width: 100%;
 }
+#ipage-collections .collection + .collection{
+  border-top:0.3px solid var(--borderGrey) ;
+}
 
 #ipage-collections .collection .collection-head{
   padding: 1rem;
