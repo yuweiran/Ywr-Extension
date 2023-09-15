@@ -1,5 +1,6 @@
 const $store = {
   collections: {},
   links: {},
-  tabs: {}
+  tabs: {},
+  history: {}
 }

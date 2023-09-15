@@ -1,11 +1,17 @@
 $sections = (() => {
   const sectionContainer = $el.__(".ipage-sections")
   const sectionTabsShow = $el.__(".section-tabs-show")
+  const sectionHistoryShow = $el.__(".section-history-show")
   const sectionWindowItem = "section-window-item"
   const sectionTabsItem = "section-tab-item"
   const sectionTabsFavicon = "tab-item-favicon"
   const sectionTabsTitle = "tab-item-title"
   const sectionTabsClose = "tab-item-close"
+
+  const sectionHistoryItem = "section-history-item"
+  const sectionHistoryFavicon = "history-item-favicon"
+  const sectionHistoryTitle = "history-item-title"
+  const sectionHistoryClose = "history-item-close"
 
   const updateTabsList = () => {
     $store.tabs = {}
@@ -33,14 +39,16 @@ $sections = (() => {
           `)
           }
         }))
-        windowsList.push(`
+        if (tabsList.length > 0) {
+          windowsList.push(`
           <li data-id="${window.id}" class="${sectionWindowItem}">
             <div class="window-item-title">WINDOW${winInd + 1}</div>
             <div class="window-item-tabs">
               ${tabsList.join("")}
             </div>
           </li>
-        `)
+          `)
+        }
       })
       sectionTabsShow.innerHTML = windowsList.join("")
       new Sortable(sectionTabsShow, {
@@ -71,6 +79,30 @@ $sections = (() => {
       }
     })
   }
+  const updateHistoryList = () => {
+
+    chrome.history.search({ text: '', maxResults: 10 }, function (data) {
+      $store.history = {}
+      const hList = data.reduce((pre, cur) => {
+        $store.history[cur.id] = cur.url
+        let faviconTemplate = `<img data-id="${cur.id}" class="${sectionHistoryFavicon}" src="${cur.favIconUrl}" />`
+        if (!cur.favIconUrl) {
+          faviconTemplate = `<div data-id="${cur.id}" class="icon-favicon ${sectionHistoryFavicon}"></div>`
+        }
+        let hTemplate = `
+        <div data-id="${cur.id}" class="${sectionHistoryItem}">
+          <div class="history-item-prefixer">
+            <div data-id="${cur.id}" class="${sectionHistoryTitle}">${cur.title || cur.url}</div>
+          </div>
+          <div data-id="${cur.id}" class="icon-close ${sectionHistoryClose}"></div>
+        </div>
+        `
+        pre.push(hTemplate)
+        return pre
+      }, [])
+      sectionHistoryShow.innerHTML = hList.join("")
+    });
+  }
   return {
     sectionContainer,
     sectionWindowItem,
@@ -79,6 +111,12 @@ $sections = (() => {
     sectionTabsTitle,
     sectionTabsFavicon,
     sectionTabsClose,
-    updateTabsList
+    sectionHistoryShow,
+    sectionHistoryItem,
+    sectionHistoryFavicon,
+    sectionHistoryTitle,
+    sectionHistoryClose,
+    updateTabsList,
+    updateHistoryList
   }
 })()

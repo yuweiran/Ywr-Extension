@@ -14,9 +14,13 @@ window.onload = () => {
       $collections.renderCollections()
     })
   })
+
 };
 
-chrome.tabs.onUpdated.addListener($sections.updateTabsList);
+chrome.tabs.onUpdated.addListener(() => {
+  $sections.updateTabsList()
+  $sections.updateHistoryList()
+});
 chrome.tabs.onRemoved.addListener($sections.updateTabsList);
 chrome.tabs.onMoved.addListener($sections.updateTabsList);
 chrome.windows.onRemoved.addListener($sections.updateTabsList);
