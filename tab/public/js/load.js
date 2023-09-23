@@ -1,10 +1,15 @@
 window.onload = () => {
   //搜索引擎
-  if (!localStorage.engine) {
+  if (!localStorage.getItem("engine")) {
     localStorage.setItem("engine", "baidu");
   }
   const engine = localStorage.getItem("engine");
   $searchEles.initEngineIcon(engine)
+
+  if (!localStorage.getItem("is-aside-fold")) {
+    localStorage.setItem("is-aside-fold", "0");
+  }
+  $aside.initFoldState()
   document.body.addEventListener("click", () => {
     $dropdown.hidden()
   }, true)

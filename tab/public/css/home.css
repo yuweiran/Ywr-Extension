@@ -32,7 +32,6 @@
 }
 .content-area .ipage-body {
   flex: 1;
-  overflow: auto;
   display: flex;
 }
 .ipage-body .ipage-body-left {

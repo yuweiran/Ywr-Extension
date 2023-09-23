@@ -3,17 +3,39 @@
   border-left: 0.3px solid var(--borderGrey);
   overflow: auto;
   display: flex;
+  position: relative;
   flex-direction: column;
 }
 .ipage-body-right .ipage-aside-header{
   height: 5rem;
   line-height: 5rem;
   padding: 0 1.5rem;
+  position:sticky;
+  top: 0;
+  z-index: 99;
+  background-color: #fff;
 }
 .ipage-aside-header .btn-aside-fold{
   transform: rotate(180deg);
+  background-color: transparent;
+}
+.ipage-aside-header .btn-aside-fold .ipage-aside-fold{
+  font-size: 1rem;
+  cursor: pointer;
 }
 
+.is-fold.ipage-body-right{
+  width: 0;
+  overflow: visible;
+}
+.is-fold.ipage-body-right .ipage-aside-header .btn-aside-fold{
+  transform: rotate(0);
+}
+.is-fold .ipage-aside-header{
+  position: absolute;
+  right: 0;
+  z-index: 999;
+}
 .ipage-sections{
   flex:1;
   padding: 0.5rem;
@@ -49,6 +71,9 @@
   flex-shrink: 0;
   margin-left: 0.2rem;
 }
+.section .section-history-item .history-item-close{
+  margin-left: 0.2rem;
+}
 .section .section-tab-item .tab-item-title,.section .section-history-item .history-item-title{
   flex: 1;
   margin-left: 0.5rem;
@@ -61,6 +86,12 @@
 }
 .section .section-window-item{
   list-style: none;
+}
+.section .section-title{
+  font-weight: bold;
+}
+.section .section-window-item .window-item-title{
+  opacity: 0.7;
 }
 .section .section-tab-item .tab-item-prefixer,.section .section-history-item .history-item-prefixer{
   display: flex;

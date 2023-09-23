@@ -42,7 +42,7 @@ $sections = (() => {
         if (tabsList.length > 0) {
           windowsList.push(`
           <li data-id="${window.id}" class="${sectionWindowItem}">
-            <div class="window-item-title">WINDOW${winInd + 1}</div>
+            <div class="window-item-title">window${winInd + 1}</div>
             <div class="window-item-tabs">
               ${tabsList.join("")}
             </div>
