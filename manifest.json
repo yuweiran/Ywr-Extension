@@ -1,6 +1,6 @@
 {
-  "name": "ywr的第一个扩展程序",
-  "description": "一个很牛的扩展程序",
+  "name": "INIT",
+  "description": "as you can see",
   "version": "1.0",
   "manifest_version": 3,
   "background": {

@@ -1,28 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      .color-container {
-        display: flex;
-      }
-      .color-container div {
-        margin: 20px;
-        height: 80px;
-        width: 80px;
-        border-radius: 4px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="color-container" id="colorContainer">
-      <div data-color="#3aa757" style="background-color: #3aa757"></div>
-      <div data-color="#e8453c" style="background-color: #e8453c"></div>
-      <div data-color="#f9bb2d" style="background-color: #f9bb2d"></div>
-      <div data-color="#4688f1" style="background-color: #4688f1"></div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./src/css/index.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_2691375_2sxc6zhrptg.css" />
+</head>
+
+<body>
+  <div class="app">
+    <div class="content">
+      <div class="section">
+        <ul>
+          <li class="section-item"><span class="icon-theme"></span><span class="section-item-text">Theme</span></li>
+          <li class="section-item"><span class="icon-background"></span><span
+              class="section-item-text">Background</span></li>
+          <li class="section-item"><span class="icon-opacity"></span><span class="section-item-text">Opacity</span></li>
+          <li class="section-item"><span class="icon-profile"></span><span class="section-item-text">Profile</span></li>
+        </ul>
+      </div>
+      <div class="core">
+        <!-- <div id="drop-zone"
+          style="width: 300px; height: 200px; border: 2px dashed #ccc; text-align: center; padding: 40px;">
+          将文件拖放到此区域进行导入
+        </div> -->
+        <!-- <img src="../images/g.jpg" alt="" srcset=""> -->
+        <div class="core-item">
+          <div class="core-item-title">Theme</div>
+          <div class="core-item-content core-item-theme">
+            <div class="theme-item"></div>
+            <div class="theme-item"></div>
+          </div>
+        </div>
+        <div class="core-item">
+          <div class="core-item-title">Background</div>
+          <div class="core-item-content core-item-background">
+            <div class="background-usepic">是否使用背景图片</div>
+            <div class="background-pic"></div>
+            <div class="background-color">使用背景颜色</div>
+          </div>
+        </div>
+        <div class="core-item">
+          <div class="core-item-title">Opacity</div>
+          <div class="core-item-content">
+            <div>透明度</div>
+          </div>
+        </div>
+        <div class="core-item">
+          <div class="core-item-title">Profile</div>
+          <div class="core-item-content">
+            <div>头像，个签</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </body>
-  <script src="./index.js"></script>
+    <img class="page-back" src="../images/g.jpg" alt="" srcset="">
+  </div>
+  <script src="./src/js/file-drag.js"></script>
+</body>
+
 </html>

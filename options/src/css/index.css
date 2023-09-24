@@ -1,0 +1,79 @@
+@import "../../../css/normalize.css"; /*样式统一*/
+@import "../../../css/variable.css"; /*样式变量文件*/
+@import "../../../css/base.css"; /*比较公共的样式*/
+@import "../../../css/iconfont.css"; /*比较公共的样式*/
+
+.app{
+  color: var(--black);
+  height: 100vh;
+  position: relative;
+  background-color: rgb(241, 241, 241);
+}
+
+.content{
+  display: flex;
+  position: absolute;
+  padding:0 4rem;
+  left:50%;
+  transform: translateX(-50%);
+  height:100%;
+  width: 100%;
+  max-width: 1200px;
+}
+.content .section{
+  padding: 4rem 0;
+  flex: 1;
+  margin-right: 1rem;
+  border-right: 0.2px solid var(--borderGrey);
+}
+.content .section .section-item{
+  list-style: none;
+  height: 3rem;
+  padding: 0 0.5rem;
+  line-height: 3rem;
+  margin-bottom: 0.5rem;
+}
+.content .section .section-item:hover{
+  background-color: var(--greyLight-3);
+  color: var(--black);
+}
+.content .core{
+  padding: 4rem 0;
+  flex: 3;
+}
+
+.page-back{
+  height: 100%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+  filter:blur(10px);
+}
+.section-item-text{
+  margin-left: 0.5rem;
+}
+
+.core-item-title{
+  height: 3rem;
+  line-height: 3rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.core-item-content{
+  background-color: var(--white);
+  padding:1rem;
+}
+.core-item-theme{
+  display: flex;
+}
+.core-item-theme .theme-item{
+  width: 10rem;
+  background-color: rebeccapurple;
+  aspect-ratio: 100/62;
+  margin-right: 1rem;
+}
+.background-pic{
+  background-color: rebeccapurple;
+  height: 6rem;
+}
