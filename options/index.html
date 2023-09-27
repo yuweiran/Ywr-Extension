@@ -30,8 +30,6 @@
         <div class="core-item">
           <div class="core-item-title">Theme</div>
           <div class="core-item-content core-item-theme">
-            <div class="theme-item"></div>
-            <div class="theme-item"></div>
           </div>
         </div>
         <div class="core-item">
@@ -58,7 +56,25 @@
     </div>
     <img class="page-back" src="../images/g.jpg" alt="" srcset="">
   </div>
-  <script src="./src/js/file-drag.js"></script>
+  <!-- 公共方法导入 -->
+  <script src="../utils/color.js"></script>
+  <script src="../utils/index.js"></script>
+  <script src="../utils/form.js"></script>
+  <script src="../utils/dropdown.js"></script>
+  <script src="../utils/notification.js"></script>
+  <script src="../utils/declare_element.js"></script>
+  <!-- 声明 -->
+  <script src="./src/js/declare/theme.js"></script>
+  <script src="./src/js/declare/background.js"></script>
+  <script src="./src/js/declare/profile.js"></script>
+  <script src="./src/js/declare/opacity.js"></script>
+  <!-- 事件 -->
+  <script src="./src/js/execute/theme.js"></script>
+  <script src="./src/js/execute/background.js"></script>
+  <script src="./src/js/execute/profile.js"></script>
+  <script src="./src/js/execute/opacity.js"></script>
+  <!-- 加载完成 -->
+  <script src="./load.js"></script>
 </body>
 
 </html>

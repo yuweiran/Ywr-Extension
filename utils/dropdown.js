@@ -4,6 +4,7 @@ class Dropdown {
   label = null
   data = null
   instance = null
+  trigger = null
   constructor(el, option = {}) {
     const options = Object.assign({
       value: "value",
@@ -14,7 +15,7 @@ class Dropdown {
     this.data = data
     this.value = value
     this.label = label
-
+    this.trigger = el
     const rect = el.getBoundingClientRect()
     const dropDownInstance = document.createElement("div")
     dropDownInstance.innerHTML = `
@@ -44,6 +45,8 @@ class Dropdown {
     this.instance.style.display = "none"
   }
   show = () => {
+    const rect = this.trigger.getBoundingClientRect()
+    this.instance.style.transform = `translate(${rect.left}px,${rect.top + rect.height + 4}px)`
     this.instance.style.display = "inline-block"
   }
   remove = () => {

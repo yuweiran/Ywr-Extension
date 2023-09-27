@@ -1,4 +1,4 @@
-$sections = (() => {
+const $sections = (() => {
   const sectionContainer = $el.__(".ipage-sections")
   const sectionTabsShow = $el.__(".section-tabs-show")
   const sectionHistoryShow = $el.__(".section-history-show")

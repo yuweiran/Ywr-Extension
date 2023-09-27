@@ -53,8 +53,10 @@
   display: none;
 }
 .collection-links .sortable-chosen{
-  color: #444444;
   display: flex;
+}
+.collection-links .sortable-chosen .tab-item-title{
+  color: #444444;
 }
 .collection-links .sortable-chosen .tab-item-favicon{
   height: 1.6rem;

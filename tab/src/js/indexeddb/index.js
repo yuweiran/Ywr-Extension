@@ -126,7 +126,7 @@ class IndexedModel {
 }
 
 const initIndexedDB = async () => {
-  const databse = await new Promise((resolve, reject) => {
+  const database = await new Promise((resolve, reject) => {
     const dbName = "initDB";
     const dbConnectHandle = indexedDB.open(dbName, 1);
     dbConnectHandle.onerror = (event) => {
@@ -141,7 +141,7 @@ const initIndexedDB = async () => {
       resolve(event.target.result)
     }
   })
-  return databse
+  return database
 }
 
 const initIndexedDBStructure = async (db, models) => {

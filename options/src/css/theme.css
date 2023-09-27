@@ -1,0 +1,20 @@
+.core-item-theme{
+  display: flex;
+}
+.core-item-theme .theme-item{
+  width: 10rem;
+  aspect-ratio: 100/78;
+  margin-right: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.theme-item .theme-item-effect{
+  flex: 4;
+  background-color: rebeccapurple;
+}
+.theme-item .theme-item-title{
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
