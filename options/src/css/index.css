@@ -2,7 +2,7 @@
 @import url("../../../css/variable.css"); /*样式变量文件*/
 @import url("../../../css/base.css"); /*比较公共的样式*/
 @import url("../../../css/iconfont.css"); /*比较公共的样式*/
-@import url("./background.css");
+@import url("./custom.css");
 @import url("./profile.css");
 @import url("./theme.css");
 .app{

@@ -1,6 +1,6 @@
 let color = "#3aa757";
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('onInstalled')
+  console.log("onInstalled");
   //加个off标签文字
   // chrome.action.setBadgeText({
   //   text: "OFF",

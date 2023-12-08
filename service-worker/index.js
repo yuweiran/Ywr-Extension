@@ -1,5 +1,5 @@
-import "./association.js"
-import "./background.js"
-import "./installed.js"
-import "./alarms.js"
-import "./tabs.js"
+import "./association.js";
+import "./background.js";
+import "./installed.js";
+import "./alarms.js";
+import "./tabs.js";

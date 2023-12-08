@@ -10,11 +10,17 @@
 }
 .theme-item .theme-item-effect{
   flex: 4;
-  background-color: rebeccapurple;
 }
 .theme-item .theme-item-title{
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.theme-demo-dark{
+  background-color: #222222;
+}
+.theme-demo-light{
+  background-color: #dddddd;
 }

@@ -1,1 +1,1 @@
-$theme.coreItemTheme
+$theme.coreItemTheme;

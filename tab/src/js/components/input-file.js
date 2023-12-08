@@ -1,17 +1,22 @@
-
 class InputFile extends HTMLElement {
-  inputFileTemplate = document.createElement('template')
-  isMultiple = false
-  files = []
+  inputFileTemplate = document.createElement("template");
+  isMultiple = false;
+  files = [];
   constructor() {
-    super()
-    this.initInputFileTemplate()
+    super();
+    this.initInputFileTemplate();
     this.showInfo = true;
-    this.attachShadow({ mode: 'open' });
-    this.shadowRoot.appendChild(this.inputFileTemplate.content.cloneNode(true))
-    this.isMultiple = this.hasAttribute("multiple") ? this.getAttribute('multiple') !== 'false' : false
-    this.shadowRoot.querySelector('.is-upload').setAttribute('multiple', this.isMultiple)
-    this.shadowRoot.querySelector('.is-upload').setAttribute('value', this.getAttribute('value'))
+    this.attachShadow({ mode: "open" });
+    this.shadowRoot.appendChild(this.inputFileTemplate.content.cloneNode(true));
+    this.isMultiple = this.hasAttribute("multiple")
+      ? this.getAttribute("multiple") !== "false"
+      : false;
+    this.shadowRoot
+      .querySelector(".is-upload")
+      .setAttribute("multiple", this.isMultiple);
+    this.shadowRoot
+      .querySelector(".is-upload")
+      .setAttribute("value", this.getAttribute("value"));
   }
   initInputFileTemplate = () => {
     this.inputFileTemplate.innerHTML = `
@@ -76,42 +81,46 @@ class InputFile extends HTMLElement {
       <input class="is-upload" type="file" />
       <div class="file-list"></div>
     </div>
-  `
-  }
+  `;
+  };
   updateFileList = () => {
-    const files = this.files
-    const templateArr = []
-    const fileList = this.shadowRoot.querySelector(".file-list")
+    const files = this.files;
+    const templateArr = [];
+    const fileList = this.shadowRoot.querySelector(".file-list");
     for (let fIndex = 0; fIndex < files.length; fIndex++) {
-      const file = files[fIndex]
+      const file = files[fIndex];
       templateArr.push(`<div class="file-item">
       <div class="file-name" title="${file.name}">${file.name}</div><div data-ind="${fIndex}" class="icon-close"></div>
-     </div>`)
+     </div>`);
     }
-    fileList.innerHTML = templateArr.join("")
-  }
+    fileList.innerHTML = templateArr.join("");
+  };
   getFiles = () => {
-    return this.files
-  }
+    return this.files;
+  };
   connectedCallback() {
     //挂载完成调用
-    this.shadowRoot.querySelector('.is-upload').addEventListener('change', (event) => {
-      const files = event.target.files
-      if (this.isMultiple) {
-        this.files = [...Array.from(files), ...this.files]
-      } else {
-        this.files = [files[0]]
-      }
-      this.updateFileList()
-      this.shadowRoot.querySelector('.is-upload').value = ""
-    })
-    this.shadowRoot.querySelector('.file-list').addEventListener('click', (event) => {
-      if (event.target.className.indexOf("icon-close") !== -1) {
-        const index = event.target.dataset.ind
-        this.files.splice(index, 1)
-        this.updateFileList()
-      }
-    })
+    this.shadowRoot
+      .querySelector(".is-upload")
+      .addEventListener("change", (event) => {
+        const files = event.target.files;
+        if (this.isMultiple) {
+          this.files = [...Array.from(files), ...this.files];
+        } else {
+          this.files = [files[0]];
+        }
+        this.updateFileList();
+        this.shadowRoot.querySelector(".is-upload").value = "";
+      });
+    this.shadowRoot
+      .querySelector(".file-list")
+      .addEventListener("click", (event) => {
+        if (event.target.className.indexOf("icon-close") !== -1) {
+          const index = event.target.dataset.ind;
+          this.files.splice(index, 1);
+          this.updateFileList();
+        }
+      });
   }
   disconnectedCallback() {
     //取消挂载时调用
@@ -124,4 +133,4 @@ class InputFile extends HTMLElement {
   }
 }
 
-window.customElements.define('input-file', InputFile)
+window.customElements.define("input-file", InputFile);

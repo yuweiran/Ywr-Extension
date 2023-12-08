@@ -30,6 +30,17 @@
   text-align: center;
   font-size: 24px;
 }
+.ipage-aside-tab .tab-item{
+  font-size: 20px;
+  padding: 0.5rem 0;
+}
+.ipage-aside-tab .tab-item .tab-icon{
+  font-size: 24px;
+  text-align: center;
+}
+.ipage-aside-tab .tab-item:hover{
+  background-color: rgb(255, 190, 179);
+}
 .content-area .ipage-body {
   flex: 1;
   display: flex;
