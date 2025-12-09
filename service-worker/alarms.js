@@ -1,11 +1,1 @@
-chrome.alarms.create("testAlarms", {
-  delayInMinutes: 0.1, //延迟触发
-  periodInMinutes: 0.2, //触发频率
-});
-chrome.alarms.onAlarm.addListener(function (alarm) {
-  console.log("定时器触发了！");
-});
-//获取所有定时器
-chrome.alarms.getAll(function (alarms) {
-  console.log(alarms);
-});
+// 保留文件占位，如需定时任务请按需创建，避免无意义的唤醒。

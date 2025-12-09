@@ -53,13 +53,35 @@ const $apis = (() => {
       const reader = new FileReader();
       // 设置当读取完成后的回调函数
       reader.onload = async (event) => {
-        const fileContent = event.target.result; // 获取文件内容
-        const jsonData = JSON.parse(fileContent); // 解析JSON内容
-        // const stringContent = JSON.stringify(jsonData, null, 2)
-        const { collections, links } = jsonData
-        await $indexedDB.$tables.collections.addMany(collections, true)
-        await $indexedDB.$tables.links.addMany(links, true)
-        res()
+        try {
+          const fileContent = event.target.result; // 获取文件内容
+          const jsonData = JSON.parse(fileContent); // 解析JSON内容
+          const { collections = [], links = [] } = jsonData
+          if (!Array.isArray(collections) || !Array.isArray(links)) {
+            throw new Error("配置格式错误");
+          }
+          // 清空旧数据，避免主键/顺序冲突
+          await $indexedDB.$tables.collections.clear()
+          await $indexedDB.$tables.links.clear()
+          // 重置 order，确保有序
+          const normalizedCollections = collections.map((c, idx) => ({
+            ...c,
+            order: idx
+          }))
+          const normalizedLinks = links.map((l, idx) => ({
+            ...l,
+            order: idx
+          }))
+          await $indexedDB.$tables.collections.addMany(normalizedCollections, true)
+          await $indexedDB.$tables.links.addMany(normalizedLinks, true)
+          res()
+        } catch (error) {
+          $notify.error({
+            message: "配置导入失败，请检查文件内容",
+            duration: 2000
+          })
+          rej(error)
+        }
       };
       // 读取文件内容
       reader.readAsText(file);

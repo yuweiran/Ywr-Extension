@@ -128,6 +128,12 @@ class IndexedModel {
       store.put(record);
     }
   };
+  clear = async () => {
+    const store = this.database
+      .transaction([this.model], "readwrite")
+      .objectStore(this.model);
+    store.clear();
+  };
 }
 
 const initIndexedDB = async () => {

@@ -8,6 +8,18 @@ const $collections = (function () {
   const btnAddCollecation = $el.__(".tab-btn-add-collection");
   let collections = [];
 
+  const batchUpdateCollectionOrder = async (sortedItems) => {
+    const tasks = sortedItems.map((id, order) =>
+      $apis.collection.edit({ order, id: parseInt(id) })
+    );
+    await Promise.all(tasks);
+  };
+  const batchUpdateLinkOrder = async (sortedItems, extra = {}) => {
+    const tasks = sortedItems.map((id, order) =>
+      $apis.link.edit({ order, id: parseInt(id), ...extra })
+    );
+    await Promise.all(tasks);
+  };
   const getCollections = async () => {
     collections = await $apis.getCollectionsAndLinks();
   };
@@ -65,12 +77,7 @@ const $collections = (function () {
       onUpdate: async function () {
         //同一组类排序
         const sortedItems = this.toArray();
-        for (let item in sortedItems) {
-          await $apis.collection.edit({
-            order: parseInt(item),
-            id: parseInt(sortedItems[item]),
-          });
-        }
+        await batchUpdateCollectionOrder(sortedItems);
       },
     });
     const linksSections = $el.__all(".collection-links");
@@ -91,51 +98,46 @@ const $collections = (function () {
             const link = $store.tabs[id];
             const newIndex = Array.from(targetEl.children).indexOf(draggingEl);
             //新加一项， 更新数据库,涉及到的order都需要更新，所有link数据都要更新，如何优化
-            for (let item in sortedItems) {
-              if (parseInt(item) === newIndex) {
-                await $apis.link.add({
-                  order: newIndex,
+            const tasks = sortedItems.map((itemId, order) => {
+              if (order === newIndex) {
+                return $apis.link.add({
+                  order,
                   name: link.title,
                   remark: link.title,
                   url: link.url,
                   collection: collectionId,
                   icon: link.favIconUrl || "",
                 });
-              } else {
-                await $apis.link.edit({
-                  order: parseInt(item),
-                  id: parseInt(sortedItems[item]),
-                });
               }
-            }
+              return $apis.link.edit({
+                order,
+                id: parseInt(itemId),
+              });
+            });
+            await Promise.all(tasks);
             renderCollections();
           } else {
             const linkId = draggingEl.dataset.id;
-            for (let item in sortedItems) {
-              if (sortedItems[item] === linkId) {
-                await $apis.link.edit({
-                  order: parseInt(item),
-                  id: parseInt(sortedItems[item]),
+            const tasks = sortedItems.map((itemId, order) => {
+              if (itemId === linkId) {
+                return $apis.link.edit({
+                  order,
+                  id: parseInt(itemId),
                   collection: collectionId,
                 });
-              } else {
-                await $apis.link.edit({
-                  order: parseInt(item),
-                  id: parseInt(sortedItems[item]),
-                });
               }
-            }
+              return $apis.link.edit({
+                order,
+                id: parseInt(itemId),
+              });
+            });
+            await Promise.all(tasks);
           }
         },
         onUpdate: async function () {
           //同一组类排序
           const sortedItems = this.toArray();
-          for (let item in sortedItems) {
-            await $apis.link.edit({
-              order: parseInt(item),
-              id: parseInt(sortedItems[item]),
-            });
-          }
+          await batchUpdateLinkOrder(sortedItems);
         },
       });
     }
