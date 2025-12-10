@@ -110,3 +110,49 @@
   border-color: var(--muted);
   box-shadow: var(--shadow-1);
 }
+
+/* ========== 主题切换器样式 ========== */
+.ipage-aside-theme{
+  position: relative;
+  text-align: center;
+  font-size: 20px;
+  padding: 0.5rem;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+.ipage-aside-theme:hover{
+  background-color: var(--muted-surface);
+  color: var(--text);
+}
+.theme-switcher{
+  position: absolute;
+  left: calc(100% + 0.5rem);
+  top: 0;
+  bottom: auto;
+  transform: translateX(-8px);
+  min-width: 9rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+}
+.theme-switcher.is-visible{
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+.theme-switcher .theme-option{
+  white-space: nowrap;
+}
+.theme-switcher .theme-option.is-active{
+  background-color: var(--muted-surface);
+  color: var(--primary);
+  font-weight: 500;
+}
+.theme-switcher .theme-option .dropdown-item-icon{
+  background: transparent;
+  font-size: 1rem;
+}

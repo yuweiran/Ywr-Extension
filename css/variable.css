@@ -1,34 +1,210 @@
-:root {
+:root,
+[data-theme="default"] {
   /* Background / Surface */
-  --bg: #fafafa; /* 页面背景：浅灰，非偏蓝 */
-  --surface: #ffffff; /* 卡片/浮层表面 */
+  --bg: #f5f5f7;
+  --surface: #ffffff;
 
   /* Text */
-  --text: #0f1724; /* 主文本色，深色，便于阅读 */
-  --muted: #6b7280; /* 次要文字 */
+  --text: #0a0f18;
+  --muted: #52565e;
 
   /* 主色系（灰度方案） */
-  --primary: #374151; /* 主要交互/强调：中深灰 */
-  --primary-light: #4b5563; /* 次级强调：稍浅 */
-  --primary-dark: #1f2937; /* hover 加深色 */
-  --accent: #6b7280; /* 次要点缀：中性灰 */
+  --primary: #1f2937;
+  --primary-light: #374151;
+  --primary-dark: #111827;
+  --accent: #4b5563;
 
   /* 中性色 / 分割线 */
-  --borderGrey: #e6eaf0;
-  --muted-surface: #f3f4f6; /* 更中性的灰白 */
+  --borderGrey: #d8dce5;
+  --muted-surface: #ebedf2;
 
-  /* 阴影与层次（可直接用于 box-shadow） */
-  --shadow-1: 0 6px 18px rgba(15, 23, 36, 0.06);
-  --shadow-2: 0 10px 30px rgba(15, 23, 36, 0.08);
-  --inset-subtle: inset 0.1rem 0.1rem 0.25rem rgba(99,102,241,0.06);
-  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255,255,255,0.9);
+  /* 阴影与层次 */
+  --shadow-1: 0 6px 18px rgba(10, 15, 24, 0.08);
+  --shadow-2: 0 10px 30px rgba(10, 15, 24, 0.12);
+  --inset-subtle: inset 0.1rem 0.1rem 0.25rem rgba(31, 41, 55, 0.08);
+  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255,255,255,0.95);
 
-  /* 兼容旧变量名（便于渐进替换） */
+  /* 兼容旧变量名 */
   --white: var(--surface);
-  --black: #111827;
-  --deep-dark: #0b1220;
+  --black: #0a0f18;
+  --deep-dark: #050810;
   --greyLight-1: var(--muted-surface);
-  --greyLight-2: rgba(99,102,241,0.06);
-  --greyLight-3: #e9eefc;
-  --greyDark: #9baacf;
+  --greyLight-2: rgba(31, 41, 55, 0.08);
+  --greyLight-3: #d8dce5;
+  --greyDark: #6b7280;
+}
+
+/* ========== 方案 A：暗夜紫金（高级奢华感） ========== */
+[data-theme="purple-gold"] {
+  --bg: #0a0a0e;
+  --surface: #14141c;
+  --text: #f5f3ff;
+  --muted: #a8a3b8;
+  --primary: #e5c76b;
+  --primary-light: #f0d98a;
+  --primary-dark: #c9a94a;
+  --accent: #b490f0;
+  --borderGrey: #2a2a38;
+  --muted-surface: #1e1e28;
+  --shadow-1: 0 6px 18px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --inset-subtle: inset 0.1rem 0.1rem 0.25rem rgba(180, 144, 240, 0.12);
+  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255, 255, 255, 0.04);
+  --white: var(--surface);
+  --black: #f5f3ff;
+  --deep-dark: #050508;
+  --greyLight-1: var(--muted-surface);
+  --greyLight-2: rgba(180, 144, 240, 0.12);
+  --greyLight-3: #2a2a38;
+  --greyDark: #a8a3b8;
+}
+
+/* ========== 方案 B：森林绿意（自然清新） ========== */
+[data-theme="forest-green"] {
+  --bg: #f4f8f4;
+  --surface: #ffffff;
+  --text: #0f1f0f;
+  --muted: #4a5f4a;
+  --primary: #1d5a3a;
+  --primary-light: #2d7a52;
+  --primary-dark: #0f3d24;
+  --accent: #4eca8b;
+  --borderGrey: #c8dcc8;
+  --muted-surface: #e6f0e6;
+  --shadow-1: 0 6px 18px rgba(15, 31, 15, 0.1);
+  --shadow-2: 0 10px 30px rgba(15, 31, 15, 0.14);
+  --inset-subtle: inset 0.1rem 0.1rem 0.25rem rgba(29, 90, 58, 0.1);
+  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255, 255, 255, 0.95);
+  --white: var(--surface);
+  --black: #0f1f0f;
+  --deep-dark: #081008;
+  --greyLight-1: var(--muted-surface);
+  --greyLight-2: rgba(29, 90, 58, 0.1);
+  --greyLight-3: #c8dcc8;
+  --greyDark: #4a5f4a;
+}
+
+/* ========== 方案 C：赛博霓虹（科技个性） ========== */
+[data-theme="cyber-neon"] {
+  --bg: #080c12;
+  --surface: #0f1419;
+  --text: #f0f6fc;
+  --muted: #9aa5b1;
+  --primary: #6eb5ff;
+  --primary-light: #96cbff;
+  --primary-dark: #4a9eff;
+  --accent: #d4a5ff;
+  --borderGrey: #262d36;
+  --muted-surface: #181f28;
+  --shadow-1: 0 6px 18px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.6);
+  --inset-subtle: inset 0.1rem 0.1rem 0.25rem rgba(110, 181, 255, 0.12);
+  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255, 255, 255, 0.03);
+  --white: var(--surface);
+  --black: #f0f6fc;
+  --deep-dark: #010409;
+  --greyLight-1: var(--muted-surface);
+  --greyLight-2: rgba(110, 181, 255, 0.12);
+  --greyLight-3: #262d36;
+  --greyDark: #9aa5b1;
+}
+
+/* ========== 方案 D：暖调焦糖（温暖舒适） ========== */
+[data-theme="caramel-warm"] {
+  --bg: #f8f5f0;
+  --surface: #fffefa;
+  --text: #2a1e12;
+  --muted: #6b5540;
+  --primary: #9a6535;
+  --primary-light: #b8824e;
+  --primary-dark: #7a4d25;
+  --accent: #d4a060;
+  --borderGrey: #ddd2c2;
+  --muted-surface: #f0e8dc;
+  --shadow-1: 0 6px 18px rgba(42, 30, 18, 0.1);
+  --shadow-2: 0 10px 30px rgba(42, 30, 18, 0.14);
+  --inset-subtle: inset 0.1rem 0.1rem 0.25rem rgba(154, 101, 53, 0.1);
+  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255, 255, 255, 0.95);
+  --white: var(--surface);
+  --black: #2a1e12;
+  --deep-dark: #1a140c;
+  --greyLight-1: var(--muted-surface);
+  --greyLight-2: rgba(154, 101, 53, 0.1);
+  --greyLight-3: #ddd2c2;
+  --greyDark: #6b5540;
+}
+
+/* ========== 方案 E：海洋深蓝（沉稳专业） ========== */
+[data-theme="ocean-blue"] {
+  --bg: #eaf1f8;
+  --surface: #ffffff;
+  --text: #0d2240;
+  --muted: #3a5a85;
+  --primary: #1a5a9e;
+  --primary-light: #2d7acc;
+  --primary-dark: #0e3d6e;
+  --accent: #4da3e0;
+  --borderGrey: #c4d8ec;
+  --muted-surface: #dce8f4;
+  --shadow-1: 0 6px 18px rgba(13, 34, 64, 0.1);
+  --shadow-2: 0 10px 30px rgba(13, 34, 64, 0.14);
+  --inset-subtle: inset 0.1rem 0.1rem 0.25rem rgba(26, 90, 158, 0.1);
+  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255, 255, 255, 0.95);
+  --white: var(--surface);
+  --black: #0d2240;
+  --deep-dark: #061220;
+  --greyLight-1: var(--muted-surface);
+  --greyLight-2: rgba(26, 90, 158, 0.1);
+  --greyLight-3: #c4d8ec;
+  --greyDark: #3a5a85;
+}
+
+/* ========== 方案 F：樱花粉黛（柔美优雅） ========== */
+[data-theme="sakura-pink"] {
+  --bg: #faf5f7;
+  --surface: #ffffff;
+  --text: #3a1c2d;
+  --muted: #7a5a6a;
+  --primary: #c45d75;
+  --primary-light: #db8095;
+  --primary-dark: #a84058;
+  --accent: #e8a0b0;
+  --borderGrey: #e8d0d8;
+  --muted-surface: #f5e8ed;
+  --shadow-1: 0 6px 18px rgba(58, 28, 45, 0.1);
+  --shadow-2: 0 10px 30px rgba(58, 28, 45, 0.14);
+  --inset-subtle: inset 0.1rem 0.1rem 0.25rem rgba(196, 93, 117, 0.1);
+  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255, 255, 255, 0.95);
+  --white: var(--surface);
+  --black: #3a1c2d;
+  --deep-dark: #220f1a;
+  --greyLight-1: var(--muted-surface);
+  --greyLight-2: rgba(196, 93, 117, 0.1);
+  --greyLight-3: #e8d0d8;
+  --greyDark: #7a5a6a;
+}
+
+/* ========== 方案 G：午夜星空（深邃神秘） ========== */
+[data-theme="midnight-star"] {
+  --bg: #060912;
+  --surface: #0d1220;
+  --text: #f0f4fa;
+  --muted: #a0a8bc;
+  --primary: #8fa0ff;
+  --primary-light: #b5c0ff;
+  --primary-dark: #6a7be8;
+  --accent: #ffd048;
+  --borderGrey: #1e263a;
+  --muted-surface: #141c30;
+  --shadow-1: 0 6px 18px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.6);
+  --inset-subtle: inset 0.1rem 0.1rem 0.25rem rgba(143, 160, 255, 0.12);
+  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255, 255, 255, 0.03);
+  --white: var(--surface);
+  --black: #f0f4fa;
+  --deep-dark: #030610;
+  --greyLight-1: var(--muted-surface);
+  --greyLight-2: rgba(143, 160, 255, 0.12);
+  --greyLight-3: #1e263a;
+  --greyDark: #a0a8bc;
 }
