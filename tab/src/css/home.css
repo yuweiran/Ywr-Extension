@@ -21,25 +21,56 @@
 .content-area .ipage-aside {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  border-right: 0.3px  solid  var(--borderGrey);
+  padding: 0.75rem;
+  border-right: 1px solid var(--borderGrey);
+  background-color: var(--surface);
+  gap: 0.25rem;
 }
 
 .ipage-aside .ipage-aside-setting{
   margin-top: auto;
   text-align: center;
-  font-size: 24px;
+  font-size: 20px;
+  padding: 0.5rem;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+.ipage-aside .ipage-aside-setting:hover{
+  background-color: var(--muted-surface);
+  color: var(--text);
 }
 .ipage-aside-tab .tab-item{
-  font-size: 20px;
-  padding: 0.5rem 0;
+  font-size: 16px;
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 140ms ease;
 }
 .ipage-aside-tab .tab-item .tab-icon{
-  font-size: 24px;
+  font-size: 1.1rem;
   text-align: center;
+  color: var(--muted);
+  background: var(--muted-surface);
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 140ms ease, color 140ms ease;
 }
 .ipage-aside-tab .tab-item:hover{
-  background-color: rgb(255, 190, 179);
+  background-color: var(--muted-surface);
+}
+.ipage-aside-tab .tab-item:hover .tab-icon{
+  background-color: var(--surface);
+  color: var(--text);
+}
+.ipage-aside-tab .tab-item.active .tab-icon{
+  background-color: var(--primary);
+  color: #fff;
 }
 .content-area .ipage-body {
   flex: 1;
@@ -57,13 +88,25 @@
   padding: 1rem 0;
 }
 
-
+.ipage-aside-avatar{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 0;
+  margin-bottom: 0.5rem;
+}
 .avatar {
-  height: 3rem;
-  width: 3rem;
+  height: 2.6rem;
+  width: 2.6rem;
   border-radius: 50%;
-  padding: 0.3rem;
   overflow: hidden;
-  box-shadow: 0.3rem 0.3rem 0.6rem var(--greyLight-2),
-    -0.2rem -0.2rem 0.5rem var(--white);
+  border: 2px solid var(--borderGrey);
+  box-shadow: 0 2px 8px rgba(15, 23, 36, 0.08);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+  cursor: pointer;
+  object-fit: cover;
+}
+.avatar:hover{
+  border-color: var(--muted);
+  box-shadow: var(--shadow-1);
 }

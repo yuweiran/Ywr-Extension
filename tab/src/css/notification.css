@@ -1,22 +1,26 @@
 .notification {
-  background-color: #ffffff;
-  position: absolute;
-  width: 15rem;
-  border-radius: 0.4rem;
-  padding: 0.5rem;
-  box-shadow: 0.3rem 0.3rem 0.6rem #c8d0e7, -0.2rem -0.2rem 0.5rem #fff;
-  right: 100px;
-  transition: top 500ms;
+  background-color: var(--surface);
+  position: fixed;
+  width: 18rem;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--borderGrey);
+  box-shadow: var(--shadow-2);
+  right: 1.5rem;
+  z-index: 10000;
+  transition: top 400ms ease;
 }
 
 .notification .notification-header {
-  padding: 0.5rem;
+  padding: 0.4rem 0.25rem;
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .notification-body {
-  font-size: 15px;
-  padding: 0.5rem;
+  font-size: 14px;
+  padding: 0.5rem 0.25rem;
+  color: var(--text);
+  line-height: 1.5;
 }

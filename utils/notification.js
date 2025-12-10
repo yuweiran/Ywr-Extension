@@ -7,22 +7,25 @@ const $notify = (function () {
     notificationInstance.setAttribute("data-ind", dataInd++);
     notificationInstance.innerHTML = `    
     <div class="notification-header">
-    <div class="icon-bulb">
-      <img
-        style="height: 1.2rem; width: 1.2rem"
-        src="./public/img/svg/bulb.svg"
-      />
-    </div>
-    <div style="margin-left: 4px; color: #47f8b1f7">Tip</div>
-    <div style="margin-left: auto">
-      <img
-        style="height: 1.2rem; width: 1.2rem"
-        src="./public/img/svg/close.svg"
-      />
+    <span class="icon-bulb" style="font-size: 1.2rem; color: var(--muted);">💡</span>
+    <div style="margin-left: 4px; color: var(--text); font-weight: 500;">提示</div>
+    <div class="notification-close" style="margin-left: auto; cursor: pointer;">
+      <span style="font-size: 1rem; color: var(--muted);">✕</span>
     </div>
   </div>
   <div class="notification-body">${message}</div>
   `;
+    // 绑定关闭按钮点击事件
+    const closeBtn = notificationInstance.querySelector('.notification-close');
+    closeBtn.addEventListener('click', () => {
+      notificationInstance.parentNode.removeChild(notificationInstance);
+      const index = notificationList.findIndex((instance) => {
+        return notificationInstance.dataset.ind === instance.dataset.ind;
+      });
+      notificationList.splice(index, 1);
+      updateInstancePosition();
+    });
+
     document.body.appendChild(notificationInstance);
     notificationList.push(notificationInstance);
     updateInstancePosition();

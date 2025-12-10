@@ -19,8 +19,8 @@
 }
 
 .theme-demo-dark{
-  background-color: #222222;
+  background-color: var(--deep-dark);
 }
 .theme-demo-light{
-  background-color: #dddddd;
+  background-color: var(--muted-surface);
 }
