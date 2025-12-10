@@ -9,6 +9,7 @@
 @import "./notification.css"; /*提示框*/
 @import "./tabs.css"; /*tab区*/
 @import "./dropdown.css"; /*drowpdown区*/
+@import "./settings.css"; /*设置面板*/
 
 .content-area {
   position: absolute;
@@ -18,6 +19,12 @@
   bottom: 0;
   display: flex;
 }
+
+/* 屏保模式下隐藏内容 */
+body.screensaver-mode .content-area {
+  display: none !important;
+}
+
 .content-area .ipage-aside {
   display: flex;
   flex-direction: column;
