@@ -16,7 +16,7 @@ const $modal = (function () {
     const formInstance = document.createElement("div");
     formInstance.setAttribute("class", "form-mask");
     formInstance.innerHTML = `    
-    <div class="eidt-form">
+    <div class="edit-form">
     <div class="edit-form-header">
       <div>${title || "标题"}</div>
       <div class="header-icon-close">
@@ -99,7 +99,7 @@ const $modal = (function () {
     const formInstance = document.createElement("div");
     formInstance.setAttribute("class", "form-mask");
     formInstance.innerHTML = `    
-    <div class="eidt-form">
+    <div class="edit-form">
     <div class="edit-form-header">
       <div>${title || "标题"}</div>
       <div class="header-icon-close">
