@@ -14,9 +14,7 @@ const retrieveContent = (content) => {
   let base_url = "";
   const engineReflect = {
     google: "https://www.google.com/search?q=",
-    sougou: "https://www.sogou.com/web?ie=UTF-8&query=",
     baidu: "https://www.baidu.com/s?ie=UTF-8&wd=",
-    360: "https://www.so.com/s?ie=UTF-8&q=",
     bing: "https://cn.bing.com/search?q=",
   };
   base_url = engineReflect[engine];
@@ -73,8 +71,6 @@ $searchEles.engineBtn.addEventListener("click", () => {
     data: [
       { id: "", icon: "baidu", value: "baidu", label: "Baidu" },
       { id: "", icon: "google", value: "google", label: "Google" },
-      { id: "", icon: "icon360", value: "icon360", label: "360" },
-      { id: "", icon: "sougou", value: "sougou", label: "Sogou" },
       { id: "", icon: "bing", value: "bing", label: "Bing" },
     ],
     callback: (value) => {
