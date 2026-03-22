@@ -1,14 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/variable.css" />
+    <link rel="stylesheet" href="../css/base.css" />
     <link rel="stylesheet" href="./index.css" />
   </head>
   <body>
-    <div>海上月是天上月</div>
-    <button id="btn">按钮</button>
+    <div class="popup-container">
+      <!-- 搜索栏 -->
+      <div class="popup-search">
+        <input type="text" id="search-input" placeholder="搜索链接..." autocomplete="off" />
+      </div>
+
+      <!-- 搜索结果（默认隐藏） -->
+      <div class="popup-section popup-search-results" id="search-results" style="display:none">
+        <div class="section-title">搜索结果</div>
+        <div class="link-list" id="search-list"></div>
+      </div>
+
+      <!-- 快速收藏 -->
+      <div class="popup-section" id="bookmark-section">
+        <div class="section-title">快速收藏</div>
+        <div class="collection-tags" id="collection-tags"></div>
+      </div>
+
+      <!-- 最近添加 -->
+      <div class="popup-section" id="recent-section">
+        <div class="section-title">最近添加</div>
+        <div class="link-list" id="recent-list"></div>
+      </div>
+
+      <!-- 底部快捷按钮 -->
+      <div class="popup-footer">
+        <button class="footer-btn" id="btn-newtab">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v1H3v10h10V8h1v5a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1zm7 0h5v5h-1V3.7L8.35 8.35l-.7-.7L12.29 3H9V2z"/></svg>
+          新标签页
+        </button>
+        <button class="footer-btn" id="btn-settings">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 4.754a3.246 3.246 0 100 6.492 3.246 3.246 0 000-6.492zM6.754 8a1.246 1.246 0 112.492 0 1.246 1.246 0 01-2.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 01-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 01-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 01.52 1.255l-.16.292c-.892 1.64.902 3.434 2.541 2.54l.292-.159a.873.873 0 011.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 011.255-.52l.292.16c1.64.892 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 01.52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 01-.52-1.255l.16-.292c.892-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 01-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 002.693 1.115l.291-.16c.764-.415 1.6.422 1.184 1.185l-.159.292a1.873 1.873 0 001.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 00-1.115 2.693l.16.291c.415.764-.422 1.6-1.185 1.184l-.292-.159a1.873 1.873 0 00-2.692 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 00-2.693-1.115l-.291.16c-.764.415-1.6-.422-1.184-1.185l.159-.292a1.873 1.873 0 00-1.116-2.692l-.318-.094c-.835-.246-.835-1.428 0-1.674l.319-.094a1.873 1.873 0 001.115-2.693l-.16-.291c-.415-.764.422-1.6 1.185-1.184l.292.159a1.873 1.873 0 002.692-1.116l.094-.318z"/></svg>
+          设置
+        </button>
+      </div>
+    </div>
+    <script src="./index.js"></script>
   </body>
-  <script src="./index.js"></script>
 </html>

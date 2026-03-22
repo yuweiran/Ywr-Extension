@@ -20,8 +20,9 @@
 - [ ] **Content Script 注册**  
   `js/content.js` 实现了阅读时间估算，但 `manifest.json` 中没有 `content_scripts` 声明，脚本不会自动注入。需添加 manifest 配置或通过 `chrome.scripting.registerContentScripts` 动态注册。
 
-- [ ] **Popup 弹窗功能改造**  
-  当前 popup 只是教程级 demo。改造为常用快捷入口：快速添加当前页面到集合、搜索已有链接、显示最近添加的链接、一键打开设置页/新标签页。
+- [x] **Popup 弹窗功能改造**  
+  当前 popup 只是教程级 demo。改造为常用快捷入口：快速添加当前页面到集合、搜索已有链接、显示最近添加的链接、一键打开设置页/新标签页。  
+  ✅ 已实现：极简一步收藏 + 搜索链接 + 最近添加 + 快捷入口，SW 独立数据层
 
 - [ ] **数据自动备份**  
   导入/导出仅通过 JSON 文件手动操作，没有自动备份。利用 `chrome.alarms`（`alarms.js` 当前为空）定期将 IndexedDB 数据快照到 `chrome.storage.local`。

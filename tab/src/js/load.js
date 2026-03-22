@@ -22,6 +22,12 @@ window.onload = () => {
 
 };
 
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === "dataChanged") {
+    $collections.renderCollections();
+  }
+});
+
 chrome.tabs.onUpdated.addListener(() => {
   $sections.updateTabsList()
   $sections.updateHistoryList()

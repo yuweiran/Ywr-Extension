@@ -1,3 +1,4 @@
+import "./db.js";
 import "./association.js";
 import "./background.js";
 import "./installed.js";
