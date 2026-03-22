@@ -2,6 +2,40 @@
   width: 600px;
   margin: 0 auto 1.5rem auto;
   overflow: visible;
+  position: relative;
+}
+
+.suggestion-list {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--borderGrey);
+  border-top: none;
+  border-radius: 0 0 0.75rem 0.75rem;
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(15, 23, 36, 0.08);
+}
+
+.suggestion-list.is-visible {
+  display: block;
+}
+
+.suggestion-item {
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 0.875rem;
+  transition: background 120ms ease;
+}
+
+.suggestion-item.is-active,
+.suggestion-item:hover {
+  background: var(--borderGrey);
 }
 
 

@@ -1,11 +1,18 @@
-// //接收数据
-chrome.runtime.onMessage.addListener(
-  async ({ keyword }, sender, sendResponse) => {
-    // const response = await fetch('https://api.bing.com/qsonhs.aspx?type=cb&q=apple', {
-    //   mode: 'no-cors',
-    //   credentials: "include"
-    // })
-    // console.log(response)
-    sendResponse({ response: "Hello from Service Worker!" }); // 发送响应消息
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "suggest") {
+    const keyword = message.keyword;
+    fetch(`https://suggestion.baidu.com/su?wd=${encodeURIComponent(keyword)}&action=opensearch`)
+      .then((res) => res.arrayBuffer())
+      .then((buf) => JSON.parse(new TextDecoder("gbk").decode(buf)))
+      .then((data) => {
+        // OpenSearch 格式: ["keyword", ["建议1", "建议2", ...]]
+        const suggestions = Array.isArray(data[1]) ? data[1] : [];
+        console.log("Received suggestions:", suggestions);
+        sendResponse({ suggestions });
+      })
+      .catch(() => {
+        sendResponse({ suggestions: [] });
+      });
+    return true; // 保持 sendResponse 通道打开（异步响应）
   }
-);
+});

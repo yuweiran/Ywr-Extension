@@ -17,6 +17,9 @@
     "webNavigation",
     "history"
   ],
+  "host_permissions": [
+    "https://suggestion.baidu.com/*"
+  ],
   "chrome_url_overrides": {
     "newtab": "/tab/index.html"
   },
