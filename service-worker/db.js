@@ -32,6 +32,17 @@ class IndexedModel {
     });
   }
 
+  clearAll() {
+    return new Promise((resolve, reject) => {
+      const store = this.database
+        .transaction([this.model], "readwrite")
+        .objectStore(this.model);
+      const req = store.clear();
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  }
+
   list(condition = null) {
     return new Promise((resolve, reject) => {
       const store = this.database

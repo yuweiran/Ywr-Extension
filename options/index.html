@@ -1,79 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="./src/css/index.css">
-  <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_2691375_rhuyt90isv.css" />
+  <title>Ywr Extension 设置</title>
+  <link rel="stylesheet" href="../css/normalize.css" />
+  <link rel="stylesheet" href="../css/variable.css" />
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="./src/css/index.css" />
 </head>
 
 <body>
   <div class="app">
-    <div class="content">
-      <div class="section">
-        <ul>
-          <li class="section-item"><span class="icon-theme"></span><span class="section-item-text">Theme</span></li>
-          <li class="section-item"><span class="icon-background"></span><span class="section-item-text">Custom</span>
-          </li>
-          <li class="section-item"><span class="icon-opacity"></span><span class="section-item-text">Opacity</span></li>
-          <li class="section-item"><span class="icon-profile"></span><span class="section-item-text">Profile</span></li>
-        </ul>
-      </div>
-      <div class="core">
-        <!-- <div id="drop-zone"
-          style="width: 300px; height: 200px; border: 2px dashed #ccc; text-align: center; padding: 40px;">
-          将文件拖放到此区域进行导入
-        </div> -->
-        <!-- <img src="../images/g.jpg" alt="" srcset=""> -->
-        <div class="core-item">
-          <div class="core-item-title">Theme</div>
-          <div class="core-item-content core-item-theme">
+    <h1 class="page-title">Ywr Extension 设置</h1>
+
+    <!-- Profile -->
+    <div class="card">
+      <h2 class="card-title">个人资料</h2>
+      <div class="profile-section">
+        <div class="avatar-area">
+          <div class="avatar-preview" id="avatarPreview"></div>
+          <div class="avatar-actions">
+            <button class="btn btn-primary" id="btnChooseAvatar">选择图片</button>
+            <button class="btn btn-secondary" id="btnRemoveAvatar">移除</button>
+            <input type="file" id="avatarInput" accept="image/*" hidden />
           </div>
         </div>
-        <div class="core-item">
-          <div class="core-item-title">Custom</div>
-          <div class="core-item-content core-item-background">
-            <div class="background-usepic">使用背景图片</div>
-            <div class="background-pic"></div>
-            <!-- <div class="background-color">使用背景颜色</div> -->
-          </div>
+        <div class="signature-area">
+          <label class="field-label" for="signatureInput">个性签名</label>
+          <input type="text" id="signatureInput" class="field-input" maxlength="100" placeholder="写点什么…" />
+          <span class="char-count"><span id="charCount">0</span>/100</span>
         </div>
-        <div class="core-item">
-          <div class="core-item-title">Opacity</div>
-          <div class="core-item-content">
-            <div>透明度</div>
-          </div>
-        </div>
-        <div class="core-item">
-          <div class="core-item-title">Profile</div>
-          <div class="core-item-content">
-            <div>头像，个签</div>
-          </div>
-        </div>
+        <button class="btn btn-primary btn-save" id="btnSaveProfile">保存 Profile</button>
+        <div class="msg" id="profileMsg"></div>
       </div>
     </div>
-    <img class="page-back" src="../images/g.jpg" alt="" srcset="">
+
+    <!-- Data Management -->
+    <div class="card">
+      <h2 class="card-title">数据管理</h2>
+      <div class="data-section">
+        <div class="data-row">
+          <button class="btn btn-primary" id="btnExport">导出数据</button>
+          <span class="data-desc">导出全部集合和链接为 JSON 文件</span>
+        </div>
+        <div class="data-row">
+          <button class="btn btn-secondary" id="btnImport">导入数据</button>
+          <span class="data-desc">从 JSON 文件恢复（覆盖当前数据）</span>
+          <input type="file" id="importInput" accept=".json" hidden />
+        </div>
+        <div class="msg" id="dataMsg"></div>
+      </div>
+    </div>
   </div>
-  <!-- 公共方法导入 -->
-  <script src="../utils/color.js"></script>
-  <script src="../utils/index.js"></script>
-  <script src="../utils/form.js"></script>
-  <script src="../utils/dropdown.js"></script>
-  <script src="../utils/notification.js"></script>
-  <script src="../utils/declare_element.js"></script>
-  <!-- 声明 -->
-  <script src="./src/js/declare/theme.js"></script>
-  <script src="./src/js/declare/custom.js"></script>
-  <script src="./src/js/declare/profile.js"></script>
-  <script src="./src/js/declare/opacity.js"></script>
-  <!-- 事件 -->
-  <script src="./src/js/execute/theme.js"></script>
-  <script src="./src/js/execute/custom.js"></script>
-  <script src="./src/js/execute/profile.js"></script>
-  <script src="./src/js/execute/opacity.js"></script>
-  <!-- 加载完成 -->
+
   <script src="./load.js"></script>
 </body>
 

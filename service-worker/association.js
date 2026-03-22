@@ -110,4 +110,80 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }).catch(() => sendResponse({ links: [] }));
     return true;
   }
+
+  /* ---- Options 数据导入导出 ---- */
+
+  if (message.type === "data:export") {
+    getDB().then(async (tables) => {
+      const collections = await tables.collections.list();
+      const links = await tables.links.list();
+      sendResponse({
+        success: true,
+        data: {
+          version: 1,
+          exportDate: new Date().toISOString(),
+          collections,
+          links,
+        },
+      });
+    }).catch((err) => sendResponse({ success: false, error: err.message || "导出失败" }));
+    return true;
+  }
+
+  if (message.type === "data:import") {
+    const { collections, links } = message.data || {};
+    if (!Array.isArray(collections) || !Array.isArray(links)) {
+      sendResponse({ success: false, error: "数据结构不完整" });
+      return true;
+    }
+    getDB().then(async (tables) => {
+      await tables.collections.clearAll();
+      await tables.links.clearAll();
+      let skipped = 0;
+      for (const c of collections) {
+        if (c.id && c.name) {
+          await tables.collections.add({ name: c.name, order: c.order ?? 0 });
+        } else {
+          skipped++;
+        }
+      }
+      // 建立旧 id → 新 id 映射（导入后 id 会重新生成）
+      // 由于 add() 用 Date.now()，需按原顺序逐条写入
+      // 先收集新的 collection id 映射
+      const newCollections = await tables.collections.list();
+      const collectionIdMap = {};
+      const sortedOld = [...collections].filter((c) => c.id && c.name).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      const sortedNew = [...newCollections].sort((a, b) => a.order - b.order);
+      sortedOld.forEach((old, i) => {
+        if (sortedNew[i]) collectionIdMap[old.id] = sortedNew[i].id;
+      });
+      for (const l of links) {
+        if (l.id && l.name && l.url && l.collection) {
+          const mappedCollection = collectionIdMap[l.collection] || l.collection;
+          await tables.links.add({
+            name: l.name,
+            url: l.url,
+            icon: l.icon || "",
+            remark: l.remark || "",
+            order: l.order ?? 0,
+            collection: mappedCollection,
+          });
+        } else {
+          skipped++;
+        }
+      }
+      sendResponse({ success: true, skipped });
+      broadcastDataChanged();
+    }).catch((err) => sendResponse({ success: false, error: err.message || "导入失败" }));
+    return true;
+  }
+
+  if (message.type === "profileChanged") {
+    chrome.tabs.query({}, (tabs) => {
+      for (const tab of tabs) {
+        chrome.tabs.sendMessage(tab.id, { type: "profileChanged" }).catch(() => {});
+      }
+    });
+    return false;
+  }
 });

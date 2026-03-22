@@ -26,6 +26,18 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message.type === "dataChanged") {
     $collections.renderCollections();
   }
+  if (message.type === "profileChanged") {
+    chrome.storage.sync.get(["profile_signature"], (data) => {
+      document.title = data.profile_signature || "新标签页";
+    });
+  }
+});
+
+// 初始加载签名到标题
+chrome.storage.sync.get(["profile_signature"], (data) => {
+  if (data.profile_signature) {
+    document.title = data.profile_signature;
+  }
 });
 
 chrome.tabs.onUpdated.addListener(() => {

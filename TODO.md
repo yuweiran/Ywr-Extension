@@ -33,8 +33,9 @@
 - [ ] **链接有效性检测**  
   没有链接状态检测逻辑。后台通过 `chrome.alarms` 定期 HEAD 请求检测链接可访问性，标记失效链接并在 UI 给出视觉提示。
 
-- [ ] **Options 页设置补全**  
-  `options/index.html` 的 Profile 区域只是占位文字"头像，个签"，Opacity 也只有一行文字。实现完整设置或合并到 SettingsManager。
+- [x] **Options 页设置补全**  
+  `options/index.html` 的 Profile 区域只是占位文字"头像，个签"，Opacity 也只有一行文字。实现完整设置或合并到 SettingsManager。  
+  ✅ 已实现：精简重建为 Profile（头像+签名 → chrome.storage.sync）+ 数据导入导出，签名同步到 document.title
 
 ---
 
