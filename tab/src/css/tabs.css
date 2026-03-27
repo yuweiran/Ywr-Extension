@@ -1,69 +1,70 @@
-#ipage-tabs{
-  padding: 1rem;
+#ipage-tabs {
+  padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
-  border-top: 1px solid var(--borderGrey);
-  border-bottom: 1px solid var(--borderGrey);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
   margin-bottom: 1rem;
   font-size: 13px;
   font-weight: 400;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
-#ipage-tabs .tab-item{
+#ipage-tabs .tab-item {
   display: inline-flex;
   align-items: center;
-  padding: 0.45rem 0.7rem;
-  border-radius: 0.4rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  color: var(--muted);
+  color: var(--text-secondary);
   background-color: transparent;
   border: 1px solid transparent;
   transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
 }
-#ipage-tabs .tab-item:hover{
-  background-color: var(--muted-surface);
+#ipage-tabs .tab-item:hover {
+  background-color: var(--surface-raised);
   color: var(--text);
 }
-#ipage-tabs .tab-item [class^="icon-"]{
+#ipage-tabs .tab-item [class^="icon-"] {
   font-size: 1rem;
   margin-right: 0.35rem;
 }
-#ipage-tabs .tab-item .tab-item-text{
+#ipage-tabs .tab-item .tab-item-text {
   font-size: 12px;
   font-weight: 500;
 }
 
-#ipage-tabs .tab-btn-add-collection{
-  padding: 0.45rem 0.75rem;
+/* 添加集合按钮 */
+#ipage-tabs .tab-btn-add-collection {
+  padding: 0.4rem 0.75rem;
   margin-left: auto;
   background-color: var(--surface);
   color: var(--text);
-  border: 1px solid var(--borderGrey);
-  border-radius: 0.4rem;
-  box-shadow: 0 1px 3px rgba(15, 23, 36, 0.04);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  transition: border-color 140ms ease, box-shadow 140ms ease;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
 }
-#ipage-tabs .tab-btn-add-collection:hover{
-  border-color: var(--muted);
-  box-shadow: var(--shadow-1);
+#ipage-tabs .tab-btn-add-collection:hover {
+  border-color: var(--primary);
+  background-color: var(--surface-raised);
+  box-shadow: var(--shadow-md);
 }
 
-.add-collection-text{
+.add-collection-text {
   font-weight: 600;
   margin-left: 0.4rem;
   font-size: 12px;
 }
-
-.add-collection-icon{
+.add-collection-icon {
   font-size: 12px;
-  color: var(--muted);
-  background: var(--muted-surface);
+  color: var(--text-secondary);
+  background: var(--border-subtle);
   padding: 0.2rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
