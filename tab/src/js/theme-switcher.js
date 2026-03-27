@@ -4,9 +4,9 @@
  */
 const ThemeSwitcher = (function () {
   const STORAGE_KEY = 'ywr-extension-theme';
-  const THEMES = ['default', 'purple-gold', 'forest-green', 'cyber-neon', 'caramel-warm', 'ocean-blue', 'sakura-pink', 'midnight-star'];
+  const THEMES = ['slate-light', 'midnight-ink', 'coral-amber', 'indigo-mint', 'violet-amber', 'rose-sky'];
 
-  let currentTheme = 'default';
+  let currentTheme = 'slate-light';
   let themeSwitcherEl = null;
   let themeBtn = null;
 
@@ -49,7 +49,7 @@ const ThemeSwitcher = (function () {
    */
   const applyTheme = (theme) => {
     if (!THEMES.includes(theme)) {
-      theme = 'default';
+      theme = 'slate-light';
     }
     document.documentElement.setAttribute('data-theme', theme);
     currentTheme = theme;
