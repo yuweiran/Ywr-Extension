@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>组件设计详情</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f0f2f5; color: #1a1a2e; padding-bottom: 3rem; }
+
+  .page-header { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 1.25rem 2rem; }
+  .page-header h1 { font-size: 1.1rem; font-weight: 700; }
+  .page-header p { font-size: 0.85rem; color: #6b7280; margin-top: 0.2rem; }
+
+  .section-title { font-size: 1rem; font-weight: 700; color: #111; margin: 2rem 2rem 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; display: flex; align-items: center; gap: 0.5rem; }
+  .section-title span { font-size: 0.75rem; font-weight: 500; color: #6b7280; background: #f1f5f9; padding: 0.2rem 0.6rem; border-radius: 20px; }
+
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; padding: 0 2rem; margin-bottom: 1.5rem; }
+  .compare-card { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .compare-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.6rem 1rem; border-bottom: 1px solid #f1f5f9; color: #94a3b8; background: #fafafa; }
+  .compare-label.new { color: #6366f1; background: #f5f3ff; }
+  .compare-body { padding: 1.5rem; }
+
+  /* ========== 搜索框 ========== */
+  /* 旧版 */
+  .old-search { width: 100%; height: 3rem; display: flex; position: relative; background: #fff; border: 1px solid #d8dce5; border-radius: 1.5rem; box-shadow: 0 2px 8px rgba(15,23,36,0.04); align-items: center; }
+  .old-search .icon { padding: 0 1rem; color: #9ca3af; font-size: 1rem; }
+  .old-search .input-mock { flex: 1; font-size: 13px; color: #c0c4cd; }
+  /* 新版 */
+  .new-search { width: 100%; height: 3.25rem; display: flex; position: relative; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 9999px; box-shadow: 0 2px 16px rgba(99,102,241,0.07), 0 1px 4px rgba(0,0,0,0.04); align-items: center; transition: all 0.2s; }
+  .new-search .icon { padding: 0 1.1rem; color: #a5b4fc; font-size: 1.1rem; }
+  .new-search .input-mock { flex: 1; font-size: 14px; color: #c4c9d8; font-weight: 400; }
+  .new-search .search-btn { margin-right: 0.4rem; background: #6366f1; color: #fff; border: none; border-radius: 9999px; padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+
+  /* ========== 集合卡片 ========== */
+  /* 旧版 */
+  .old-collection { width: 100%; }
+  .old-coll-head { padding: 1rem; font-size: 14px; font-weight: 600; background: #ebedf2; border-radius: 0.6rem 0.6rem 0 0; border: 1px solid #d8dce5; display: flex; justify-content: space-between; align-items: center; }
+  .old-coll-head .btns { display: flex; gap: 0.3rem; }
+  .old-coll-head .btn { background: #fff; border: 1px solid #d8dce5; border-radius: 5px; padding: 0.25rem 0.5rem; font-size: 0.75rem; color: #6b7280; cursor: pointer; }
+  .old-coll-body { display: flex; gap: 0.6rem; padding: 0.75rem; border: 1px solid #d8dce5; border-top: none; border-radius: 0 0 0.6rem 0.6rem; background: #fff; flex-wrap: wrap; }
+  .old-link { width: 9rem; aspect-ratio: 4/2; border-radius: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); display: flex; flex-direction: column; overflow: hidden; background: #fff; border: 1px solid #eee; }
+  .old-link-top { display: flex; align-items: center; gap: 0.3rem; padding: 0.35rem 0.4rem; border-bottom: 1px solid #eee; flex: 3; }
+  .old-link-icon { width: 1.2rem; height: 1.2rem; background: #ebedf2; border-radius: 4px; flex-shrink: 0; }
+  .old-link-name { font-size: 0.68rem; color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .old-link-remark { flex: 2; padding: 0.3rem 0.4rem; font-size: 0.6rem; color: #9ca3af; white-space: nowrap; overflow: hidden; }
+
+  /* 新版 */
+  .new-collection { width: 100%; }
+  .new-coll-head { padding: 0.85rem 1rem; font-size: 13px; font-weight: 700; background: #f8f8fc; border-radius: 12px 12px 0 0; border: 1.5px solid #e8e8f4; border-bottom: none; display: flex; justify-content: space-between; align-items: center; letter-spacing: 0.01em; color: #4b5090; }
+  .new-coll-head .btns { display: flex; gap: 0.3rem; }
+  .new-coll-head .btn { background: transparent; border: 1px solid #dde0f5; border-radius: 7px; padding: 0.28rem 0.55rem; font-size: 0.72rem; color: #8b8fc0; cursor: pointer; transition: all 0.15s; }
+  .new-coll-head .btn:hover { background: #eef; color: #5a5fd8; }
+  .new-coll-body { display: flex; gap: 0.7rem; padding: 0.9rem; border: 1.5px solid #e8e8f4; border-top: none; border-radius: 0 0 12px 12px; background: #fff; flex-wrap: wrap; }
+  .new-link { width: 9rem; aspect-ratio: 4/2; border-radius: 10px; box-shadow: 0 2px 10px rgba(99,102,241,0.08), 0 1px 3px rgba(0,0,0,0.04); display: flex; flex-direction: column; overflow: hidden; background: #fff; border: 1px solid #eef0fc; transition: box-shadow 0.2s, transform 0.15s; }
+  .new-link:hover { box-shadow: 0 6px 20px rgba(99,102,241,0.15); transform: translateY(-1px); }
+  .new-link-top { display: flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.5rem; border-bottom: 1px solid #f0f0f8; flex: 3; }
+  .new-link-icon { width: 1.25rem; height: 1.25rem; background: #eef0ff; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: #818cf8; }
+  .new-link-name { font-size: 0.7rem; color: #2d2f5e; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .new-link-remark { flex: 2; padding: 0.32rem 0.5rem; font-size: 0.6rem; color: #a0a3c4; white-space: nowrap; overflow: hidden; background: #fafafe; }
+
+  /* ========== 侧边栏 ========== */
+  .aside-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; padding: 0 2rem; margin-bottom: 1.5rem; }
+  .aside-demo { background: #fff; border-radius: 14px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  /* 旧侧栏 */
+  .old-aside { width: 44px; background: #fff; border: 1px solid #d8dce5; border-radius: 8px; display: flex; flex-direction: column; align-items: center; padding: 0.6rem 0; gap: 0.35rem; }
+  .old-aside-item { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: #9ca3af; background: #f3f4f6; }
+  .old-aside-item.active { background: #374151; color: #fff; }
+  /* 新侧栏 */
+  .new-aside { width: 52px; background: #fff; border: 1.5px solid #e8e8f4; border-radius: 14px; display: flex; flex-direction: column; align-items: center; padding: 0.75rem 0; gap: 0.45rem; box-shadow: 0 4px 16px rgba(99,102,241,0.06); }
+  .new-aside-item { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #a0a3c4; background: transparent; transition: all 0.15s; }
+  .new-aside-item.active { background: #6366f1; color: #fff; box-shadow: 0 3px 10px rgba(99,102,241,0.35); }
+  .new-aside-item:hover { background: #eef0ff; color: #6366f1; }
+  .new-aside-sep { width: 24px; height: 1px; background: #eef0fc; margin: 0.2rem 0; }
+  .new-aside-bottom { margin-top: auto; }
+
+  /* ========== 下拉 / Dropdown ========== */
+  /* 旧版 */
+  .old-dropdown { background: #fff; border: 1px solid #d8dce5; border-radius: 8px; padding: 0.35rem 0; width: 140px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .old-dd-item { padding: 0.5rem 0.9rem; display: flex; align-items: center; gap: 0.5rem; font-size: 13px; color: #374151; cursor: pointer; }
+  .old-dd-item:hover { background: #f3f4f6; }
+  .old-dd-icon { width: 22px; height: 22px; background: #ebedf2; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #6b7280; flex-shrink: 0; }
+  /* 新版 */
+  .new-dropdown { background: #fff; border: 1.5px solid #e8e8f4; border-radius: 12px; padding: 0.4rem; width: 155px; box-shadow: 0 8px 28px rgba(99,102,241,0.1), 0 2px 8px rgba(0,0,0,0.05); }
+  .new-dd-item { padding: 0.5rem 0.65rem; display: flex; align-items: center; gap: 0.55rem; font-size: 13px; color: #2d2f5e; cursor: pointer; border-radius: 8px; transition: background 0.12s; }
+  .new-dd-item:hover { background: #f5f4ff; }
+  .new-dd-icon { width: 24px; height: 24px; background: #eef0ff; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: #818cf8; flex-shrink: 0; }
+  .new-dd-sep { height: 1px; background: #f0f0f8; margin: 0.3rem 0; }
+
+  .change-tag { display: inline-block; font-size: 0.68rem; font-weight: 600; padding: 0.12rem 0.45rem; border-radius: 4px; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; margin-left: 0.4rem; }
+
+  .summary-box { margin: 1rem 2rem 0; background: #fafafe; border: 1.5px solid #e8e8f4; border-radius: 12px; padding: 1.1rem 1.4rem; }
+  .summary-box h3 { font-size: 0.88rem; font-weight: 700; color: #4b5090; margin-bottom: 0.6rem; }
+  .summary-box ul { font-size: 0.82rem; color: #4b5563; line-height: 2; padding-left: 1rem; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Section 2：组件形态设计</h1>
+  <p>旧版 vs 新版对比 · 所有主题共用同一套组件形态</p>
+</div>
+
+<!-- 搜索框 -->
+<div class="section-title">搜索框 <span>#user_input_area</span></div>
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-label">旧版</div>
+    <div class="compare-body">
+      <div class="old-search">
+        <div class="icon">⚡</div>
+        <div class="input-mock">搜索...</div>
+        <div class="icon">🔍</div>
+      </div>
+      <div style="margin-top:0.75rem;font-size:0.75rem;color:#9ca3af">高度 3rem · 圆角 1.5rem · 细阴影</div>
+    </div>
+  </div>
+  <div class="compare-card">
+    <div class="compare-label new">新版</div>
+    <div class="compare-body">
+      <div class="new-search">
+        <div class="icon">⚡</div>
+        <div class="input-mock">搜索网页、书签...</div>
+        <div class="search-btn">搜索</div>
+      </div>
+      <div style="margin-top:0.75rem;font-size:0.75rem;color:#6366f1">高度 3.25rem<span class="change-tag">↑</span> · 全 pill 圆角 · primary 色搜索按钮 · 微光晕阴影</div>
+    </div>
+  </div>
+</div>
+
+<!-- 集合卡片 -->
+<div class="section-title">集合 + 链接卡片 <span>#ipage-collections .collection</span></div>
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-label">旧版</div>
+    <div class="compare-body">
+      <div class="old-collection">
+        <div class="old-coll-head">
+          设计资源
+          <div class="btns"><div class="btn">编辑</div><div class="btn">删除</div></div>
+        </div>
+        <div class="old-coll-body">
+          <div class="old-link">
+            <div class="old-link-top"><div class="old-link-icon"></div><div class="old-link-name">Figma</div></div>
+            <div class="old-link-remark">设计工具</div>
+          </div>
+          <div class="old-link">
+            <div class="old-link-top"><div class="old-link-icon"></div><div class="old-link-name">Dribbble</div></div>
+            <div class="old-link-remark">灵感参考</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;font-size:0.75rem;color:#9ca3af">头部/正文分体式 border · 链接卡片圆角 3px · 扁平阴影</div>
+    </div>
+  </div>
+  <div class="compare-card">
+    <div class="compare-label new">新版</div>
+    <div class="compare-body">
+      <div class="new-collection">
+        <div class="new-coll-head">
+          设计资源
+          <div class="btns"><div class="btn">编辑</div><div class="btn">删除</div></div>
+        </div>
+        <div class="new-coll-body">
+          <div class="new-link">
+            <div class="new-link-top"><div class="new-link-icon">F</div><div class="new-link-name">Figma</div></div>
+            <div class="new-link-remark">设计工具</div>
+          </div>
+          <div class="new-link">
+            <div class="new-link-top"><div class="new-link-icon">D</div><div class="new-link-name">Dribbble</div></div>
+            <div class="new-link-remark">灵感参考</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;font-size:0.75rem;color:#6366f1">统一圆角卡片 12px<span class="change-tag">↑</span> · 链接卡片 10px · hover 上浮效果 · 精细光晕阴影</div>
+    </div>
+  </div>
+</div>
+
+<!-- 侧边栏 -->
+<div class="section-title">侧边栏图标列 <span>.ipage-aside</span></div>
+<div class="aside-compare">
+  <div class="aside-demo">
+    <div class="compare-label" style="width:100%;border-radius:6px;margin-bottom:0.5rem">旧版</div>
+    <div style="display:flex;align-items:flex-start;gap:1rem">
+      <div class="old-aside">
+        <div class="old-aside-item active">🎨</div>
+        <div class="old-aside-item">⚙️</div>
+      </div>
+      <div style="font-size:0.78rem;color:#9ca3af;line-height:1.9">
+        宽 44px<br>图标区 28×28px<br>圆角 6px<br>active = 深灰填充<br>无分隔线
+      </div>
+    </div>
+  </div>
+  <div class="aside-demo">
+    <div class="compare-label new" style="width:100%;border-radius:6px;margin-bottom:0.5rem">新版</div>
+    <div style="display:flex;align-items:flex-start;gap:1rem">
+      <div class="new-aside">
+        <div class="new-aside-item active">🎨</div>
+        <div class="new-aside-item">🖼</div>
+        <div class="new-aside-sep"></div>
+        <div class="new-aside-item new-aside-bottom">⚙️</div>
+      </div>
+      <div style="font-size:0.78rem;color:#6366f1;line-height:1.9">
+        宽 52px <span class="change-tag">↑</span><br>图标区 34×34px <span class="change-tag">↑</span><br>圆角 9px<br>active = primary 填充 + 光晕阴影<br>分隔线隔开功能区/设置区
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dropdown -->
+<div class="section-title">下拉菜单 <span>.dropdown</span></div>
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-label">旧版</div>
+    <div class="compare-body" style="display:flex;justify-content:center">
+      <div class="old-dropdown">
+        <div class="old-dd-item"><div class="old-dd-icon">📤</div>导出配置</div>
+        <div class="old-dd-item"><div class="old-dd-icon">📥</div>导入配置</div>
+      </div>
+    </div>
+  </div>
+  <div class="compare-card">
+    <div class="compare-label new">新版</div>
+    <div class="compare-body" style="display:flex;justify-content:center">
+      <div class="new-dropdown">
+        <div class="new-dd-item"><div class="new-dd-icon">📤</div>导出配置</div>
+        <div class="new-dd-sep"></div>
+        <div class="new-dd-item"><div class="new-dd-icon">📥</div>导入配置</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="summary-box">
+  <h3>CSS 改动范围摘要</h3>
+  <ul>
+    <li><strong>css/variable.css</strong> — 重建 token 系统（颜色 + 形态 + 间距），新增 6 套主题，旧变量名保留别名</li>
+    <li><strong>tab/src/css/search.css</strong> — 搜索框高度、圆角、阴影、按钮样式</li>
+    <li><strong>tab/src/css/link.css</strong> — 集合头部/正文统一圆角、链接卡片圆角升级、hover 动效</li>
+    <li><strong>tab/src/css/home.css</strong> — 侧边栏宽度、图标尺寸、active 态光晕阴影</li>
+    <li><strong>tab/src/css/dropdown.css</strong> — 圆角、padding、item hover 样式、分隔线</li>
+    <li><strong>tab/src/css/tabs.css</strong> — toolbar 区域间距和按钮样式微调</li>
+    <li><strong>tab/src/js/theme-switcher.js</strong> — THEMES 数组更新为 6 套新主题名</li>
+    <li><strong>tab/index.html</strong> — theme-option data-theme 属性和显示名称更新</li>
+  </ul>
+</div>
+
+<script src="http://localhost:52190/helper.js"></script>
+</body>
+</html>

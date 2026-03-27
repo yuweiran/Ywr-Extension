@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>主题设计方案预览</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+  .page-header { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+  .page-header h1 { font-size: 1.1rem; font-weight: 700; }
+  .page-header p { font-size: 0.85rem; color: #6b7280; }
+
+  .themes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding: 2rem; max-width: 1300px; margin: 0 auto; }
+
+  /* 每个主题卡片 */
+  .theme-card { border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); background: #fff; }
+  .theme-preview { height: 200px; padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem; position: relative; overflow: hidden; }
+  .theme-info { padding: 1rem 1.25rem; border-top: 1px solid rgba(0,0,0,0.06); }
+  .theme-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .theme-desc { font-size: 0.78rem; color: #6b7280; margin-bottom: 0.6rem; }
+  .theme-palette { display: flex; gap: 5px; }
+  .swatch { width: 20px; height: 20px; border-radius: 5px; border: 1px solid rgba(0,0,0,0.08); }
+
+  /* Mock 组件 */
+  .mock-sidebar { width: 36px; position: absolute; left: 1rem; top: 1rem; bottom: 1rem; border-radius: 10px; display: flex; flex-direction: column; align-items: center; padding: 0.6rem 0; gap: 0.5rem; }
+  .mock-dot { width: 20px; height: 20px; border-radius: 6px; }
+  .mock-dot.active { }
+  .mock-main { position: absolute; left: 4rem; right: 1rem; top: 1rem; bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .mock-search { height: 32px; border-radius: 20px; display: flex; align-items: center; padding: 0 0.75rem; font-size: 0.65rem; gap: 0.4rem; }
+  .mock-toolbar { height: 22px; border-radius: 6px; display: flex; align-items: center; padding: 0 0.5rem; gap: 0.4rem; font-size: 0.6rem; }
+  .mock-cards { display: flex; gap: 0.4rem; flex: 1; }
+  .mock-card { flex: 1; border-radius: 8px; }
+  .mock-aside { width: 80px; position: absolute; right: 1rem; top: 1rem; bottom: 1rem; border-radius: 10px; }
+
+  /* ===== 1. 石墨浅色 ===== */
+  .t-slate .theme-preview { background: #f1f3f5; }
+  .t-slate .mock-sidebar { background: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+  .t-slate .mock-dot { background: #e9ecef; }
+  .t-slate .mock-dot.active { background: #343a40; }
+  .t-slate .mock-search { background: #fff; border: 1px solid #dee2e6; color: #6c757d; }
+  .t-slate .mock-toolbar { background: #fff; border: 1px solid #dee2e6; color: #adb5bd; }
+  .t-slate .mock-card { background: #ffffff; box-shadow: 0 1px 6px rgba(0,0,0,0.07); border: 1px solid #e9ecef; }
+  .t-slate .mock-aside { background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+
+  /* ===== 2. 深夜墨色 ===== */
+  .t-dark .theme-preview { background: #0f1117; }
+  .t-dark .mock-sidebar { background: #1a1d27; }
+  .t-dark .mock-dot { background: #252836; }
+  .t-dark .mock-dot.active { background: #6366f1; box-shadow: 0 0 8px rgba(99,102,241,0.5); }
+  .t-dark .mock-search { background: #1a1d27; border: 1px solid #2d3048; color: #6b7280; }
+  .t-dark .mock-toolbar { background: #1a1d27; border: 1px solid #2d3048; color: #4b5563; }
+  .t-dark .mock-card { background: #1a1d27; border: 1px solid #252836; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+  .t-dark .mock-aside { background: #1a1d27; }
+
+  /* ===== 3. 珊瑚×金橙 ===== */
+  .t-coral .theme-preview { background: #fff8f5; }
+  .t-coral .mock-sidebar { background: #fff3ee; box-shadow: 0 2px 10px rgba(255,107,107,0.1); border: 1px solid #ffe0d6; }
+  .t-coral .mock-dot { background: #ffe0d6; }
+  .t-coral .mock-dot.active { background: #ff6b6b; box-shadow: 0 0 8px rgba(255,107,107,0.4); }
+  .t-coral .mock-search { background: #fff; border: 1px solid #ffc9b8; color: #ff8c6b; }
+  .t-coral .mock-toolbar { background: #fff3ee; border: 1px solid #ffd6c4; color: #ffa94d; }
+  .t-coral .mock-card { background: #fff; border: 1px solid #ffe0d6; box-shadow: 0 2px 10px rgba(255,107,107,0.08); }
+  .t-coral .mock-aside { background: #fff3ee; border-left: 1px solid #ffe0d6; }
+
+  /* ===== 4. 靛蓝×薄荷 ===== */
+  .t-indigo .theme-preview { background: #eef2ff; }
+  .t-indigo .mock-sidebar { background: #fff; box-shadow: 0 2px 10px rgba(66,99,235,0.1); border: 1px solid #c7d2fe; }
+  .t-indigo .mock-dot { background: #e0e7ff; }
+  .t-indigo .mock-dot.active { background: #4263eb; box-shadow: 0 0 8px rgba(66,99,235,0.4); }
+  .t-indigo .mock-search { background: #fff; border: 1px solid #c7d2fe; color: #6272d4; }
+  .t-indigo .mock-toolbar { background: #fff; border: 1px solid #c7d2fe; color: #20c997; }
+  .t-indigo .mock-card { background: #fff; border: 1px solid #dde4ff; box-shadow: 0 2px 10px rgba(66,99,235,0.07); }
+  .t-indigo .mock-aside { background: #fff; border-left: 1px solid #c7d2fe; }
+
+  /* ===== 5. 紫罗兰×柠黄 ===== */
+  .t-violet .theme-preview { background: #f5f3ff; }
+  .t-violet .mock-sidebar { background: #ede9fe; box-shadow: 0 2px 10px rgba(124,58,237,0.12); border: 1px solid #ddd6fe; }
+  .t-violet .mock-dot { background: #ddd6fe; }
+  .t-violet .mock-dot.active { background: #7c3aed; box-shadow: 0 0 8px rgba(124,58,237,0.45); }
+  .t-violet .mock-search { background: #fff; border: 1px solid #c4b5fd; color: #8b5cf6; }
+  .t-violet .mock-toolbar { background: #ede9fe; border: 1px solid #ddd6fe; color: #fbbf24; }
+  .t-violet .mock-card { background: #fff; border: 1px solid #e8e0ff; box-shadow: 0 2px 10px rgba(124,58,237,0.08); }
+  .t-violet .mock-aside { background: #ede9fe; border-left: 1px solid #ddd6fe; }
+
+  /* ===== 6. 玫红×天蓝 ===== */
+  .t-rose .theme-preview { background: #fef0f8; }
+  .t-rose .mock-sidebar { background: #fff; box-shadow: 0 2px 10px rgba(233,30,140,0.1); border: 1px solid #f9c0e2; }
+  .t-rose .mock-dot { background: #fce4f3; }
+  .t-rose .mock-dot.active { background: #e91e8c; box-shadow: 0 0 8px rgba(233,30,140,0.45); }
+  .t-rose .mock-search { background: #fff; border: 1px solid #f9c0e2; color: #e91e8c; }
+  .t-rose .mock-toolbar { background: #fff; border: 1px solid #bde8fc; color: #00b4d8; }
+  .t-rose .mock-card { background: #fff; border: 1px solid #fce4f3; box-shadow: 0 2px 10px rgba(233,30,140,0.07); }
+  .t-rose .mock-aside { background: #fff; border-left: 1px solid #bde8fc; }
+
+  .tag { display: inline-block; font-size: 0.68rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 20px; margin-bottom: 0.4rem; }
+  .tag-light { background: #f1f5f9; color: #475569; }
+  .tag-dark { background: #1e293b; color: #94a3b8; }
+  .tag-color { background: #fef3c7; color: #92400e; }
+
+  .note { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 1rem 1.25rem; margin: 0 2rem 2rem; font-size: 0.85rem; color: #166534; line-height: 1.7; }
+  .note strong { color: #14532d; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>6 套主题设计方案</h1>
+    <p>Refined 风格 · CSS Design Token 驱动 · 组件形态全局统一升级</p>
+  </div>
+</div>
+
+<div class="themes-grid">
+
+  <!-- 1 石墨浅色 -->
+  <div class="theme-card t-slate">
+    <div class="theme-preview">
+      <div class="mock-sidebar">
+        <div class="mock-dot active"></div>
+        <div class="mock-dot"></div>
+        <div class="mock-dot"></div>
+      </div>
+      <div class="mock-main">
+        <div class="mock-search">🔍 搜索...</div>
+        <div class="mock-toolbar">MORE &nbsp; + ADD COLLECTION</div>
+        <div class="mock-cards">
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+        </div>
+      </div>
+      <div class="mock-aside"></div>
+    </div>
+    <div class="theme-info">
+      <div class="tag tag-light">浅色</div>
+      <div class="theme-name">石墨浅调</div>
+      <div class="theme-desc">中性灰白，专业克制，primary = #343a40</div>
+      <div class="theme-palette">
+        <div class="swatch" style="background:#f1f3f5"></div>
+        <div class="swatch" style="background:#ffffff"></div>
+        <div class="swatch" style="background:#343a40"></div>
+        <div class="swatch" style="background:#6c757d"></div>
+        <div class="swatch" style="background:#e9ecef"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 深夜墨色 -->
+  <div class="theme-card t-dark">
+    <div class="theme-preview">
+      <div class="mock-sidebar">
+        <div class="mock-dot active"></div>
+        <div class="mock-dot"></div>
+        <div class="mock-dot"></div>
+      </div>
+      <div class="mock-main">
+        <div class="mock-search">🔍 搜索...</div>
+        <div class="mock-toolbar">MORE &nbsp; + ADD COLLECTION</div>
+        <div class="mock-cards">
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+        </div>
+      </div>
+      <div class="mock-aside"></div>
+    </div>
+    <div class="theme-info">
+      <div class="tag tag-dark">深色</div>
+      <div class="theme-name">深夜墨色</div>
+      <div class="theme-desc">近黑底 + 靛紫 primary，霓虹阴影点缀</div>
+      <div class="theme-palette">
+        <div class="swatch" style="background:#0f1117"></div>
+        <div class="swatch" style="background:#1a1d27"></div>
+        <div class="swatch" style="background:#6366f1"></div>
+        <div class="swatch" style="background:#818cf8"></div>
+        <div class="swatch" style="background:#252836"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 珊瑚×金橙 -->
+  <div class="theme-card t-coral">
+    <div class="theme-preview">
+      <div class="mock-sidebar">
+        <div class="mock-dot active"></div>
+        <div class="mock-dot"></div>
+        <div class="mock-dot"></div>
+      </div>
+      <div class="mock-main">
+        <div class="mock-search">🔍 搜索...</div>
+        <div class="mock-toolbar">MORE &nbsp; + ADD COLLECTION</div>
+        <div class="mock-cards">
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+        </div>
+      </div>
+      <div class="mock-aside"></div>
+    </div>
+    <div class="theme-info">
+      <div class="tag tag-color">彩色</div>
+      <div class="theme-name">珊瑚 × 金橙</div>
+      <div class="theme-desc">暖调浅底，珊瑚红 primary + 金橙 accent</div>
+      <div class="theme-palette">
+        <div class="swatch" style="background:#fff8f5"></div>
+        <div class="swatch" style="background:#ffffff"></div>
+        <div class="swatch" style="background:#ff6b6b"></div>
+        <div class="swatch" style="background:#ffa94d"></div>
+        <div class="swatch" style="background:#ffe0d6"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 靛蓝×薄荷 -->
+  <div class="theme-card t-indigo">
+    <div class="theme-preview">
+      <div class="mock-sidebar">
+        <div class="mock-dot active"></div>
+        <div class="mock-dot"></div>
+        <div class="mock-dot"></div>
+      </div>
+      <div class="mock-main">
+        <div class="mock-search">🔍 搜索...</div>
+        <div class="mock-toolbar">MORE &nbsp; + ADD COLLECTION</div>
+        <div class="mock-cards">
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+        </div>
+      </div>
+      <div class="mock-aside"></div>
+    </div>
+    <div class="theme-info">
+      <div class="tag tag-color">彩色</div>
+      <div class="theme-name">靛蓝 × 薄荷</div>
+      <div class="theme-desc">冷调清爽，靛蓝 primary + 薄荷绿 accent</div>
+      <div class="theme-palette">
+        <div class="swatch" style="background:#eef2ff"></div>
+        <div class="swatch" style="background:#ffffff"></div>
+        <div class="swatch" style="background:#4263eb"></div>
+        <div class="swatch" style="background:#20c997"></div>
+        <div class="swatch" style="background:#c7d2fe"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 紫罗兰×柠黄 -->
+  <div class="theme-card t-violet">
+    <div class="theme-preview">
+      <div class="mock-sidebar">
+        <div class="mock-dot active"></div>
+        <div class="mock-dot"></div>
+        <div class="mock-dot"></div>
+      </div>
+      <div class="mock-main">
+        <div class="mock-search">🔍 搜索...</div>
+        <div class="mock-toolbar">MORE &nbsp; + ADD COLLECTION</div>
+        <div class="mock-cards">
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+        </div>
+      </div>
+      <div class="mock-aside"></div>
+    </div>
+    <div class="theme-info">
+      <div class="tag tag-color">彩色</div>
+      <div class="theme-name">紫罗兰 × 柠黄</div>
+      <div class="theme-desc">补色撞色，深紫 primary + 柠黄 accent，个性张扬</div>
+      <div class="theme-palette">
+        <div class="swatch" style="background:#f5f3ff"></div>
+        <div class="swatch" style="background:#ffffff"></div>
+        <div class="swatch" style="background:#7c3aed"></div>
+        <div class="swatch" style="background:#fbbf24"></div>
+        <div class="swatch" style="background:#ddd6fe"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 玫红×天蓝 -->
+  <div class="theme-card t-rose">
+    <div class="theme-preview">
+      <div class="mock-sidebar">
+        <div class="mock-dot active"></div>
+        <div class="mock-dot"></div>
+        <div class="mock-dot"></div>
+      </div>
+      <div class="mock-main">
+        <div class="mock-search">🔍 搜索...</div>
+        <div class="mock-toolbar">MORE &nbsp; + ADD COLLECTION</div>
+        <div class="mock-cards">
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+          <div class="mock-card"></div>
+        </div>
+      </div>
+      <div class="mock-aside"></div>
+    </div>
+    <div class="theme-info">
+      <div class="tag tag-color">彩色</div>
+      <div class="theme-name">玫红 × 天蓝</div>
+      <div class="theme-desc">分裂互补，玫红 primary + 天蓝 accent，年轻活力</div>
+      <div class="theme-palette">
+        <div class="swatch" style="background:#fef0f8"></div>
+        <div class="swatch" style="background:#ffffff"></div>
+        <div class="swatch" style="background:#e91e8c"></div>
+        <div class="swatch" style="background:#00b4d8"></div>
+        <div class="swatch" style="background:#fce4f3"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="note">
+  <strong>组件形态（6 套共用）：</strong>圆角升级为三级制（sm=6px / md=10px / lg=16px / full）；搜索框加高至 3.25rem，pill 形；集合卡片去掉分体式 border，改为统一圆角卡片 + 精细阴影；侧边栏加宽至 48px，图标更大；阴影系统：浅色主题用中性投影，深色主题用 primary 色光晕。
+</div>
+
+<script src="http://localhost:52190/helper.js"></script>
+</body>
+</html>

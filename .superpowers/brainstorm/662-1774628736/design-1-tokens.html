@@ -1,0 +1,138 @@
+<h2>Section 1：设计 Token 系统</h2>
+<p class="subtitle">新 variable.css 将从"只有颜色"扩展为"颜色 + 形态 + 间距 + 排版"的完整设计语言</p>
+
+<div class="section">
+  <h3>Token 分层结构</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:0.75rem">
+
+    <div style="background:#f8f9fa;border:1px solid #e2e8f0;border-radius:10px;padding:1.25rem">
+      <div class="label" style="color:#6366f1;margin-bottom:0.75rem">颜色 Token（每套主题各自定义）</div>
+      <div style="font-family:monospace;font-size:0.8rem;line-height:2;color:#374151">
+        --bg<br>
+        --surface<br>
+        --surface-raised &nbsp;<span style="color:#9ca3af">← 新增：卡片/浮层面</span><br>
+        --text<br>
+        --text-secondary &nbsp;<span style="color:#9ca3af">← 新增：替代 muted</span><br>
+        --primary<br>
+        --primary-hover<br>
+        --accent<br>
+        --border<br>
+        --border-subtle &nbsp;<span style="color:#9ca3af">← 新增：更轻的分割线</span><br>
+        --focus-ring &nbsp;<span style="color:#9ca3af">← 新增：焦点轮廓色</span>
+      </div>
+    </div>
+
+    <div style="background:#f8f9fa;border:1px solid #e2e8f0;border-radius:10px;padding:1.25rem">
+      <div class="label" style="color:#6366f1;margin-bottom:0.75rem">形态 Token（全局共享，主题不改）</div>
+      <div style="font-family:monospace;font-size:0.8rem;line-height:2;color:#374151">
+        <span style="color:#9ca3af">/* 圆角 */</span><br>
+        --radius-sm: 6px<br>
+        --radius-md: 10px<br>
+        --radius-lg: 16px<br>
+        --radius-full: 9999px<br>
+        <span style="color:#9ca3af">/* 阴影 */</span><br>
+        --shadow-sm<br>
+        --shadow-md<br>
+        --shadow-lg<br>
+        <span style="color:#9ca3af">/* 间距 */</span><br>
+        --space-xs: 0.25rem<br>
+        --space-sm: 0.5rem<br>
+        --space-md: 1rem<br>
+        --space-lg: 1.5rem<br>
+        --space-xl: 2rem
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section">
+  <h3>4 套主题预览（色板）</h3>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-top:0.75rem">
+
+    <!-- 默认灰调 -->
+    <div style="border-radius:12px;overflow:hidden;border:1px solid #e2e8f0">
+      <div style="height:60px;background:linear-gradient(135deg,#f1f3f5 0%,#e9ecef 100%);display:flex;align-items:center;justify-content:center">
+        <div style="width:28px;height:28px;border-radius:8px;background:#343a40;box-shadow:0 2px 8px rgba(52,58,64,0.3)"></div>
+      </div>
+      <div style="padding:0.75rem;background:#fff">
+        <div style="font-size:0.8rem;font-weight:600;color:#212529;margin-bottom:0.4rem">石墨灰调</div>
+        <div style="display:flex;gap:4px">
+          <div style="width:16px;height:16px;border-radius:3px;background:#f1f3f5"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#fff;border:1px solid #e2e8f0"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#343a40"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#6c757d"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#adb5bd"></div>
+        </div>
+        <div style="font-size:0.7rem;color:#6c757d;margin-top:0.3rem">浅色 · 中性 · 专业</div>
+      </div>
+    </div>
+
+    <!-- 暗夜紫金 -->
+    <div style="border-radius:12px;overflow:hidden;border:1px solid #e2e8f0">
+      <div style="height:60px;background:linear-gradient(135deg,#0d0d14 0%,#1a1625 100%);display:flex;align-items:center;justify-content:center">
+        <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#d4a843,#b8860b);box-shadow:0 2px 8px rgba(212,168,67,0.4)"></div>
+      </div>
+      <div style="padding:0.75rem;background:#fff">
+        <div style="font-size:0.8rem;font-weight:600;color:#212529;margin-bottom:0.4rem">暗夜紫金</div>
+        <div style="display:flex;gap:4px">
+          <div style="width:16px;height:16px;border-radius:3px;background:#0d0d14"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#1a1625"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#d4a843"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#9b72cf"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#2d2640"></div>
+        </div>
+        <div style="font-size:0.7rem;color:#6c757d;margin-top:0.3rem">深色 · 奢华 · 金紫</div>
+      </div>
+    </div>
+
+    <!-- 赛博霓虹 -->
+    <div style="border-radius:12px;overflow:hidden;border:1px solid #e2e8f0">
+      <div style="height:60px;background:linear-gradient(135deg,#060a10 0%,#0d1520 100%);display:flex;align-items:center;justify-content:center">
+        <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#00d4ff,#0090cc);box-shadow:0 2px 12px rgba(0,212,255,0.5)"></div>
+      </div>
+      <div style="padding:0.75rem;background:#fff">
+        <div style="font-size:0.8rem;font-weight:600;color:#212529;margin-bottom:0.4rem">赛博霓虹</div>
+        <div style="display:flex;gap:4px">
+          <div style="width:16px;height:16px;border-radius:3px;background:#060a10"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#0d1520"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#00d4ff"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#bf5fff"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#152030"></div>
+        </div>
+        <div style="font-size:0.7rem;color:#6c757d;margin-top:0.3rem">深色 · 科技 · 霓虹</div>
+      </div>
+    </div>
+
+    <!-- 樱花粉黛 -->
+    <div style="border-radius:12px;overflow:hidden;border:1px solid #e2e8f0">
+      <div style="height:60px;background:linear-gradient(135deg,#fdf6f8 0%,#fce8ef 100%);display:flex;align-items:center;justify-content:center">
+        <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#e05a7a,#c43060);box-shadow:0 2px 8px rgba(224,90,122,0.35)"></div>
+      </div>
+      <div style="padding:0.75rem;background:#fff">
+        <div style="font-size:0.8rem;font-weight:600;color:#212529;margin-bottom:0.4rem">樱花粉黛</div>
+        <div style="display:flex;gap:4px">
+          <div style="width:16px;height:16px;border-radius:3px;background:#fdf6f8"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#fff;border:1px solid #f5d0da"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#e05a7a"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#b06090"></div>
+          <div style="width:16px;height:16px;border-radius:3px;background:#f5d0da"></div>
+        </div>
+        <div style="font-size:0.7rem;color:#6c757d;margin-top:0.3rem">浅色 · 优雅 · 粉玫瑰</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section">
+  <h3>关键设计决策</h3>
+  <ul style="font-size:0.9rem;line-height:2;color:#374151;padding-left:1.25rem">
+    <li>形态 token（圆角/间距/阴影）<strong>全局统一</strong>，4 套主题共享同一套形态语言</li>
+    <li>阴影系统重建：深色主题用<strong>光晕型阴影</strong>（primary 色调），浅色主题用<strong>投影型阴影</strong>（中性灰）</li>
+    <li>新增 <code>--surface-raised</code>，解决深色主题中卡片和背景分层不清的问题</li>
+    <li>旧变量名（<code>--greyLight-1</code> 等）通过别名保留，不破坏现有 JS 引用</li>
+  </ul>
+</div>
+
+<p style="text-align:center;color:#6b7280;font-size:0.85rem;margin-top:1rem">这是设计系统第一部分。看起来方向对吗？在终端告诉我意见，或直接说"继续"</p>
