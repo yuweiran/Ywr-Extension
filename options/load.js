@@ -1,13 +1,14 @@
 const $ = (sel) => document.querySelector(sel);
 
-const avatarPreview = $("#avatarPreview");
-const avatarInput = $("#avatarInput");
+const iconPreview = $("#iconPreview");
+const iconInput = $("#iconInput");
 const signatureInput = $("#signatureInput");
 const charCount = $("#charCount");
 const profileMsg = $("#profileMsg");
 const dataMsg = $("#dataMsg");
 
-let currentAvatar = "";
+let currentIconBase64 = "";  // data-URL or "" (reset)
+let iconChanged = false;      // track whether user changed the icon this session
 
 /* ---- Helpers ---- */
 
@@ -29,77 +30,115 @@ function sendMsg(type, data = {}) {
   });
 }
 
-function compressAvatar(file) {
+/**
+ * Read a File as a data-URL (base64).
+ */
+function readFileAsDataURL(file) {
   return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = 64;
-      canvas.height = 64;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, 64, 64);
-
-      const qualities = [0.6, 0.4, 0.2];
-      for (const q of qualities) {
-        const dataUrl = canvas.toDataURL("image/jpeg", q);
-        if (dataUrl.length <= 10666) {
-          resolve(dataUrl);
-          return;
-        }
-      }
-      reject(new Error("图片过大，请选择更小的图片"));
-    };
-    img.onerror = () => reject(new Error("图片读取失败"));
-    img.src = URL.createObjectURL(file);
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("图片读取失败"));
+    reader.onload = (e) => resolve(e.target.result);
+    reader.readAsDataURL(file);
   });
 }
 
-/* ---- Profile ---- */
+/* ---- Settings load ---- */
 
-function loadProfile() {
-  chrome.storage.sync.get(["profile_avatar", "profile_signature"], (data) => {
-    currentAvatar = data.profile_avatar || "";
-    if (currentAvatar) {
-      avatarPreview.style.backgroundImage = `url(${currentAvatar})`;
+function loadSettings() {
+  // extension_icon is stored in local (no cross-device sync needed, avoids 8 KB sync limit)
+  // profile_signature stays in sync so it follows the user across devices
+  chrome.storage.local.get(["extension_icon"], (localData) => {
+    currentIconBase64 = localData.extension_icon || "";
+    if (currentIconBase64) {
+      iconPreview.style.backgroundImage = `url(${currentIconBase64})`;
     }
-    signatureInput.value = data.profile_signature || "";
+  });
+  chrome.storage.sync.get(["profile_signature"], (syncData) => {
+    signatureInput.value = syncData.profile_signature || "";
     charCount.textContent = signatureInput.value.length;
   });
 }
 
-$("#btnChooseAvatar").addEventListener("click", () => avatarInput.click());
+/* ---- Icon selection ---- */
 
-avatarInput.addEventListener("change", async () => {
-  const file = avatarInput.files[0];
+$("#btnChooseIcon").addEventListener("click", () => iconInput.click());
+
+iconInput.addEventListener("change", async () => {
+  const file = iconInput.files[0];
   if (!file) return;
   try {
-    currentAvatar = await compressAvatar(file);
-    avatarPreview.style.backgroundImage = `url(${currentAvatar})`;
+    currentIconBase64 = await readFileAsDataURL(file);
+    iconPreview.style.backgroundImage = `url(${currentIconBase64})`;
+    iconChanged = true;
   } catch (e) {
     showMsg(profileMsg, e.message, "error");
   }
-  avatarInput.value = "";
+  iconInput.value = "";
 });
 
-$("#btnRemoveAvatar").addEventListener("click", () => {
-  currentAvatar = "";
-  avatarPreview.style.backgroundImage = "";
+$("#btnRemoveIcon").addEventListener("click", () => {
+  currentIconBase64 = "";
+  iconChanged = true;
+  iconPreview.style.backgroundImage = "";
 });
 
 signatureInput.addEventListener("input", () => {
   charCount.textContent = signatureInput.value.length;
 });
 
-$("#btnSaveProfile").addEventListener("click", () => {
+/* ---- Save ---- */
+
+$("#btnSaveSettings").addEventListener("click", async () => {
   const signature = signatureInput.value.trim().slice(0, 100);
-  chrome.storage.sync.set({ profile_avatar: currentAvatar, profile_signature: signature }, () => {
-    if (chrome.runtime.lastError) {
-      showMsg(profileMsg, "保存失败，请重试", "error");
+
+  // 1. Save or remove icon in local storage (no 8 KB limit, no cross-device sync needed)
+  try {
+    await new Promise((resolve, reject) => {
+      if (currentIconBase64) {
+        chrome.storage.local.set({ extension_icon: currentIconBase64 }, () => {
+          if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
+          else resolve();
+        });
+      } else {
+        chrome.storage.local.remove("extension_icon", () => {
+          if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
+          else resolve();
+        });
+      }
+    });
+  } catch (e) {
+    showMsg(profileMsg, "图标保存失败：" + e.message, "error");
+    return;
+  }
+
+  // 2. Save signature to sync storage (cross-device)
+  try {
+    await new Promise((resolve, reject) => {
+      chrome.storage.sync.set({ profile_signature: signature }, () => {
+        if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
+        else resolve();
+      });
+    });
+  } catch (e) {
+    showMsg(profileMsg, "签名保存失败：" + e.message, "error");
+    return;
+  }
+
+  // 3. Notify tab pages that signature may have changed
+  chrome.runtime.sendMessage({ type: "profileChanged" }).catch(() => {});
+
+  // 4. Update toolbar icon if it changed this session
+  if (iconChanged) {
+    const res = await sendMsg(currentIconBase64 ? "iconChanged" : "iconReset",
+      currentIconBase64 ? { base64: currentIconBase64 } : {});
+    iconChanged = false;
+    if (!res || !res.success) {
+      showMsg(profileMsg, "图标更新失败，其余设置已保存", "error");
       return;
     }
-    showMsg(profileMsg, "已保存", "success");
-    chrome.runtime.sendMessage({ type: "profileChanged" }).catch(() => {});
-  });
+  }
+
+  showMsg(profileMsg, "已保存", "success");
 });
 
 /* ---- Data Export / Import ---- */
@@ -150,4 +189,4 @@ $("#importInput").addEventListener("change", async (e) => {
 
 /* ---- Init ---- */
 
-loadProfile();
+loadSettings();

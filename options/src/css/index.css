@@ -29,25 +29,31 @@
   margin-bottom: 1rem;
 }
 
-/* Avatar */
+/* Icon */
 .avatar-area {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
-.avatar-preview {
+.icon-preview {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
+  border-radius: 12px;
   background: var(--muted-surface);
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
+  border: 1px solid var(--borderGrey);
 }
 .avatar-actions {
   display: flex;
   gap: 0.5rem;
+}
+.icon-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
 }
 
 /* Signature */

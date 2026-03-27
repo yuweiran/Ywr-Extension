@@ -1,3 +1,18 @@
+function applyFavicon(base64) {
+  let link = document.querySelector("link[rel~='icon']");
+  if (!link) {
+    link = document.createElement("link");
+    link.rel = "shortcut icon";
+    document.head.appendChild(link);
+  }
+  link.href = base64;
+}
+
+function resetFavicon() {
+  const link = document.querySelector("link[rel~='icon']");
+  if (link) link.href = "./src/img/icon/snow.png";
+}
+
 window.onload = () => {
   //搜索引擎
   if (!localStorage.getItem("engine")) {
@@ -31,6 +46,14 @@ chrome.runtime.onMessage.addListener((message) => {
       document.title = data.profile_signature || "新标签页";
     });
   }
+  if (message.type === "tab:iconChanged") {
+    chrome.storage.local.get(["extension_icon"], (data) => {
+      if (data.extension_icon) applyFavicon(data.extension_icon);
+    });
+  }
+  if (message.type === "tab:iconReset") {
+    resetFavicon();
+  }
 });
 
 // 初始加载签名到标题
@@ -38,6 +61,11 @@ chrome.storage.sync.get(["profile_signature"], (data) => {
   if (data.profile_signature) {
     document.title = data.profile_signature;
   }
+});
+
+// 初始加载自定义图标到 favicon
+chrome.storage.local.get(["extension_icon"], (data) => {
+  if (data.extension_icon) applyFavicon(data.extension_icon);
 });
 
 chrome.tabs.onUpdated.addListener(() => {

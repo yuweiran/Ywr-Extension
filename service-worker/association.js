@@ -4,6 +4,49 @@ function broadcastDataChanged() {
   chrome.runtime.sendMessage({ type: "dataChanged" }).catch(() => {});
 }
 
+const ICON_SIZES = [16, 32, 48, 64, 128];
+
+/**
+ * Build a multi-size imageData dict from a URL (data-URL or extension resource URL).
+ * @param {string} url
+ * @returns {Promise<{ [size: number]: ImageData }>}
+ */
+async function urlToImageDataMap(url) {
+  const res = await fetch(url);
+  const blob = await res.blob();
+  const bitmap = await createImageBitmap(blob);
+
+  const imageData = {};
+  for (const size of ICON_SIZES) {
+    const canvas = new OffscreenCanvas(size, size);
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(bitmap, 0, 0, size, size);
+    imageData[size] = ctx.getImageData(0, 0, size, size);
+  }
+  bitmap.close();
+  return imageData;
+}
+
+async function base64ToImageDataMap(base64) {
+  return urlToImageDataMap(base64);
+}
+
+/**
+ * Restore the saved icon from chrome.storage.local on service-worker startup.
+ * If no icon is saved, resets to the default manifest icon.
+ */
+export async function restoreSavedIcon() {
+  chrome.storage.local.get(["extension_icon"], async (data) => {
+    try {
+      const url = data.extension_icon || chrome.runtime.getURL("/images/icon.png");
+      const imageData = await urlToImageDataMap(url);
+      await chrome.action.setIcon({ imageData });
+    } catch (_) {
+      // Silently fail — browser keeps whatever icon it has
+    }
+  });
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "suggest") {
     const keyword = message.keyword;
@@ -185,5 +228,34 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
     });
     return false;
+  }
+
+  if (message.type === "iconChanged") {
+    const { base64 } = message;
+    if (!base64) {
+      sendResponse({ success: false, error: "参数缺失" });
+      return true;
+    }
+    base64ToImageDataMap(base64)
+      .then((imageData) => chrome.action.setIcon({ imageData }))
+      .then(() => {
+        chrome.runtime.sendMessage({ type: "tab:iconChanged" }).catch(() => {});
+        sendResponse({ success: true });
+      })
+      .catch((err) => sendResponse({ success: false, error: err.message || "setIcon 失败" }));
+    return true;
+  }
+
+  if (message.type === "iconReset") {
+    chrome.storage.local.remove(["extension_icon"]);
+    const defaultIconUrl = chrome.runtime.getURL("/images/icon.png");
+    urlToImageDataMap(defaultIconUrl)
+      .then((imageData) => chrome.action.setIcon({ imageData }))
+      .then(() => {
+        chrome.runtime.sendMessage({ type: "tab:iconReset" }).catch(() => {});
+        sendResponse({ success: true });
+      })
+      .catch((err) => sendResponse({ success: false, error: err.message || "重置失败" }));
+    return true;
   }
 });

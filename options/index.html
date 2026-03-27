@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ywr Extension 设置</title>
+  <title>扩展设置</title>
   <link rel="stylesheet" href="../css/normalize.css" />
   <link rel="stylesheet" href="../css/variable.css" />
   <link rel="stylesheet" href="../css/base.css" />
@@ -13,26 +13,27 @@
 
 <body>
   <div class="app">
-    <h1 class="page-title">Ywr Extension 设置</h1>
+    <h1 class="page-title">扩展设置</h1>
 
-    <!-- Profile -->
+    <!-- Extension Settings -->
     <div class="card">
-      <h2 class="card-title">个人资料</h2>
+      <h2 class="card-title">扩展设置</h2>
       <div class="profile-section">
         <div class="avatar-area">
-          <div class="avatar-preview" id="avatarPreview"></div>
+          <div class="icon-preview" id="iconPreview"></div>
           <div class="avatar-actions">
-            <button class="btn btn-primary" id="btnChooseAvatar">选择图片</button>
-            <button class="btn btn-secondary" id="btnRemoveAvatar">移除</button>
-            <input type="file" id="avatarInput" accept="image/*" hidden />
+            <button class="btn btn-primary" id="btnChooseIcon">选择图标</button>
+            <button class="btn btn-secondary" id="btnRemoveIcon">重置</button>
+            <input type="file" id="iconInput" accept="image/*" hidden />
           </div>
         </div>
+        <div class="icon-hint">选择图片后将替换浏览器工具栏中的扩展图标</div>
         <div class="signature-area">
           <label class="field-label" for="signatureInput">个性签名</label>
           <input type="text" id="signatureInput" class="field-input" maxlength="100" placeholder="写点什么…" />
           <span class="char-count"><span id="charCount">0</span>/100</span>
         </div>
-        <button class="btn btn-primary btn-save" id="btnSaveProfile">保存 Profile</button>
+        <button class="btn btn-primary btn-save" id="btnSaveSettings">保存设置</button>
         <div class="msg" id="profileMsg"></div>
       </div>
     </div>
