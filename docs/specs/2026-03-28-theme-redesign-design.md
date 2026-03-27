@@ -1,7 +1,7 @@
 # Theme System Redesign — Design Spec
 
 **Date:** 2026-03-28
-**Status:** Approved
+**Status:** Approved (rev 2 — spec review fixes applied)
 **Scope:** Global visual language rebuild — CSS Design Token system + 6 themes + component restyling
 
 ---
@@ -39,7 +39,24 @@ Rebuild the extension's visual design language from scratch. Current state: 8 th
 | `--focus-ring` | Keyboard focus outline — **new** |
 | `--shadow-color` | Shadow tint (neutral for light themes, primary-tinted for dark) — **new** |
 
-**Backward compatibility:** All legacy variable names (`--muted`, `--greyLight-1`, `--greyLight-2`, `--greyLight-3`, `--greyDark`, `--white`, `--black`, `--deep-dark`, `--borderGrey`, `--muted-surface`) are preserved as aliases pointing to new tokens. No JS references break.
+**Backward compatibility:** All legacy variable names are preserved as aliases pointing to new tokens. No JS references break. Full alias list:
+
+| Legacy name | Maps to |
+|-------------|---------|
+| `--muted` | `var(--text-secondary)` |
+| `--borderGrey` | `var(--border)` |
+| `--muted-surface` | `var(--surface-raised)` |
+| `--greyLight-1` | `var(--surface-raised)` |
+| `--greyLight-2` | `rgba(var(--shadow-color), 0.08)` |
+| `--greyLight-3` | `var(--border)` |
+| `--greyDark` | `var(--text-secondary)` |
+| `--white` | `var(--surface)` |
+| `--black` | `var(--text)` |
+| `--deep-dark` | `var(--bg)` |
+| `--shadow-1` | `var(--shadow-md)` |
+| `--shadow-2` | `var(--shadow-lg)` |
+| `--inset-subtle` | `inset 0.1rem 0.1rem 0.25rem rgba(var(--shadow-color), 0.08)` |
+| `--inset-highlight` | `inset -0.1rem -0.1rem 0.25rem rgba(255,255,255,0.05)` |
 
 **Layer 2 — Form tokens** (global, shared across all 6 themes, never theme-specific):
 
@@ -57,12 +74,14 @@ Rebuild the extension's visual design language from scratch. Current state: 8 th
 --space-lg: 1.5rem
 --space-xl: 2rem
 
-/* Shadows — values reference --shadow-color */
---shadow-sm:  0 1px 4px rgba(var(--shadow-color), 0.06)
---shadow-md:  0 4px 16px rgba(var(--shadow-color), 0.10)
---shadow-lg:  0 8px 28px rgba(var(--shadow-color), 0.14)
---shadow-glow: 0 3px 10px rgba(var(--primary-rgb), 0.35)  /* active icon glow */
+/* Shadows — all reference --shadow-color (RGB triplet, no alpha) */
+--shadow-sm:   0 1px 4px rgba(var(--shadow-color), 0.06)
+--shadow-md:   0 4px 16px rgba(var(--shadow-color), 0.10)
+--shadow-lg:   0 8px 28px rgba(var(--shadow-color), 0.14)
+--shadow-glow: 0 3px 10px rgba(var(--shadow-color), 0.35)  /* active icon glow — uses same --shadow-color */
 ```
+
+Note: `--shadow-color` is defined as a bare RGB triplet (e.g. `0, 0, 0` or `99, 102, 241`) so it can be used inside `rgba()`. There is no separate `--primary-rgb` token.
 
 ---
 
@@ -144,7 +163,7 @@ Rebuild the extension's visual design language from scratch. Current state: 8 th
 | `--surface` | `#ffffff` |
 | `--surface-raised` | `#ede9fe` |
 | `--text` | `#2e1065` |
-| `--text-secondary` | `#7c3aed` |
+| `--text-secondary` | `#9d72d4` |
 | `--primary` | `#7c3aed` |
 | `--primary-hover` | `#6d28d9` |
 | `--accent` | `#fbbf24` |
@@ -184,7 +203,7 @@ All components use form tokens (`--radius-*`, `--shadow-*`, `--space-*`). No com
 - Border: `1px solid var(--border)` (unchanged token, new value)
 - Box-shadow: add `0 2px 16px rgba(var(--shadow-color), 0.07)` micro-glow
 - Right side: replace icon-only button with a pill-shaped `<span>` styled as a search submit button using `--primary` background. No HTML change — CSS-only using `#btn-retrieval-content`.
-- Focus state: `border-color: var(--primary)` + `box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15)`
+- Focus state: `border-color: var(--primary)` + `box-shadow: 0 0 0 3px rgba(var(--shadow-color), 0.15)`
 
 ### Collection Container (`.collection`)
 
@@ -244,8 +263,21 @@ All components use form tokens (`--radius-*`, `--shadow-*`, `--space-*`). No com
 | `tab/src/css/tabs.css` | Toolbar spacing and add-collection button style |
 | `tab/src/css/edit-form.css` | Modal radius upgrade |
 | `tab/src/css/notification.css` | Toast radius + shadow upgrade |
-| `tab/src/js/theme-switcher.js` | `THEMES` array: replace 8 old names with 6 new names |
+| `tab/src/js/theme-switcher.js` | `THEMES` array: replace 8 old names with 6 new slug names; update default fallback from `'default'` to `'slate-light'` |
 | `tab/index.html` | `data-theme` attributes + display names for 6 themes; add `.ipage-aside-sep` |
+
+### Theme option HTML mapping
+
+Each `<div class="dropdown-item theme-option">` entry in `tab/index.html` must use:
+
+| `data-theme` slug | Icon | Display name (Chinese) |
+|-------------------|------|------------------------|
+| `slate-light` | `◐` | 石墨浅调 |
+| `midnight-ink` | `🌑` | 深夜墨色 |
+| `coral-amber` | `🪸` | 珊瑚金橙 |
+| `indigo-mint` | `💎` | 靛蓝薄荷 |
+| `violet-amber` | `🔮` | 紫罗兰柠黄 |
+| `rose-sky` | `🌸` | 玫红天蓝 |
 
 ---
 
@@ -257,6 +289,7 @@ All components use form tokens (`--radius-*`, `--shadow-*`, `--space-*`). No com
 - **Legacy CSS variable names preserved as aliases** — no grep-and-replace needed in JS
 - Theme is applied via `document.documentElement.setAttribute('data-theme', theme)` — mechanism unchanged
 - The 4 彩色 themes are浅色 (light background) — deep dark is only `midnight-ink`
+- **Theme migration fallback:** existing users may have an old theme name (e.g. `"default"`, `"purple-gold"`) saved in `localStorage`. The `loadSavedTheme()` function already falls back to `currentTheme` (`'default'`) when the saved value is not in `THEMES`. After the update, `'default'` is also no longer in `THEMES`, so it too falls through. The implementer must update the fallback value inside `theme-switcher.js` from `'default'` to `'slate-light'` so existing users get the light base theme rather than a broken state.
 
 ---
 
