@@ -1,48 +1,48 @@
-# Theme System Redesign — Design Spec
+# 主题系统重设计 — 设计规格文档
 
-**Date:** 2026-03-28
-**Status:** Approved (rev 2 — spec review fixes applied)
-**Scope:** Global visual language rebuild — CSS Design Token system + 6 themes + component restyling
-
----
-
-## Overview
-
-Rebuild the extension's visual design language from scratch. Current state: 8 themes that only swap color variables, with no coherent component design system. Target state: a CSS Design Token system driving 6 well-crafted themes (2 base + 4 high-saturation color themes), with unified component form language across all themes.
-
-**Guiding aesthetic:** Refined — clear visual hierarchy, purposeful shadows, quality feel without coldness. Reference: Arc Browser, Raycast.
-
-**Implementation strategy:** CSS Design Token rewrite + full component CSS rewrite. HTML structure preserved where possible (only add helper classes, never reorder). JS logic untouched except theme name array update.
+**日期：** 2026-03-28
+**状态：** 已批准（第 2 版 — 已修复规格审查问题）
+**范围：** 全局视觉语言重建 — CSS 设计 Token 系统 + 6 套主题 + 组件样式重写
 
 ---
 
-## Design Token System
+## 概览
 
-### Token Architecture
+从零重建扩展的视觉设计语言。现状：8 套主题仅替换颜色变量，没有统一的组件设计系统。目标：以 CSS 设计 Token 系统驱动 6 套精心设计的主题（2 套基础款 + 4 套高饱和彩色款），所有主题共用统一的组件形态语言。
 
-`css/variable.css` expands from color-only to a two-layer token system:
+**设计基调：** 现代有质感（Refined）— 清晰的视觉层次，有分量感的阴影，精致而不冷漠。参考：Arc Browser、Raycast。
 
-**Layer 1 — Color tokens** (each theme defines its own values):
+**实施策略：** CSS 设计 Token 重写 + 组件 CSS 全面重写。HTML 结构尽量保留（只添加辅助 class，不改变顺序）。JS 逻辑不动，仅更新主题名称数组。
 
-| Token | Role |
+---
+
+## 设计 Token 系统
+
+### Token 分层结构
+
+`css/variable.css` 从纯颜色变量扩展为两层 Token 系统：
+
+**第一层 — 颜色 Token**（每套主题各自定义）：
+
+| Token | 用途 |
 |-------|------|
-| `--bg` | Page background |
-| `--surface` | Default surface (sidebar, panels) |
-| `--surface-raised` | Elevated surface (cards, dropdowns) — **new** |
-| `--text` | Primary text |
-| `--text-secondary` | Secondary / muted text (replaces `--muted`) |
-| `--primary` | Brand / interactive color |
-| `--primary-hover` | Primary hover state — **new** |
-| `--accent` | Secondary highlight color |
-| `--border` | Default border |
-| `--border-subtle` | Light divider — **new** |
-| `--focus-ring` | Keyboard focus outline — **new** |
-| `--shadow-color` | Shadow tint (neutral for light themes, primary-tinted for dark) — **new** |
+| `--bg` | 页面背景色 |
+| `--surface` | 默认面板色（侧边栏、面板） |
+| `--surface-raised` | 抬高面板色（卡片、下拉浮层）— **新增** |
+| `--text` | 主文字色 |
+| `--text-secondary` | 次要/辅助文字色（替代 `--muted`） |
+| `--primary` | 品牌色 / 交互主色 |
+| `--primary-hover` | 主色悬浮态 — **新增** |
+| `--accent` | 辅助强调色 |
+| `--border` | 默认边框色 |
+| `--border-subtle` | 轻量分割线色 — **新增** |
+| `--focus-ring` | 键盘焦点轮廓色 — **新增** |
+| `--shadow-color` | 阴影色调（浅色主题用中性灰，深色主题用主色调）— **新增** |
 
-**Backward compatibility:** All legacy variable names are preserved as aliases pointing to new tokens. No JS references break. Full alias list:
+**向后兼容：** 所有旧变量名保留为新 Token 的别名，JS 中的引用不会失效。完整别名列表：
 
-| Legacy name | Maps to |
-|-------------|---------|
+| 旧变量名 | 映射至 |
+|----------|--------|
 | `--muted` | `var(--text-secondary)` |
 | `--borderGrey` | `var(--border)` |
 | `--muted-surface` | `var(--surface-raised)` |
@@ -60,39 +60,39 @@ Rebuild the extension's visual design language from scratch. Current state: 8 th
 | `--primary-light` | `var(--primary-hover)` |
 | `--primary-dark` | `var(--primary)` |
 
-**Layer 2 — Form tokens** (global, shared across all 6 themes, never theme-specific):
+**第二层 — 形态 Token**（全局共用，6 套主题共享，不随主题变化）：
 
 ```css
-/* Border radius */
+/* 圆角 */
 --radius-sm:   6px
 --radius-md:   10px
 --radius-lg:   16px
 --radius-full: 9999px
 
-/* Spacing */
+/* 间距 */
 --space-xs: 0.25rem
 --space-sm: 0.5rem
 --space-md: 1rem
 --space-lg: 1.5rem
 --space-xl: 2rem
 
-/* Shadows — all reference --shadow-color (RGB triplet, no alpha) */
+/* 阴影 — 全部引用 --shadow-color（RGB 三元组，不含 alpha） */
 --shadow-sm:   0 1px 4px rgba(var(--shadow-color), 0.06)
 --shadow-md:   0 4px 16px rgba(var(--shadow-color), 0.10)
 --shadow-lg:   0 8px 28px rgba(var(--shadow-color), 0.14)
---shadow-glow: 0 3px 10px rgba(var(--shadow-color), 0.35)  /* active icon glow — uses same --shadow-color */
+--shadow-glow: 0 3px 10px rgba(var(--shadow-color), 0.35)  /* 激活图标光晕，同样引用 --shadow-color */
 ```
 
-Note: `--shadow-color` is defined as a bare RGB triplet (e.g. `0, 0, 0` or `99, 102, 241`) so it can be used inside `rgba()`. There is no separate `--primary-rgb` token.
+注意：`--shadow-color` 定义为裸 RGB 三元组（如 `0, 0, 0` 或 `99, 102, 241`），以便用于 `rgba()` 内部。不存在单独的 `--primary-rgb` token。
 
 ---
 
-## 6 Themes
+## 6 套主题
 
-### Theme 1 — 石墨浅调 `slate-light` (light base)
+### 主题 1 — 石墨浅调 `slate-light`（浅色基础款）
 
-| Token | Value |
-|-------|-------|
+| Token | 颜色值 |
+|-------|--------|
 | `--bg` | `#f1f3f5` |
 | `--surface` | `#ffffff` |
 | `--surface-raised` | `#ffffff` |
@@ -106,10 +106,10 @@ Note: `--shadow-color` is defined as a bare RGB triplet (e.g. `0, 0, 0` or `99, 
 | `--focus-ring` | `#343a40` |
 | `--shadow-color` | `0, 0, 0` |
 
-### Theme 2 — 深夜墨色 `midnight-ink` (dark base)
+### 主题 2 — 深夜墨色 `midnight-ink`（深色基础款）
 
-| Token | Value |
-|-------|-------|
+| Token | 颜色值 |
+|-------|--------|
 | `--bg` | `#0f1117` |
 | `--surface` | `#1a1d27` |
 | `--surface-raised` | `#22253a` |
@@ -121,12 +121,12 @@ Note: `--shadow-color` is defined as a bare RGB triplet (e.g. `0, 0, 0` or `99, 
 | `--border` | `#2d3048` |
 | `--border-subtle` | `#252836` |
 | `--focus-ring` | `#818cf8` |
-| `--shadow-color` | `99, 102, 241` (primary-tinted glow) |
+| `--shadow-color` | `99, 102, 241`（主色调光晕） |
 
-### Theme 3 — 珊瑚×金橙 `coral-amber` (warm color)
+### 主题 3 — 珊瑚×金橙 `coral-amber`（暖调彩色）
 
-| Token | Value |
-|-------|-------|
+| Token | 颜色值 |
+|-------|--------|
 | `--bg` | `#fff8f5` |
 | `--surface` | `#ffffff` |
 | `--surface-raised` | `#fff3ee` |
@@ -140,10 +140,10 @@ Note: `--shadow-color` is defined as a bare RGB triplet (e.g. `0, 0, 0` or `99, 
 | `--focus-ring` | `#ff6b6b` |
 | `--shadow-color` | `255, 107, 107` |
 
-### Theme 4 — 靛蓝×薄荷 `indigo-mint` (cool color)
+### 主题 4 — 靛蓝×薄荷 `indigo-mint`（冷调彩色）
 
-| Token | Value |
-|-------|-------|
+| Token | 颜色值 |
+|-------|--------|
 | `--bg` | `#eef2ff` |
 | `--surface` | `#ffffff` |
 | `--surface-raised` | `#f5f7ff` |
@@ -157,10 +157,10 @@ Note: `--shadow-color` is defined as a bare RGB triplet (e.g. `0, 0, 0` or `99, 
 | `--focus-ring` | `#4263eb` |
 | `--shadow-color` | `66, 99, 235` |
 
-### Theme 5 — 紫罗兰×柠黄 `violet-amber` (split-complementary)
+### 主题 5 — 紫罗兰×柠黄 `violet-amber`（分裂互补色）
 
-| Token | Value |
-|-------|-------|
+| Token | 颜色值 |
+|-------|--------|
 | `--bg` | `#f5f3ff` |
 | `--surface` | `#ffffff` |
 | `--surface-raised` | `#ede9fe` |
@@ -174,10 +174,10 @@ Note: `--shadow-color` is defined as a bare RGB triplet (e.g. `0, 0, 0` or `99, 
 | `--focus-ring` | `#7c3aed` |
 | `--shadow-color` | `124, 58, 237` |
 
-### Theme 6 — 玫红×天蓝 `rose-sky` (split-complementary)
+### 主题 6 — 玫红×天蓝 `rose-sky`（分裂互补色）
 
-| Token | Value |
-|-------|-------|
+| Token | 颜色值 |
+|-------|--------|
 | `--bg` | `#fef0f8` |
 | `--surface` | `#ffffff` |
 | `--surface-raised` | `#fce4f3` |
@@ -193,87 +193,87 @@ Note: `--shadow-color` is defined as a bare RGB triplet (e.g. `0, 0, 0` or `99, 
 
 ---
 
-## Component Redesign
+## 组件重设计
 
-All components use form tokens (`--radius-*`, `--shadow-*`, `--space-*`). No component has hard-coded pixel values for radius or shadow.
+所有组件使用形态 Token（`--radius-*`、`--shadow-*`、`--space-*`），组件 CSS 中不出现硬编码的圆角或阴影像素值。
 
-### Search Bar (`#user_input_area`)
+### 搜索框（`#user_input_area`）
 
-**Changes:**
-- Height: `3rem` → `3.25rem`
-- Border-radius: `1.5rem` → `var(--radius-full)`
-- Border: `1px solid var(--border)` (unchanged token, new value)
-- Box-shadow: add `0 2px 16px rgba(var(--shadow-color), 0.07)` micro-glow
-- Right side: replace icon-only button with a pill-shaped `<span>` styled as a search submit button using `--primary` background. No HTML change — CSS-only using `#btn-retrieval-content`.
-- Focus state: `border-color: var(--primary)` + `box-shadow: 0 0 0 3px rgba(var(--shadow-color), 0.15)`
+**改动：**
+- 高度：`3rem` → `3.25rem`
+- 圆角：`1.5rem` → `var(--radius-full)`
+- 边框：`1px solid var(--border)`（token 不变，颜色值随主题更新）
+- 阴影：新增 `0 2px 16px rgba(var(--shadow-color), 0.07)` 微光晕
+- 右侧搜索按钮：将仅图标按钮改为 pill 形搜索按钮，使用 `--primary` 背景色。纯 CSS 实现，不改 HTML，选择器为 `#btn-retrieval-content`
+- 聚焦态：`border-color: var(--primary)` + `box-shadow: 0 0 0 3px rgba(var(--shadow-color), 0.15)`
 
-### Collection Container (`.collection`)
+### 集合容器（`.collection`）
 
-**Changes:**
-- Collection header `.collection-head`: `background: var(--surface-raised)`, `border-radius: var(--radius-lg) var(--radius-lg) 0 0`, `border: 1.5px solid var(--border-subtle)`
-- Collection body `.collection-links`: `border-radius: 0 0 var(--radius-lg) var(--radius-lg)`, `border: 1.5px solid var(--border-subtle)`, `border-top: none`
-- Collection gap between groups: `margin-top: 1.5rem`
-- Handle buttons `.collection-handle button`: `border-radius: var(--radius-sm)`, refined hover state
+**改动：**
+- 集合头部 `.collection-head`：`background: var(--surface-raised)`，`border-radius: var(--radius-lg) var(--radius-lg) 0 0`，`border: 1.5px solid var(--border-subtle)`
+- 集合正文 `.collection-links`：`border-radius: 0 0 var(--radius-lg) var(--radius-lg)`，`border: 1.5px solid var(--border-subtle)`，`border-top: none`
+- 集合间距：`margin-top: 1.5rem`
+- 操作按钮 `.collection-handle button`：`border-radius: var(--radius-sm)`，细化悬浮态
 
-### Link Cards (`.collection-link`)
+### 链接卡片（`.collection-link`）
 
-**Changes:**
-- Border-radius: `0.2rem` → `var(--radius-md)` (10px)
-- Box-shadow: `var(--shadow-sm)` at rest, `var(--shadow-md)` on hover
-- Hover: `transform: translateY(-2px)` + shadow step up
-- Link icon `.collection-link-icon`: `border-radius: var(--radius-sm)`, `background: var(--border-subtle)`, color `var(--text-secondary)`
-- Remark area `.collection-link-remark`: `background: var(--surface-raised)` (subtle tint to differentiate from name area)
+**改动：**
+- 圆角：`0.2rem` → `var(--radius-md)`（10px）
+- 阴影：静止态 `var(--shadow-sm)`，悬浮态 `var(--shadow-md)`
+- 悬浮动效：`transform: translateY(-2px)` + 阴影升级
+- 链接图标 `.collection-link-icon`：`border-radius: var(--radius-sm)`，`background: var(--border-subtle)`，颜色 `var(--text-secondary)`
+- 备注区 `.collection-link-remark`：`background: var(--surface-raised)`（轻微着色，与名称区形成区分）
 
-### Sidebar (`.ipage-aside`)
+### 侧边栏（`.ipage-aside`）
 
-**Changes:**
-- Width: implicit `~44px` → `52px` (via padding adjustment)
-- Theme/setting icon wrapper: `width: 34px; height: 34px; border-radius: var(--radius-md)`
-- Active icon (`.ipage-aside-theme`, `.ipage-aside-setting`): `background: var(--primary); color: #fff; box-shadow: var(--shadow-glow)`
-- Add a `<div class="ipage-aside-sep">` divider between theme icon and setting icon (single HTML addition, low risk)
-- Sidebar overall: `border-right: 1px solid var(--border-subtle)`
+**改动：**
+- 宽度：原隐式 `~44px` → `52px`（通过调整 padding 实现）
+- 图标容器（主题按钮、设置按钮）：`width: 34px; height: 34px; border-radius: var(--radius-md)`
+- 激活态图标（`.ipage-aside-theme`、`.ipage-aside-setting`）：`background: var(--primary); color: #fff; box-shadow: var(--shadow-glow)`
+- 在主题图标与设置图标之间新增 `<div class="ipage-aside-sep">` 分隔线（单处 HTML 添加，风险低）
+- 侧边栏整体：`border-right: 1px solid var(--border-subtle)`
 
-### Dropdown (`.dropdown`)
+### 下拉菜单（`.dropdown`）
 
-**Changes:**
-- Border-radius: `0.5rem` → `var(--radius-lg)` (16px)
-- Padding: `0.35rem 0` → `0.4rem`
-- Border: `1px solid var(--border)` → `1.5px solid var(--border-subtle)`
-- Box-shadow: upgrade to `var(--shadow-lg)`
-- Items `.dropdown-item`: `border-radius: var(--radius-sm)` (items get their own radius so hover fills correctly within padded container)
-- Item icon `.dropdown-item-icon`: `background: var(--border-subtle)`, `border-radius: var(--radius-sm)`
-- Add separator `<div class="dropdown-sep">` support in CSS (1px `var(--border-subtle)` line with `0.3rem` vertical margin)
+**改动：**
+- 圆角：`0.5rem` → `var(--radius-lg)`（16px）
+- 内边距：`0.35rem 0` → `0.4rem`
+- 边框：`1px solid var(--border)` → `1.5px solid var(--border-subtle)`
+- 阴影：升级为 `var(--shadow-lg)`
+- 菜单项 `.dropdown-item`：`border-radius: var(--radius-sm)`（悬浮填充在圆角容器内正确显示）
+- 图标 `.dropdown-item-icon`：`background: var(--border-subtle)`，`border-radius: var(--radius-sm)`
+- 新增分隔线 `.dropdown-sep` 的 CSS 支持（1px `var(--border-subtle)` 线，上下各 `0.3rem` 边距）
 
-### Notification + Modal (`utils/notification.js`, `utils/form.js` styles)
+### 通知 + 弹窗（对应 CSS 文件）
 
-**Changes (CSS only):**
-- Toast `.notification`: `border-radius: var(--radius-md)`, `box-shadow: var(--shadow-lg)`
-- Modal overlay: backdrop unchanged
-- Modal dialog: `border-radius: var(--radius-lg)`, `border: 1.5px solid var(--border-subtle)`
+**改动（仅 CSS）：**
+- Toast 提示 `.notification`：`border-radius: var(--radius-md)`，`box-shadow: var(--shadow-lg)`
+- 遮罩层：不变
+- 弹窗主体：`border-radius: var(--radius-lg)`，`border: 1.5px solid var(--border-subtle)`
 
 ---
 
-## Files Changed
+## 改动文件清单
 
-| File | Change type |
-|------|-------------|
-| `css/variable.css` | Full rewrite — 6 themes, two-layer token system, legacy aliases |
-| `tab/src/css/search.css` | Height, radius, shadow, focus state, search button style |
-| `tab/src/css/link.css` | Collection/link card radius, shadow, hover animation |
-| `tab/src/css/home.css` | Sidebar width, icon size, active glow, separator |
-| `tab/src/css/dropdown.css` | Radius, shadow, item radius, separator support |
-| `tab/src/css/tabs.css` | Toolbar spacing and add-collection button style |
-| `tab/src/css/edit-form.css` | Modal radius upgrade |
-| `tab/src/css/notification.css` | Toast radius + shadow upgrade |
-| `tab/src/js/theme-switcher.js` | `THEMES` array: replace 8 old names with 6 new slug names; update default fallback from `'default'` to `'slate-light'` |
-| `tab/index.html` | `data-theme` attributes + display names for 6 themes; add `.ipage-aside-sep` |
+| 文件 | 改动说明 |
+|------|----------|
+| `css/variable.css` | 全部重写 — 6 套主题，两层 Token 系统，旧变量别名 |
+| `tab/src/css/search.css` | 高度、圆角、阴影、聚焦态、搜索按钮样式 |
+| `tab/src/css/link.css` | 集合/链接卡片圆角、阴影、悬浮动效 |
+| `tab/src/css/home.css` | 侧边栏宽度、图标尺寸、激活光晕、分隔线 |
+| `tab/src/css/dropdown.css` | 圆角、阴影、菜单项圆角、分隔线支持 |
+| `tab/src/css/tabs.css` | 工具栏间距与添加集合按钮样式微调 |
+| `tab/src/css/edit-form.css` | 弹窗圆角升级 |
+| `tab/src/css/notification.css` | Toast 圆角 + 阴影升级 |
+| `tab/src/js/theme-switcher.js` | `THEMES` 数组：替换为 6 个新主题 slug；默认值从 `'default'` 改为 `'slate-light'`（两处） |
+| `tab/index.html` | 更新 6 套主题的 `data-theme` 属性和显示名；新增 `.ipage-aside-sep` |
 
-### Theme option HTML mapping
+### HTML 主题选项映射表
 
-Each `<div class="dropdown-item theme-option">` entry in `tab/index.html` must use:
+`tab/index.html` 中每个 `<div class="dropdown-item theme-option">` 条目的具体内容：
 
-| `data-theme` slug | Icon | Display name (Chinese) |
-|-------------------|------|------------------------|
+| `data-theme` 标识 | 图标 | 显示名 |
+|-------------------|------|--------|
 | `slate-light` | `◐` | 石墨浅调 |
 | `midnight-ink` | `🌑` | 深夜墨色 |
 | `coral-amber` | `🪸` | 珊瑚金橙 |
@@ -283,25 +283,25 @@ Each `<div class="dropdown-item theme-option">` entry in `tab/index.html` must u
 
 ---
 
-## Constraints
+## 约束条件
 
-- **No JS logic changes** beyond `THEMES` array in `theme-switcher.js`
-- **Script load order in `tab/index.html` must not change**
-- **`$indexedDB`, `$store`, `$apis` and all global objects are unaffected**
-- **Legacy CSS variable names preserved as aliases** — no grep-and-replace needed in JS
-- Theme is applied via `document.documentElement.setAttribute('data-theme', theme)` — mechanism unchanged
-- The 4 彩色 themes are浅色 (light background) — deep dark is only `midnight-ink`
-- **Theme migration fallback:** existing users may have an old theme name (e.g. `"default"`, `"purple-gold"`) saved in `localStorage`. The `loadSavedTheme()` function already falls back to `currentTheme` (`'default'`) when the saved value is not in `THEMES`. After the update, `'default'` is also no longer in `THEMES`, so it too falls through. The implementer must update **both** hardcoded `'default'` strings in `theme-switcher.js` to `'slate-light'`:
-  1. `let currentTheme = 'default'` → `let currentTheme = 'slate-light'` (line 9, module-level init)
-  2. `theme = 'default'` inside `applyTheme()` → `theme = 'slate-light'` (line 52, guard for unrecognized names)
+- **JS 逻辑不变**，仅修改 `theme-switcher.js` 中的 `THEMES` 数组和默认值
+- **`tab/index.html` 的脚本加载顺序不得改变**
+- **`$indexedDB`、`$store`、`$apis` 等全局对象不受影响**
+- **旧 CSS 变量名通过别名保留**，JS 层无需任何 grep 替换
+- 主题通过 `document.documentElement.setAttribute('data-theme', theme)` 应用，机制不变
+- 4 套彩色主题均为浅色背景，深色主题仅 `midnight-ink` 一套
+- **主题迁移兼容：** 老用户的 `localStorage` 中可能保存了旧主题名（如 `"default"`、`"purple-gold"`）。`loadSavedTheme()` 在旧名不在 `THEMES` 中时会回退至 `currentTheme`（原为 `'default'`），但更新后 `'default'` 本身也不在新 `THEMES` 中，因此会进一步落入 `applyTheme()` 的兜底逻辑。实施时需修改 `theme-switcher.js` 中**两处**硬编码的 `'default'`：
+  1. `let currentTheme = 'default'` → `let currentTheme = 'slate-light'`（第 9 行，模块级初始化）
+  2. `applyTheme()` 内 `theme = 'default'` → `theme = 'slate-light'`（第 52 行，无效主题兜底）
 
 ---
 
-## Out of Scope
+## 不在本次范围内
 
-- Options page (`options/`) — not restyled in this pass
-- Popup (`popup/`) — not restyled in this pass
-- Settings panel (`settings.css`) — no changes required; all values already use tokens that are preserved via the alias table above
-- Font family — no change
-- Layout proportions (column widths, sidebar/body split) — no change
-- Screensaver layer — no change
+- 选项页（`options/`）— 本次不重构
+- 弹窗（`popup/`）— 本次不重构
+- 设置面板（`settings.css`）— 无需改动，现有值已通过别名表完整覆盖
+- 字体族 — 不变
+- 布局比例（列宽、侧边栏与主体分割）— 不变
+- 屏保层 — 不变
