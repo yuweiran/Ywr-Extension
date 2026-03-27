@@ -57,6 +57,8 @@ Rebuild the extension's visual design language from scratch. Current state: 8 th
 | `--shadow-2` | `var(--shadow-lg)` |
 | `--inset-subtle` | `inset 0.1rem 0.1rem 0.25rem rgba(var(--shadow-color), 0.08)` |
 | `--inset-highlight` | `inset -0.1rem -0.1rem 0.25rem rgba(255,255,255,0.05)` |
+| `--primary-light` | `var(--primary-hover)` |
+| `--primary-dark` | `var(--primary)` |
 
 **Layer 2 — Form tokens** (global, shared across all 6 themes, never theme-specific):
 
@@ -289,7 +291,9 @@ Each `<div class="dropdown-item theme-option">` entry in `tab/index.html` must u
 - **Legacy CSS variable names preserved as aliases** — no grep-and-replace needed in JS
 - Theme is applied via `document.documentElement.setAttribute('data-theme', theme)` — mechanism unchanged
 - The 4 彩色 themes are浅色 (light background) — deep dark is only `midnight-ink`
-- **Theme migration fallback:** existing users may have an old theme name (e.g. `"default"`, `"purple-gold"`) saved in `localStorage`. The `loadSavedTheme()` function already falls back to `currentTheme` (`'default'`) when the saved value is not in `THEMES`. After the update, `'default'` is also no longer in `THEMES`, so it too falls through. The implementer must update the fallback value inside `theme-switcher.js` from `'default'` to `'slate-light'` so existing users get the light base theme rather than a broken state.
+- **Theme migration fallback:** existing users may have an old theme name (e.g. `"default"`, `"purple-gold"`) saved in `localStorage`. The `loadSavedTheme()` function already falls back to `currentTheme` (`'default'`) when the saved value is not in `THEMES`. After the update, `'default'` is also no longer in `THEMES`, so it too falls through. The implementer must update **both** hardcoded `'default'` strings in `theme-switcher.js` to `'slate-light'`:
+  1. `let currentTheme = 'default'` → `let currentTheme = 'slate-light'` (line 9, module-level init)
+  2. `theme = 'default'` inside `applyTheme()` → `theme = 'slate-light'` (line 52, guard for unrecognized names)
 
 ---
 
@@ -297,7 +301,7 @@ Each `<div class="dropdown-item theme-option">` entry in `tab/index.html` must u
 
 - Options page (`options/`) — not restyled in this pass
 - Popup (`popup/`) — not restyled in this pass
-- Settings panel (`settings.css`) — minor token updates only, no structural change
+- Settings panel (`settings.css`) — no changes required; all values already use tokens that are preserved via the alias table above
 - Font family — no change
 - Layout proportions (column widths, sidebar/body split) — no change
 - Screensaver layer — no change
