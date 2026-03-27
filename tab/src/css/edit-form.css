@@ -2,10 +2,10 @@
   padding: 1.5rem;
   color: var(--text);
   width: 28rem;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-lg);
   background-color: var(--surface);
-  border: 1px solid var(--borderGrey);
-  box-shadow: var(--shadow-2);
+  border: 1.5px solid var(--border-subtle);
+  box-shadow: var(--shadow-lg);
   position: absolute;
   top: 50%;
   left: 50%;

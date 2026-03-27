@@ -2,10 +2,10 @@
   background-color: var(--surface);
   position: fixed;
   width: 18rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   padding: 0.75rem;
   border: 1px solid var(--borderGrey);
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--shadow-lg);
   right: 1.5rem;
   z-index: 10000;
   transition: top 400ms ease;
