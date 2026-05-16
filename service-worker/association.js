@@ -63,6 +63,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message.type === "data:changed") {
+    broadcastDataChanged();
+    return false;
+  }
+
   /* ---- Popup 消息处理 ---- */
 
   if (message.type === "popup:getCollections") {
@@ -183,34 +188,35 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       await tables.collections.clearAll();
       await tables.links.clearAll();
       let skipped = 0;
+      const collectionIdMap = {};
+      const usedCollectionIds = new Set();
       for (const c of collections) {
-        if (c.id && c.name) {
-          await tables.collections.add({ name: c.name, order: c.order ?? 0 });
+        if (c.name) {
+          const savedCollection = await tables.collections.add({
+            id: c.id,
+            name: c.name,
+            order: c.order ?? 0,
+          }, { preserveId: true });
+          if (c.id != null) {
+            collectionIdMap[c.id] = savedCollection.id;
+            usedCollectionIds.add(savedCollection.id);
+          }
         } else {
           skipped++;
         }
       }
-      // 建立旧 id → 新 id 映射（导入后 id 会重新生成）
-      // 由于 add() 用 Date.now()，需按原顺序逐条写入
-      // 先收集新的 collection id 映射
-      const newCollections = await tables.collections.list();
-      const collectionIdMap = {};
-      const sortedOld = [...collections].filter((c) => c.id && c.name).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      const sortedNew = [...newCollections].sort((a, b) => a.order - b.order);
-      sortedOld.forEach((old, i) => {
-        if (sortedNew[i]) collectionIdMap[old.id] = sortedNew[i].id;
-      });
       for (const l of links) {
-        if (l.id && l.name && l.url && l.collection) {
-          const mappedCollection = collectionIdMap[l.collection] || l.collection;
+        const mappedCollection = collectionIdMap[l.collection] || l.collection;
+        if (l.name && l.url && usedCollectionIds.has(mappedCollection)) {
           await tables.links.add({
+            id: l.id,
             name: l.name,
             url: l.url,
             icon: l.icon || "",
             remark: l.remark || "",
             order: l.order ?? 0,
             collection: mappedCollection,
-          });
+          }, { preserveId: true });
         } else {
           skipped++;
         }

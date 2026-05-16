@@ -1,6 +1,13 @@
 const $apis = (() => {
+  const notifyDataChanged = () => {
+    if (typeof chrome !== "undefined" && chrome.runtime?.sendMessage) {
+      chrome.runtime.sendMessage({ type: "data:changed" }).catch(() => {});
+    }
+  }
   //链接列表
   const getCollectionsAndLinks = async () => {
+    $store.collections = {}
+    $store.links = {}
     const collections = (await $indexedDB.$tables.collections.list()).sort((a, b) => a.order - b.order)
     for (let collection of collections) {
       $store.collections[collection.id] = structuredClone(collection)
@@ -74,6 +81,7 @@ const $apis = (() => {
           }))
           await $indexedDB.$tables.collections.addMany(normalizedCollections, true)
           await $indexedDB.$tables.links.addMany(normalizedLinks, true)
+          notifyDataChanged()
           res()
         } catch (error) {
           $notify.error({
@@ -92,9 +100,11 @@ const $apis = (() => {
   const collection = {
     add: async (collection) => {
       await $indexedDB.$tables.collections.add(collection)
+      notifyDataChanged()
     },
     edit: async (collection) => {
       await $indexedDB.$tables.collections.update(collection)
+      notifyDataChanged()
     },
     delete: async (id) => {
       //级联删除链接
@@ -102,6 +112,7 @@ const $apis = (() => {
       await $indexedDB.$tables.links.deleteWithCondition({
         collection: id
       })
+      notifyDataChanged()
     },
     updateOrder: async (records) => {
       for (let r of records) {
@@ -112,12 +123,15 @@ const $apis = (() => {
   const link = {
     add: async (link) => {
       await $indexedDB.$tables.links.add(link)
+      notifyDataChanged()
     },
     edit: async (link) => {
       await $indexedDB.$tables.links.update(link)
+      notifyDataChanged()
     },
     delete: async (id) => {
       await $indexedDB.$tables.links.delete(id)
+      notifyDataChanged()
     },
     updateOrder: async (records) => {
       for (let r of records) {

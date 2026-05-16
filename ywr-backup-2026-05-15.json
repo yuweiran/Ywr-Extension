@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "exportDate": "2026-05-15T11:04:57.256Z",
+  "collections": [
+    {
+      "name": "AI助手",
+      "order": 1,
+      "id": 1765369684436
+    },
+    {
+      "name": "阿里云服务",
+      "order": 2,
+      "id": 1778739650701
+    }
+  ],
+  "links": [
+    {
+      "order": 1,
+      "name": "Supported AI models in GitHub Copilot - GitHub Docs",
+      "remark": "Supported AI models in GitHub Copilot - GitHub Docs",
+      "url": "https://docs.github.com/en/copilot/reference/ai-models/supported-models",
+      "collection": 1765369684436,
+      "icon": "https://docs.github.com/assets/cb-345/images/site/favicon.png",
+      "id": 1765369708746
+    },
+    {
+      "order": 0,
+      "name": "哔哩哔哩 (゜-゜)つロ 干杯~-bilibili",
+      "remark": "哔哩哔哩 (゜-゜)つロ 干杯~-bilibili",
+      "url": "https://www.bilibili.com/",
+      "collection": 1765369684436,
+      "icon": "https://i0.hdslb.com/bfs/static/jinkela/long/images/favicon.ico",
+      "id": 1765370339834
+    },
+    {
+      "order": 0,
+      "name": "日志服务-阿里云控制台",
+      "remark": "日志服务-阿里云控制台",
+      "url": "https://sls.console.aliyun.com/lognext/project/k8s-log-cdbdbfcc557f645d18fa709d3c6c4cc02/logsearch/invoice-issue-service-v-taxapi?slsRegion=cn-beijing",
+      "collection": 1778739650701,
+      "icon": "https://img.alicdn.com/tfs/TB1_ZXuNcfpK1RjSZFOXXa6nFXa-32-32.ico",
+      "id": 1778739661879
+    },
+    {
+      "order": 2,
+      "name": "API 网关",
+      "remark": "API 网关",
+      "url": "https://apigateway.console.aliyun.com/?spm=5176.12818093_47.overview_recent.2.3be916d0sqnIAY#/cn-beijing/groups/list",
+      "collection": 1778739650701,
+      "icon": "https://img.alicdn.com/tfs/TB1_ZXuNcfpK1RjSZFOXXa6nFXa-32-32.ico",
+      "id": 1778739732832
+    },
+    {
+      "order": 3,
+      "name": "云市场·服务商控制台",
+      "remark": "云市场·服务商控制台",
+      "url": "https://msp.aliyun.com/msp/commodity/list?",
+      "collection": 1778739650701,
+      "icon": "https://img.alicdn.com/tfs/TB1_ZXuNcfpK1RjSZFOXXa6nFXa-32-32.ico",
+      "id": 1778740093263
+    },
+    {
+      "order": 4,
+      "name": "柠檬云发票【最新版】_财务管理_归档_财务-云市场-阿里云",
+      "remark": "柠檬云发票【最新版】_财务管理_归档_财务-云市场-阿里云",
+      "url": "https://market.aliyun.com/detail/cmapi00073798?spm=5176.marketmsp.0.0.5eb525dbU789FN#sku=yuncode6779800001",
+      "collection": 1778739650701,
+      "icon": "https://img.alicdn.com/tfs/TB1_ZXuNcfpK1RjSZFOXXa6nFXa-32-32.ico",
+      "id": 1778740139015
+    },
+    {
+      "order": 1,
+      "name": "容器服务 Kubernetes 版",
+      "remark": "容器服务 Kubernetes 版",
+      "url": "https://cs.console.aliyun.com/?spm=5176.12818093_47.overview_recent.5.5e6e16d0C0Gb8R#/k8s/cluster/list?region=cn-beijing",
+      "collection": 1778739650701,
+      "icon": "https://img.alicdn.com/tfs/TB1_ZXuNcfpK1RjSZFOXXa6nFXa-32-32.ico",
+      "id": 1778740781480
+    }
+  ]
+}

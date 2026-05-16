@@ -9,36 +9,43 @@ class IndexedModel {
   }
   add = async (record) => {
     const id = new Date().getTime();
-    const store = this.database
-      .transaction([this.model], "readwrite")
-      .objectStore(this.model);
+    const transaction = this.database.transaction([this.model], "readwrite");
+    const store = transaction.objectStore(this.model);
     record.id = id;
-    store.add(record);
+    return await new Promise((res, rej) => {
+      const request = store.add(record);
+      request.onsuccess = () => res(record);
+      request.onerror = () => rej(request.error);
+    });
   };
   addMany = async (records, useOrder = false) => {
-    const store = this.database
-      .transaction([this.model], "readwrite")
-      .objectStore(this.model);
+    const transaction = this.database.transaction([this.model], "readwrite");
+    const store = transaction.objectStore(this.model);
     records.forEach((record, ind) => {
       if (useOrder) {
         record.order = ind;
       }
       store.add(record);
     });
+    return await new Promise((res, rej) => {
+      transaction.oncomplete = () => res(records);
+      transaction.onerror = () => rej(transaction.error);
+      transaction.onabort = () => rej(transaction.error);
+    });
   };
   delete = async (id) => {
-    const store = this.database
-      .transaction([this.model], "readwrite")
-      .objectStore(this.model);
-    store.delete(id);
+    const store = this.database.transaction([this.model], "readwrite").objectStore(this.model);
+    return await new Promise((res, rej) => {
+      const request = store.delete(id);
+      request.onsuccess = () => res();
+      request.onerror = () => rej(request.error);
+    });
   };
   deleteWithCondition = async (condition) => {
-    const store = this.database
-      .transaction([this.model], "readwrite")
-      .objectStore(this.model);
-    const records = await new Promise((res, rej) => {
+    const transaction = this.database.transaction([this.model], "readwrite");
+    const store = transaction.objectStore(this.model);
+    return await new Promise((res, rej) => {
       const request = store.openCursor();
-      const records = [];
       request.onsuccess = (event) => {
         const cursor = event.target.result;
         if (cursor) {
@@ -50,25 +57,22 @@ class IndexedModel {
             }
           }
           if (isValid) {
-            records.push(cursor.value);
+            cursor.delete();
           }
           cursor.continue();
-        } else {
-          res(records);
         }
       };
       request.onerror = () => {
-        rej();
+        rej(request.error);
       };
-    });
-    console.log(records);
-    records.forEach((r) => {
-      store.delete(r.id);
+      transaction.oncomplete = () => res();
+      transaction.onerror = () => rej(transaction.error);
+      transaction.onabort = () => rej(transaction.error);
     });
   };
   list = async (condition = null) => {
     const store = this.database
-      .transaction([this.model], "readwrite")
+      .transaction([this.model], "readonly")
       .objectStore(this.model);
 
     return await new Promise((res, rej) => {
@@ -109,9 +113,8 @@ class IndexedModel {
     });
   };
   update = async (data) => {
-    const store = this.database
-      .transaction([this.model], "readwrite")
-      .objectStore(this.model);
+    const transaction = this.database.transaction([this.model], "readwrite");
+    const store = transaction.objectStore(this.model);
     const record = await new Promise((res, rej) => {
       const request = store.get(data.id);
       request.onsuccess = () => {
@@ -125,14 +128,20 @@ class IndexedModel {
       for (let property in data) {
         record[property] = data[property];
       }
-      store.put(record);
+      return await new Promise((res, rej) => {
+        const request = store.put(record);
+        request.onsuccess = () => res(record);
+        request.onerror = () => rej(request.error);
+      });
     }
   };
   clear = async () => {
-    const store = this.database
-      .transaction([this.model], "readwrite")
-      .objectStore(this.model);
-    store.clear();
+    const store = this.database.transaction([this.model], "readwrite").objectStore(this.model);
+    return await new Promise((res, rej) => {
+      const request = store.clear();
+      request.onsuccess = () => res();
+      request.onerror = () => rej(request.error);
+    });
   };
 }
 

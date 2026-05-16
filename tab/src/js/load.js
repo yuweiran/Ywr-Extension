@@ -13,6 +13,26 @@ function resetFavicon() {
   if (link) link.href = "./src/img/icon/snow.png";
 }
 
+let isCollectionsRendering = false;
+let shouldRefreshCollectionsAgain = false;
+
+async function refreshCollections() {
+  if (!$indexedDB?.$tables || !$collections?.renderCollections) return;
+  if (isCollectionsRendering) {
+    shouldRefreshCollectionsAgain = true;
+    return;
+  }
+  isCollectionsRendering = true;
+  try {
+    do {
+      shouldRefreshCollectionsAgain = false;
+      await $collections.renderCollections();
+    } while (shouldRefreshCollectionsAgain);
+  } finally {
+    isCollectionsRendering = false;
+  }
+}
+
 window.onload = () => {
   //搜索引擎
   if (!localStorage.getItem("engine")) {
@@ -31,7 +51,7 @@ window.onload = () => {
   initIndexedDB().then((db) => {
     $indexedDB = db
     initIndexedDBFunction(db, $indexedDBModel).then(() => {
-      $collections.renderCollections()
+      refreshCollections()
     })
   })
 
@@ -39,7 +59,7 @@ window.onload = () => {
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type === "dataChanged") {
-    $collections.renderCollections();
+    refreshCollections();
   }
   if (message.type === "profileChanged") {
     chrome.storage.sync.get(["profile_signature"], (data) => {
@@ -53,6 +73,13 @@ chrome.runtime.onMessage.addListener((message) => {
   }
   if (message.type === "tab:iconReset") {
     resetFavicon();
+  }
+});
+
+window.addEventListener("focus", refreshCollections);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    refreshCollections();
   }
 });
 

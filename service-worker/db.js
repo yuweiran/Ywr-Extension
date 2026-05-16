@@ -9,14 +9,18 @@ class IndexedModel {
     this.model = modelName;
   }
 
-  add(record) {
+  add(record, options = {}) {
+    const { preserveId = false } = options;
     return new Promise((resolve, reject) => {
       const store = this.database
         .transaction([this.model], "readwrite")
         .objectStore(this.model);
-      record.id = Date.now();
-      const req = store.add(record);
-      req.onsuccess = () => resolve(record);
+      const nextRecord = { ...record };
+      if (!preserveId || nextRecord.id == null) {
+        nextRecord.id = createRecordId();
+      }
+      const req = store.add(nextRecord);
+      req.onsuccess = () => resolve(nextRecord);
       req.onerror = () => reject(req.error);
     });
   }
@@ -87,6 +91,13 @@ const MODELS = {
 
 let _db = null;
 let _tables = null;
+let _lastRecordId = 0;
+
+function createRecordId() {
+  const now = Date.now();
+  _lastRecordId = now > _lastRecordId ? now : _lastRecordId + 1;
+  return _lastRecordId;
+}
 
 function openDB() {
   return new Promise((resolve, reject) => {
