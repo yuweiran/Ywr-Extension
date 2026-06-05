@@ -100,7 +100,7 @@ $collections.collectionsContainer.addEventListener('click', async (event) => {
   }
 })
 
-$collections.btnAddCollecation.addEventListener('click', () => {
+$collections.btnAddCollection.addEventListener('click', () => {
   $modal.form({
     title: 'Create Collection',
     config: [

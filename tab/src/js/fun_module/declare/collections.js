@@ -5,7 +5,7 @@ const $collections = (function () {
   const btnLinkAdd = "link-tool-add";
   const btnCollectionDelete = "link-collection-delete";
   const btnCollectionEdit = "link-collection-edit";
-  const btnAddCollecation = $el.__(".tab-btn-add-collection");
+  const btnAddCollection = $el.__(".tab-btn-add-collection");
   let collections = [];
 
   const batchUpdateCollectionOrder = async (sortedItems) => {
@@ -151,7 +151,7 @@ const $collections = (function () {
     collectionsContainer,
     btnLinkDelete,
     btnLinkEdit,
-    btnAddCollecation,
+    btnAddCollection,
     btnLinkAdd,
     btnCollectionDelete,
     btnCollectionEdit,
