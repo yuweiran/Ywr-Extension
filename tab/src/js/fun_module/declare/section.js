@@ -62,8 +62,8 @@ const $sections = (() => {
           const sortedItems = this.toArray();
         },
       });
-      const tabSectiona = $el.__all(".window-item-tabs");
-      for (let tabSection of tabSectiona) {
+      const tabSections = $el.__all(".window-item-tabs");
+      for (let tabSection of tabSections) {
         new Sortable(tabSection, {
           group: {
             name: "linkShared",

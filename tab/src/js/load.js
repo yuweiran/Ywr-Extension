@@ -76,7 +76,6 @@ chrome.runtime.onMessage.addListener((message) => {
   }
 });
 
-window.addEventListener("focus", refreshCollections);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {
     refreshCollections();

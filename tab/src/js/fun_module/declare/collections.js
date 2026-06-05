@@ -82,7 +82,6 @@ const $collections = (function () {
     });
     const linksSections = $el.__all(".collection-links");
     for (let linksSection of linksSections) {
-      linksSection;
       new Sortable(linksSection, {
         animation: 150,
         group: {
