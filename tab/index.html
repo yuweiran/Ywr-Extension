@@ -1,22 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="shortcut icon" href="./src/img/icon/snow.png" />
+    <title>INIT</title>
+    <link rel="stylesheet" href="./src/css/home.css" />
+    <link
+      rel="stylesheet"
+      href="https://at.alicdn.com/t/c/font_2691375_rhuyt90isv.css"
+    />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <link rel="shortcut icon" href="./src/img/icon/snow.png" />
-  <title>INIT</title>
-  <link rel="stylesheet" href="./src/css/home.css" />
-  <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_2691375_rhuyt90isv.css" />
-</head>
-
-<body style="height: 100vh">
-  <!-- <div id="clock"></div> -->
-  <!-- -------------------------内容区域 -------------------------------->
-  <div class="content-area">
-    <div class="ipage-aside">
-      <!-- <div class="ipage-aside-tab">
+  <body style="height: 100vh">
+    <!-- <div id="clock"></div> -->
+    <!-- -------------------------内容区域 -------------------------------->
+    <div class="content-area">
+      <div class="ipage-aside">
+        <!-- <div class="ipage-aside-tab">
         <div class="tab-item">
           <div class="icon-collections tab-icon"></div>
           <div class="tab-text"></div>
@@ -26,56 +28,56 @@
           <div class="tab-text"></div>
         </div>
       </div> -->
-      <div class="ipage-aside-theme">
-        <span class="icon-theme"></span>
-        <div class="theme-switcher dropdown" id="theme-switcher">
-          <div class="dropdown-item theme-option" data-theme="slate-light">
-            <span class="dropdown-item-icon">◐</span>
-            <span>石墨浅调</span>
-          </div>
-          <div class="dropdown-item theme-option" data-theme="midnight-ink">
-            <span class="dropdown-item-icon">🌑</span>
-            <span>深夜墨色</span>
-          </div>
-          <div class="dropdown-item theme-option" data-theme="coral-amber">
-            <span class="dropdown-item-icon">🪸</span>
-            <span>珊瑚金橙</span>
-          </div>
-          <div class="dropdown-item theme-option" data-theme="indigo-mint">
-            <span class="dropdown-item-icon">💎</span>
-            <span>靛蓝薄荷</span>
-          </div>
-          <div class="dropdown-item theme-option" data-theme="violet-amber">
-            <span class="dropdown-item-icon">🔮</span>
-            <span>紫罗兰柠黄</span>
-          </div>
-          <div class="dropdown-item theme-option" data-theme="rose-sky">
-            <span class="dropdown-item-icon">🌸</span>
-            <span>玫红天蓝</span>
+        <div class="ipage-aside-theme">
+          <span class="icon-theme"></span>
+          <div class="theme-switcher dropdown" id="theme-switcher">
+            <div class="dropdown-item theme-option" data-theme="slate-light">
+              <span class="dropdown-item-icon">◐</span>
+              <span>石墨浅调</span>
+            </div>
+            <div class="dropdown-item theme-option" data-theme="midnight-ink">
+              <span class="dropdown-item-icon">🌑</span>
+              <span>深夜墨色</span>
+            </div>
+            <div class="dropdown-item theme-option" data-theme="coral-amber">
+              <span class="dropdown-item-icon">🪸</span>
+              <span>珊瑚金橙</span>
+            </div>
+            <div class="dropdown-item theme-option" data-theme="indigo-mint">
+              <span class="dropdown-item-icon">💎</span>
+              <span>靛蓝薄荷</span>
+            </div>
+            <div class="dropdown-item theme-option" data-theme="violet-amber">
+              <span class="dropdown-item-icon">🔮</span>
+              <span>紫罗兰柠黄</span>
+            </div>
+            <div class="dropdown-item theme-option" data-theme="rose-sky">
+              <span class="dropdown-item-icon">🌸</span>
+              <span>玫红天蓝</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="ipage-aside-sep"></div>
-      <div class="ipage-aside-setting">
-        <span class="icon-setting"></span>
-      </div>
-    </div>
-    <div class="ipage-body">
-      <div class="ipage-body-center">
-        <div id="user_search_area">
-          <div id="user_input_area">
-            <button id="btn-retrieval-engine">
-              <span class="icon-baidu"></span>
-            </button>
-            <input type="text" spellcheck="false" id="user-content" />
-            <button id="btn-retrieval-content">
-              <span class="icon-search"></span>
-            </button>
-          </div>
-          <div class="suggestion-list" id="suggestion-list"></div>
+        <div class="ipage-aside-sep"></div>
+        <div class="ipage-aside-setting">
+          <span class="icon-setting"></span>
         </div>
-        <div id="ipage-tabs">
-          <!-- <div class="tab-item btn-tool-layout">
+      </div>
+      <div class="ipage-body">
+        <div class="ipage-body-center">
+          <div id="user_search_area">
+            <div id="user_input_area">
+              <button id="btn-retrieval-engine">
+                <span class="icon-baidu"></span>
+              </button>
+              <input type="text" spellcheck="false" id="user-content" />
+              <button id="btn-retrieval-content">
+                <span class="icon-search"></span>
+              </button>
+            </div>
+            <div class="suggestion-list" id="suggestion-list"></div>
+          </div>
+          <div id="ipage-tabs">
+            <!-- <div class="tab-item btn-tool-layout">
             <span class="icon-layout"></span><span class="tab-item-text">LAYOUT</span>
           </div>
           <div class="tab-item btn-tool-history">
@@ -90,70 +92,92 @@
           <div class="tab-item btn-tool-task">
             <span class="icon-task"></span><span class="tab-item-text">TASK</span>
           </div> -->
-          <!-- <div class="tab-item btn-tool-more">
+            <!-- <div class="tab-item btn-tool-more">
             <span class="icon-more"></span><span class="tab-item-text">MORE</span>
           </div> -->
-          <button class="tab-btn-add-collection">
-            <span class="icon-plus add-collection-icon"></span><span class="add-collection-text">ADD COLLECTION</span>
-          </button>
-        </div>
-        <div id="ipage-collections"></div>
-      </div>
-      <div class="ipage-body-right">
-        <div class="ipage-aside-header">
-          <button class="btn-aside-fold">
-            <span class="icon-fold ipage-aside-fold"></span>
-          </button>
-        </div>
-        <div class="ipage-sections">
-          <div class="section">
-            <div class="section-title">Tabs</div>
-            <ul class="section-tabs-show"></ul>
+            <button class="tab-btn-add-collection">
+              <span class="icon-plus add-collection-icon"></span
+              ><span class="add-collection-text">ADD COLLECTION</span>
+            </button>
           </div>
-          <!-- <div><input-file id="test-file"></input-file></div> -->
-          <div class="section">
-            <div class="section-title">History</div>
-            <ul class="section-history-show"></ul>
+          <div id="ipage-collections"></div>
+        </div>
+        <div class="ipage-body-right">
+          <div class="ipage-aside-header">
+            <button class="btn-aside-fold">
+              <span class="icon-fold ipage-aside-fold"></span>
+            </button>
+          </div>
+          <div class="ipage-sections">
+            <div class="section">
+              <div class="section-title">Tabs</div>
+              <ul class="section-tabs-show"></ul>
+            </div>
+            <!-- <div><input-file id="test-file"></input-file></div> -->
+            <div class="section">
+              <div class="section-title-row">
+                <div class="section-title">History</div>
+                <button type="button" class="section-history-clear-all">
+                  Clear
+                </button>
+              </div>
+              <div class="section-history-viewport">
+                <ul class="section-history-show"></ul>
+              </div>
+              <div class="section-history-pagination">
+                <button
+                  type="button"
+                  class="history-page-btn history-page-prev"
+                >
+                  Prev
+                </button>
+                <div class="history-page-info">1 / 1</div>
+                <button
+                  type="button"
+                  class="history-page-btn history-page-next"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <!-- 引入第三方库 -->
-  <script src="../vender/sortablejs.js"></script>
-  <!-- 自定义的一些方法 -->
-  <script src="./src/js/components/input-file.js"></script>
-  <script src="./src/js/theme-switcher.js"></script>
-  <script src="./src/js/settings-manager.js"></script>
-  <script src="../utils/color.js"></script>
-  <script src="../utils/index.js"></script>
-  <script src="../utils/form.js"></script>
-  <script src="../utils/dropdown.js"></script>
-  <script src="../utils/notification.js"></script>
-  <!-- store -->
-  <script src="./src/js/store/index.js"></script>
-  <!-- 声明标签获取函数 -->
-  <script src="../utils/declare_element.js"></script>
-  <!-- indexedDB -->
-  <script src="./src/js/indexeddb/models/index.model.js"></script>
-  <script src="./src/js/indexeddb/utils/index.utils.js"></script>
-  <script src="./src/js/indexeddb/index.js"></script>
-  <!-- 元素获取 -->
-  <script src="./src/js/fun_module/declare/search.js"></script>
-  <script src="./src/js/fun_module/declare/collections.js"></script>
-  <script src="./src/js/fun_module/declare/tools.js"></script>
-  <script src="./src/js/fun_module/declare/section.js"></script>
-  <script src="./src/js/fun_module/declare/aside.js"></script>
-  <!-- 模块的一些操作 -->
-  <script src="./src/js/fun_module/execute/search.js"></script>
-  <script src="./src/js/fun_module/execute/collection.js"></script>
-  <script src="./src/js/fun_module/execute/tool.js"></script>
-  <script src="./src/js/fun_module/execute/section.js"></script>
-  <script src="./src/js/fun_module/execute/aside.js"></script>
-  <!-- api -->
-  <script src="./src/js/apis/index.js"></script>
-  <!-- load -->
-  <script src="./src/js/load.js"></script>
-</body>
-
+    <!-- 引入第三方库 -->
+    <script src="../vender/sortablejs.js"></script>
+    <!-- 自定义的一些方法 -->
+    <script src="./src/js/components/input-file.js"></script>
+    <script src="./src/js/theme-switcher.js"></script>
+    <script src="./src/js/settings-manager.js"></script>
+    <script src="../utils/color.js"></script>
+    <script src="../utils/index.js"></script>
+    <script src="../utils/form.js"></script>
+    <script src="../utils/dropdown.js"></script>
+    <script src="../utils/notification.js"></script>
+    <!-- store -->
+    <script src="./src/js/store/index.js"></script>
+    <!-- 声明标签获取函数 -->
+    <script src="../utils/declare_element.js"></script>
+    <!-- indexedDB -->
+    <script src="./src/js/indexeddb/models/index.model.js"></script>
+    <script src="./src/js/indexeddb/utils/index.utils.js"></script>
+    <script src="./src/js/indexeddb/index.js"></script>
+    <!-- 元素获取 -->
+    <script src="./src/js/fun_module/declare/search.js"></script>
+    <script src="./src/js/fun_module/declare/collections.js"></script>
+    <script src="./src/js/fun_module/declare/tools.js"></script>
+    <script src="./src/js/fun_module/declare/section.js"></script>
+    <script src="./src/js/fun_module/declare/aside.js"></script>
+    <!-- 模块的一些操作 -->
+    <script src="./src/js/fun_module/execute/search.js"></script>
+    <script src="./src/js/fun_module/execute/collection.js"></script>
+    <script src="./src/js/fun_module/execute/tool.js"></script>
+    <script src="./src/js/fun_module/execute/section.js"></script>
+    <script src="./src/js/fun_module/execute/aside.js"></script>
+    <!-- api -->
+    <script src="./src/js/apis/index.js"></script>
+    <!-- load -->
+    <script src="./src/js/load.js"></script>
+  </body>
 </html>
