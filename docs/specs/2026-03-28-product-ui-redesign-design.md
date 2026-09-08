@@ -38,7 +38,7 @@
 
 1. **移除现有固定左竖条 `.ipage-aside` 的外壳**，但其**内部节点与 class 钩子保留并迁入顶栏**：主题按钮沿用 `.ipage-aside-theme` + `#theme-switcher` 下拉、设置按钮沿用 `.ipage-aside-setting`。**这是硬性约束**：`theme-switcher.js` 与 `settings-manager.js` 通过这两个 class 自动绑定，M1 阶段必须保持钩子可用，否则主题切换与设置入口立刻失效。M1 验收包含"点顶栏主题/设置图标功能正常"。
 2. **三段式容器**：
-   - `.shell-topbar`：高度 `--topbar-h`，含引擎 logo、问候/日期（可选 `clock` widget hero 变体）、主题入口、设置入口
+   - `.shell-topbar`：高度 `--topbar-h`，含引擎 logo、问候/日期（**该问候/日期即 `clock` widget 的 topbar 渲染位**——启用时由 widget 渲染，停用时此区域留空，不存在第二套内置问候，避免双实例）、主题入口、设置入口
    - `.shell-hero`：高度 `--hero-h`，承载主搜索区（现 `#user_search_area` 迁入）与引擎 chips
    - `.shell-workbench`：`display: grid`，列布局 `[widgets 列(auto, 可关) | 收藏区(1fr) | 右栏(auto, 可折叠)]`
 3. **收藏集合为主体**：`#ipage-collections` 渲染逻辑与 `$collections` 不动，仅外层容器与间距样式变化。
@@ -102,7 +102,7 @@ widgets/
 | 待办清单 | `todo` | IndexedDB 新表 `todos` | 增删/勾选/清除已完成；空态引导；同页事件直连刷新（见 §2.1）|
 | 每日语录 | `quote` | 内置 ~50 条 + localStorage 记录当日索引 | 随机展示，点按换一条；按天固定（同日不重复随机）|
 | 快捷工具组 | `tools` | localStorage JSON 数组 | 默认 8 个（GitHub/知乎/Gmail/B站/掘金/邮箱/地图/翻译），可增删改；图标用 emoji 或 iconfont |
-| 多引擎搜索 | `engines` | 复用 `'engine'` | chips 展示 3 引擎，点击切换主搜索框引擎并聚焦。**注意：与 Hero 内引擎 chips 是同一个实例**——引擎状态由既有 `$searchEles`/`execute/search.js` 驱动，widget 只渲染 UI 并调用既有切换 API，避免出现两行重复 chips |
+| 多引擎搜索 | `engines` | 复用 `'engine'` | chips 展示 3 引擎，点击切换主搜索框引擎并聚焦。**引擎驱动（明确）**：现有 `$searchEles` 只暴露 DOM 引用/`initEngineIcon`，`engineItem` 是 parse 期静态 NodeList（当前为空，无 `.engine-item` 节点，旧 `execute/search.js` 委托是死代码）；引擎切换逻辑内联在 `execute/search.js` 的 `#btn-retrieval-engine` 下拉回调里。**因此 M4 新增共享 API `$searchEles.setEngine(engine)`**（封装"写 `localStorage.engine` + `initEngineIcon` + 标记选中"），chips、原下拉回调、engines widget 三处统一调用；chips 渲染不得依赖 parse 期 `engineItem` NodeList 或旧委托路径（该死代码可在 M4 一并删除）。`engines` widget 与 Hero chips 是同一实例，避免两行重复 chips |
 
 ### 2.4 IndexedDB schema 升级
 
@@ -132,8 +132,8 @@ widgets/
 | 内容 | 存储位置 | 理由 |
 |------|----------|------|
 | 本地图片二进制、渐变字符串（可 MB 级）| IndexedDB 表 `wallpapers` | 配额大；避免每次滑块输入都整包序列化 base64 |
-| 壁纸配置 `{current, library(元数据), favorites, daily}` | **`chrome.storage.local` 键 `'ywr-wallpaper'`** | **SW 的 alarm 必须能写**（SW 无 tab 页 localStorage）；tab 与 SW 共享可读 |
-| 滑块即时值（透明度/模糊）| 沿用 `localStorage` 会话内暂存或并入配置后 debounce 写 | 交互轻量 |
+| 壁纸配置 `{current, library(元数据), favorites, daily, view, seeded}` | **`chrome.storage.local` 键 `'ywr-wallpaper'`** | **SW 的 alarm 必须能写**（SW 无 tab 页 localStorage）；tab 与 SW 共享可读 |
+| 透明度/模糊滑块值 | 并入配置 `view` 字段（见下），debounce ~200ms 整包写回 | 单一数据源；避免每次滑动都全量 IO |
 
 **配置 schema（chrome.storage.local）：**
 
@@ -146,7 +146,9 @@ widgets/
     { "id": "1750000000002", "type": "online", "url": "https://picsum.photos/1920/1080?seed=2026-03-28", "label": "每日随机", "addedAt": 1750000000002 }
   ],
   "favorites": ["1750000000000"],
-  "daily":     false
+  "daily":     false,
+  "view":      { "opacity": 0.15, "blur": 0 },
+  "seeded":    true
 }
 ```
 
@@ -156,19 +158,28 @@ widgets/
 - 渲染时按 `current.type` 解析：`local`/`gradient` → 查 IndexedDB `wallpapers` 取 `data`；`online` → 从 library 条目取 `url`。
 - **旧数据迁移（一次、幂等）**：`WallpaperManager` 初始化时读旧 `localStorage['ywr-extension-settings'].backgroundImage`，若有 base64 → 写入 IndexedDB + 生成 library 项 → 置为 current → 移除旧字段。同时 `SettingsManager.saveSettings()` 的 try/catch 不再吞 `QuotaExceededError`（改为上报 `$notify`）。
 
+**生命周期不变量（明确，M3 必须实现）：**
+
+1. **首次运行默认态**：`chrome.storage.local['ywr-wallpaper']` 不存在时初始化为 `{ current: null, library: [], favorites: [], daily: false, view: { opacity: 0.15, blur: 0 } }`；`current: null` 时背景层回退到纯 `--bg` 主题色（无壁纸空态）。
+2. **透明度/模糊唯一存放**：并入配置的 `view` 字段（见上），滑块输入 **debounce ~200ms 后整包写回** `'ywr-wallpaper'`——**不设第二个 localStorage 暂存位**，保持单一数据源。渲染时优先 `current` 对应项覆盖值，缺省用 `view` 全局值。
+3. **删除语义**：从 library 删除某壁纸时，同步清理——若它是 `current` → `current` 置为 null（回退主题色）或改指 library 首项（取前者：null，避免隐式跳转）；同时从 `favorites` 移除该 id。**不留悬空 id**。
+4. **收藏操作幂等**：收藏重复 id 不产生重复项；取消收藏不存在 id 为 no-op。
+5. **12 组渐变一次性播种**：首次运行（检测到 library 为空且无旧数据）时把 12 组预设渐变写入 IndexedDB 并回填 library；后续每次加载**不重复播种**（以 `current === null && library.length === 0` 之外的标记，如配置内 `seeded: true` 字段保证幂等）。
+6. **单写者约束**：tab（上传/收藏/切 current）与 SW（每日轮换改写 url）都会写 `'ywr-wallpaper'`，二者**共用同一 read-modify-write helper**（`chrome.storage.local.get` → 修改 → `set`），SW 侧在 alarm 触发处串行调用，避免日切竞态丢更新。
+
 ### 3.3 四类壁纸能力
 
 1. **本地上传（新增真实压缩管线，替代不存在的旧假设）**：
    - `FileReader` 读入 → `canvas` 等比缩放到最长边 ≤ 1920px → `toDataURL('image/jpeg', 0.85)`，若 > 300KB 降质量档重压（0.85→0.6→0.4→0.2），上限默认 1MB（可配置）。
    - 结果写入 IndexedDB `wallpapers` + library 元数据入配置；预览即时反馈。
 2. **渐变生成器**：预设 12 组渐变 + 随机渐变（HSL 双色），字符串入 IndexedDB，label 入配置。
-3. **在线壁纸**：
-   - 主：**Picsum Photos** `https://picsum.photos/1920/1080?seed=<dayKey>`（免费、无需 key、稳定）。
-   - 备：Bing 每日壁纸（`https://www.bing.com/HPImageArchive.aspx`），经 SW 代理解析出 URL。
-   - **全部经 service worker 代理 fetch**（仓库约束：仅 SW 可发外部请求），广播结果。
+3. **在线壁纸（字节永不跨扩展，URL 即终态）**：
+   - 主：**Picsum Photos** `https://picsum.photos/1920/1080?seed=<dayKey>`（免费、无需 key、稳定）。**纯 URL 构造，无 fetch、无字节传输**：tab 直接把它写入 library 条目的 `url` 并用于 CSS `background-image`。
+   - 备：Bing 每日壁纸（`https://www.bing.com/HPImageArchive.aspx`），**这是唯一需要 SW fetch 字节解析的场景**：SW fetch 返回 JSON → 提取图片 URL → 写入 library 条目 `url` → 广播。
+   - **SW fetch 的完整职责清单（明确，避免实现出字节管线）**：(a) Bing archive 解析（fetch → 提取 URL）；(b) M3 的 Picsum 重定向链 spike 验证（fetch picsum URL 确认 302 目标可达，验证后即弃，不存字节）；(c) 可选"手动刷新当前在线壁纸"消息（重新解析 Bing 或重写 Picsum seed）。**任何路径都不把图片字节写入 storage 或广播**——图片由 tab 页 CSS 直连加载。
 4. **收藏与每日轮换**：
    - 当前壁纸可收藏/取消收藏（操作 `favorites` id 索引）。
-   - 每日轮换开关开启后注册 `chrome.alarms`（`wallpaperDaily`，24h 周期）→ SW 拉取在线壁纸 → 更新 `chrome.storage.local['ywr-wallpaper']` → 广播 `wallpaperChanged`。
+   - 每日轮换开关开启后注册 `chrome.alarms`（`wallpaperDaily`，24h 周期）→ SW 触发 → **仅重写在线 library 条目的 `url` 字段**（Picsum 按日 seed 构造 / Bing 走 fetch 解析）→ 更新 `chrome.storage.local['ywr-wallpaper']` → 广播 `wallpaperChanged`。
    - **端到端通道（明确）**：alarm 在 SW 触发 → SW 写 `chrome.storage.local` → `chrome.runtime.sendMessage({type:'wallpaperChanged'})` → tab 页监听后读 `chrome.storage.local` 刷新背景层。Picsum 用**按日 seed**（如 `new Date().toISOString().slice(0,10)`），保证同日多次触发结果一致。
    - 这是 alarms 的合规用途（有明确目的）。
 
@@ -191,8 +202,8 @@ widgets/
 
 ### 3.5 保留项
 
-- 透明度/模糊滑块作用于当前壁纸视图（`wallpaper.current` 的预览 + 全局默认）。
-- 屏保层展示当前壁纸全屏；无壁纸时的空态提示沿用"请先设置背景图片"逻辑。
+- 透明度/模糊滑块读写配置 `view` 字段（`{opacity, blur}`），作用于当前壁纸视图；`current` 对应项有覆盖值时优先（见 §3.2 不变量 2）。
+- 屏保层展示当前壁纸全屏；无壁纸（`current: null`）时的空态提示沿用"请先设置背景图片"逻辑。
 
 ---
 
@@ -227,6 +238,7 @@ Token 双层体系（`css/variable.css`）**根基不动**，追加增强：
 
 - 抽屉宽度 320px → **380px**；保留 `.settings-panel` / `.settings-overlay` 命名与开合机制（`.ipage-aside-setting` 打开入口保留），内部 body 改 Tab 容器。
 - 该面板 HTML 目前由 `settings-manager.js` 的 `createSettingsPanel()` 字符串生成 → 本轮**按 Tab 分区重构该字符串模板**（倾向控制改动面，不引入 declare/execute 拆分）。
+- **职责归属（明确，消除 M4 冲突风险）**：`settings-manager.js` 是面板**唯一 owner**——负责抽屉外壳、Tab 切换与各分区模板；"外观"Tab 内壁纸源相关事件委托给 `WallpaperManager`、"布局"Tab 委托 `WidgetRegistry`（读/写 `ywr-widget-layout`）、主题选择复用 `ThemeSwitcher`。`wallpaper-manager.js` 只暴露能力 API（源 CRUD/切 current/收藏/每日开关/透明度模糊），**不持有面板 DOM**。
 
 ---
 
@@ -259,7 +271,9 @@ Token 双层体系（`css/variable.css`）**根基不动**，追加增强：
 | `css/variable.css` | 追加形态/颜色 Token（§4）|
 | `tab/src/css/home.css` | `@import` 追加 hero/topbar/widgets；迁移原 `.ipage-aside` 外壳样式 |
 | `tab/src/js/load.js` | 初始化顺序（WallpaperManager → WidgetRegistry → 既有流程）；折叠键默认值写入改新键；旧键迁移调用 |
-| `tab/src/js/settings-manager.js` | 背景职责移交 WallpaperManager；面板 Tab 化；saveSettings 配额错误上报 |
+| `tab/src/js/settings-manager.js` | 面板唯一 owner：外壳/Tab 切换/分区模板（委托见 §5）；背景职责移交 WallpaperManager；saveSettings 配额错误上报 |
+| `tab/src/js/fun_module/declare/search.js` | 新增共享 API `$searchEles.setEngine(engine)`（§2.3 engines 驱动）|
+| `tab/src/js/fun_module/execute/search.js` | `#btn-retrieval-engine` 下拉回调改调 `setEngine`；随 M4 移除死代码委托（`.engine-item`/`contentArea` 旧路径）|
 | `tab/src/js/fun_module/declare/aside.js` | 折叠键读取迁移（`is-aside-fold`→`ywr-layout-right-fold`）|
 | `tab/src/js/theme-switcher.js` | 若顶栏迁移后钩子选择器需重绑（默认保留 class 则免改）；可选 Hero 联动 |
 | `tab/src/js/indexeddb/models/index.model.js` | + `todos`、`wallpapers` 表，v1→v2 |
@@ -274,9 +288,11 @@ Token 双层体系（`css/variable.css`）**根基不动**，追加增强：
 
 1. **M1 布局骨架**：顶栏 + Hero + 工作区 grid；`.ipage-aside` 节点迁入顶栏并保钩子；折叠键迁移（declare/aside.js + load.js 同轮）。**M1 清单必须包含**：
    - 主题/设置下拉从"左栏右侧弹出"改为"顶栏下拉"方向定位（`.theme-switcher` 原 `left: calc(100% + .5rem)` 依赖左栏位置，迁顶栏后需重定坐标；`.ipage-aside-setting` 仍须在 parse 期可查——`declare/aside.js` 与 `settings-manager.js` 均在解析/初始化时 querySelector 它，DOM 必须先生成或在脚本前存在）
-   - **验收：主题切换、设置面板、右栏折叠三项功能不回归。**
+   - **`.content-area` 必须保留为整页最外层包裹类**：`execute/search.js` 首行对其 `addEventListener`（为 null 即抛错并杀死后续所有绑定）、`settings-manager.js:185` 屏保逻辑 querySelector `.content-area`、`search.css` 亦有 `.content-area .ipage-aside` 后代选择器。新三段结构（topbar/hero/workbench）整体置于 `.content-area` 内，否则引擎委托与屏保同步失效。
+   - `#ipage-tabs`、`.ipage-body-right`、`.btn-aside-fold`、`#ipage-collections` 等既有容器 id/class 在重排后保持可查（`declare/` 各模块 parse 期 querySelector）。
+   - **验收：主题切换、设置面板、右栏折叠、搜索/引擎、屏保五项功能不回归。**
 2. **M2 主题 Token 增强 + 毛玻璃视觉**
-3. **M3 壁纸引擎**：IndexedDB `wallpapers` 表 + 配置入 `chrome.storage.local` → 渐变 → 本地（真实压缩管线）→ 在线 → 收藏/每日轮换
+3. **M3 壁纸引擎**：v1→v2 迁移落地（**一次性建 `todos`+`wallpapers` 两表**，含 contains 守卫，三处文件同步）→ 配置入 `chrome.storage.local` → 渐变（一次性播种 12 组）→ 本地（真实压缩管线）→ 在线（URL-only，Bing 解析走 SW）→ 收藏/每日轮换
 4. **M4 WidgetRegistry + 设置面板 Tab 化**（开关/位置表单）
 5. **M5 五个小组件逐个落地**
 6. **M6 动效打磨、回归测试、v1→v2 升级与旧壁纸数据迁移验证**
@@ -308,7 +324,7 @@ Token 双层体系（`css/variable.css`）**根基不动**，追加增强：
 
 | 风险 | 缓解 |
 |------|------|
-| 布局重排破坏既有交互 | 每里程碑独立提交；M1 收 DOM 但保 class 钩子，M1 验收含三功能回归检查 |
+| 布局重排破坏既有交互 | 每里程碑独立提交；M1 收 DOM 但保 class 钩子，M1 验收含五项功能回归检查（主题/设置/折叠/搜索/屏保） |
 | IndexedDB v1→v2 升级损坏旧库 | tab 侧 `initIndexedDBStructure` 加 contains 守卫 + 版本常量同步三处；先在本机保留 v1 副本验证升级 |
 | 壁纸二进制撑爆 localStorage | 二进制全部入 IndexedDB；配置（纯元数据）才入 chrome.storage.local |
 | 在线壁纸 API 不可用 | Picsum+Bing 双源；失败回退渐变/本地；离线仍可用 |
