@@ -70,7 +70,7 @@ widgets/
 └── engines.js       # 多引擎快速搜索 chips
 ```
 
-- 每个 widget 模块暴露 `{ id, title, icon, zones, render(el), refresh? }`（`id` 为稳定 slug，如 `'clock'`）。
+- 每个 widget 模块暴露 `{ id, title, icon, zones, render(el), refresh? }`（`id` 为稳定 slug，如 `'clock'`）。**全局命名约束**：widget 模块只向 registry 注册 payload，**不得引入新的顶层全局对象**——现有 `$tools`（declare/tools.js）等名字已被占用，`widgets/tools.js` 等文件名与既有 declare 文件同名，必须以注册 payload 形式存在（如 `WidgetRegistry.register({id:'tools', ...})`），避免 IIFE 全局冲突。
 - **declare 阶段**：各 widget 调用 `WidgetRegistry.register(...)`。
 - **execute 阶段**：`WidgetRegistry.init()` 读取布局配置，将启用项渲染至对应 zone。
 - **刷新机制（同页直连）**：widget 内的用户操作（如新增待办）由该 widget 自己的事件处理完成后直接重渲染自身，或调用 `WidgetRegistry.refresh(id)`。**不依赖跨页广播**——`dataChanged` 广播只服务收藏集合；todo 等本页数据不做跨 tab 实时同步（本轮范围外，见 §8）。
@@ -102,13 +102,14 @@ widgets/
 | 待办清单 | `todo` | IndexedDB 新表 `todos` | 增删/勾选/清除已完成；空态引导；同页事件直连刷新（见 §2.1）|
 | 每日语录 | `quote` | 内置 ~50 条 + localStorage 记录当日索引 | 随机展示，点按换一条；按天固定（同日不重复随机）|
 | 快捷工具组 | `tools` | localStorage JSON 数组 | 默认 8 个（GitHub/知乎/Gmail/B站/掘金/邮箱/地图/翻译），可增删改；图标用 emoji 或 iconfont |
-| 多引擎搜索 | `engines` | 复用 `'engine'` | chips 展示 3 引擎，点击切换主搜索框引擎并聚焦 |
+| 多引擎搜索 | `engines` | 复用 `'engine'` | chips 展示 3 引擎，点击切换主搜索框引擎并聚焦。**注意：与 Hero 内引擎 chips 是同一个实例**——引擎状态由既有 `$searchEles`/`execute/search.js` 驱动，widget 只渲染 UI 并调用既有切换 API，避免出现两行重复 chips |
 
 ### 2.4 IndexedDB schema 升级
 
 - 新表 **`todos`**：`{ id: Date.now(), text, done: 0|1, createdAt }`。
-- 新表 **`wallpapers`**：`{ id, type: 'local'|'gradient', data }`（`data` = base64 dataURL 或 CSS gradient 字符串；**二进制/长字符串一律存这里，不进 localStorage**）。在线壁纸只存 URL 于配置，无二进制。
-- 数据库版本 **v1 → v2**：`onupgradeneeded` 中**为每个 store 加 `objectStoreNames.contains()` 守卫**后 `createObjectStore`。
+- 新表 **`wallpapers`**：`{ id: Date.now(), type: 'local'|'gradient', data }`（`data` = base64 dataURL 或 CSS gradient 字符串；**二进制/长字符串一律存这里，不进 localStorage**）。在线壁纸只存 URL 于配置，无二进制。
+  - **注意**：`wallpapers` 表的 `properties` 只列 `[id, type]`，**不要把 `data` 加入 properties**——`initIndexedDBStructure` 会为 properties 每个字段建索引，`data` 入索引等于把每张 ≤1MB base64 再复制一份。
+- 数据库版本 **v1 → v2**（**一次升级，两表同时建**）：`onupgradeneeded` 中**为每个 store 加 `objectStoreNames.contains()` 守卫**后 `createObjectStore`；本次 v2 迁移**同时创建 `todos` 与 `wallpapers` 两个 store**。该迁移由 M3 落地（M3 最先触碰版本号），M5 的 todo widget 只消费已存在的 `todos` store，**不得再做第二次版本号提升**。
 - **必须同步的 3 处文件**（tab 与 SW 各持有一份模型/打开逻辑，且 tab 侧 `indexeddb/index.js` 的 `initIndexedDBStructure` **当前无 contains 守卫**——版本号从字面量 `1` 升为 `2`，无守卫会在旧库升级时对 `collections`/`links` 抛 `ConstraintError`）：
   1. `tab/src/js/indexeddb/models/index.model.js`（加两表，版本/结构常量）
   2. `tab/src/js/indexeddb/index.js`（版本字面量 `1`→`2`，`initIndexedDBStructure` 加 contains 守卫）
@@ -138,18 +139,21 @@ widgets/
 
 ```json
 {
-  "current":   { "id": "wall-abc", "type": "local" },
+  "current":   { "id": "1750000000000", "type": "local" },
   "library":   [
-    { "id": "wall-abc", "type": "local", "label": "我的壁纸", "addedAt": 1730000000000 },
-    { "id": "wall-grad-aurora", "type": "gradient", "label": "极光", "addedAt": ... }
+    { "id": "1750000000000", "type": "local", "label": "我的壁纸", "addedAt": 1750000000000 },
+    { "id": "1750000000001", "type": "gradient", "label": "极光", "addedAt": 1750000000001 },
+    { "id": "1750000000002", "type": "online", "url": "https://picsum.photos/1920/1080?seed=2026-03-28", "label": "每日随机", "addedAt": 1750000000002 }
   ],
-  "favorites": ["wall-abc"],
+  "favorites": ["1750000000000"],
   "daily":     false
 }
 ```
 
-- **每个 library 项有稳定 `id`**（本地：`Date.now()` 时间戳；渐变：预设 slug 或时间戳）。`favorites` 只存 id 索引，**绝不复制二进制**。
-- 渲染时按 `current.type` 解析：`local`/`gradient` → 查 IndexedDB `wallpapers` 取 `data`；`online` → 直接用配置内 URL。
+- **`id` 来源（唯一实现路径）**：tab 侧 `IndexedModel.add()` 会无条件覆写 `record.id = Date.now()`（`tab/src/js/indexeddb/index.js`），**不采用预设 slug/预计算 id**。所有 `local`/`gradient` 项的 `id` 一律取 **DB 写入后返回的真实 id**（时间戳），并回填到配置 library 条目；`current`/`favorites` 引用同一 id。渐变预设可预先写入 DB 得到稳定 id 后回填。
+- **`online` 项的 URL 归属（明确）**：URL 作为 `url` 字段存在 **library 条目自身**（如上示例）；`current` 只存 `{id, type}`，渲染时按 id 从 library 解析出 URL。每日轮换时 SW 按日 seed 重算 URL → 更新对应 library 条目 `url` 字段 → 广播。
+- `favorites` 只存 id 索引，**绝不复制二进制**。
+- 渲染时按 `current.type` 解析：`local`/`gradient` → 查 IndexedDB `wallpapers` 取 `data`；`online` → 从 library 条目取 `url`。
 - **旧数据迁移（一次、幂等）**：`WallpaperManager` 初始化时读旧 `localStorage['ywr-extension-settings'].backgroundImage`，若有 base64 → 写入 IndexedDB + 生成 library 项 → 置为 current → 移除旧字段。同时 `SettingsManager.saveSettings()` 的 try/catch 不再吞 `QuotaExceededError`（改为上报 `$notify`）。
 
 ### 3.3 四类壁纸能力
@@ -174,9 +178,12 @@ widgets/
 "host_permissions": [
   "https://suggestion.baidu.com/*",
   "https://picsum.photos/*",
+  "https://fastly.picsum.photos/*",
   "https://www.bing.com/*"
 ]
 ```
+
+- **`fastly.picsum.photos` 必须一并授权**：Picsum 图片 URL 会 302 到 `fastly.picsum.photos`，MV3 对 fetch 重定向目标是否继承 host 权限未明确保证，主源可能静默失败。M3 含一次 spike 验证实际重定向链；若重定向目标在已授权列表仍失败，则在线主源降级为 Bing。
 
 - `service-worker/wallpaper.js`：`wallpaper:fetch` 消息路由 + 每日 alarm 处理；import 进 `service-worker/index.js`，路由注册进 `association.js`。
 - 广播沿用 `chrome.runtime.sendMessage({ type: 'wallpaperChanged' })`。
@@ -265,7 +272,9 @@ Token 双层体系（`css/variable.css`）**根基不动**，追加增强：
 
 ### 6.3 实施顺序（每步独立验收）
 
-1. **M1 布局骨架**：顶栏 + Hero + 工作区 grid；`.ipage-aside` 节点迁入顶栏并保钩子；折叠键迁移（declare/aside.js + load.js 同轮）。**验收：主题切换、设置面板、右栏折叠三项功能不回归。**
+1. **M1 布局骨架**：顶栏 + Hero + 工作区 grid；`.ipage-aside` 节点迁入顶栏并保钩子；折叠键迁移（declare/aside.js + load.js 同轮）。**M1 清单必须包含**：
+   - 主题/设置下拉从"左栏右侧弹出"改为"顶栏下拉"方向定位（`.theme-switcher` 原 `left: calc(100% + .5rem)` 依赖左栏位置，迁顶栏后需重定坐标；`.ipage-aside-setting` 仍须在 parse 期可查——`declare/aside.js` 与 `settings-manager.js` 均在解析/初始化时 querySelector 它，DOM 必须先生成或在脚本前存在）
+   - **验收：主题切换、设置面板、右栏折叠三项功能不回归。**
 2. **M2 主题 Token 增强 + 毛玻璃视觉**
 3. **M3 壁纸引擎**：IndexedDB `wallpapers` 表 + 配置入 `chrome.storage.local` → 渐变 → 本地（真实压缩管线）→ 在线 → 收藏/每日轮换
 4. **M4 WidgetRegistry + 设置面板 Tab 化**（开关/位置表单）
