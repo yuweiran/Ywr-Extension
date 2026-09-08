@@ -1128,6 +1128,7 @@
     };
 
     const applyBackground = async () => {
+      if (!config) return; // init() 前（config 仍为 null）安全跳过
       ensureBackgroundLayer();
       const src = config.current;
       const css = await resolveSourceCss(src);
@@ -1178,10 +1179,11 @@
       }
     };
 
-    /* ---------- 能力 API ---------- */
-    const listSources = () => config.library || [];
+    /* ---------- 能力 API（config 在 init() 前为 null，所有读操作必须空安全） ---------- */
+    const listSources = () => (config && config.library) || [];
 
     const setCurrent = async (id) => {
+      if (!config) return false;
       const meta = (config.library || []).find((it) => it.id === id);
       if (!meta) return false;
       config.current = { id: meta.id, type: meta.type };
@@ -1197,6 +1199,7 @@
       const gradient = `linear-gradient(135deg, hsl(${hue1},70%,60%) 0%, hsl(${hue2},70%,55%) 100%)`;
       const row = await dbAddWallpaper({ type: "gradient", data: gradient });
       const meta = { id: row.id, type: "gradient", label: "随机渐变", addedAt: Date.now() };
+      if (!config) config = defaultConfig();
       config.library = config.library || [];
       config.library.push(meta);
       await saveConfig(config);
@@ -1264,6 +1267,7 @@
       });
 
     const removeSource = async (id) => {
+      if (!config) return;
       config.library = (config.library || []).filter((it) => it.id !== id);
       config.favorites = (config.favorites || []).filter((f) => f !== id);
       if (config.current && config.current.id === id) {
@@ -1275,6 +1279,7 @@
     };
 
     const toggleFavorite = async (id) => {
+      if (!config) return false;
       const favs = config.favorites || [];
       const idx = favs.indexOf(id);
       if (idx === -1) favs.push(id);
@@ -1284,7 +1289,7 @@
       return config.favorites;
     };
 
-    const isFavorite = (id) => (config.favorites || []).includes(id);
+    const isFavorite = (id) => !!config && (config.favorites || []).includes(id);
 
     const setDaily = async (enabled) => {
       return new Promise((resolve, reject) => {
@@ -1293,19 +1298,20 @@
             reject(new Error(chrome.runtime.lastError ? chrome.runtime.lastError.message : "setDaily failed"));
             return;
           }
-          config.daily = enabled;
+          if (config) config.daily = enabled;
           resolve(true);
         });
       });
     };
 
     const setView = async (patch) => {
+      if (!config) return;
       config.view = Object.assign({}, config.view || { opacity: 0.15, blur: 0 }, patch);
       await saveConfig(config);
       await applyBackground();
     };
 
-    const getView = () => config.view || { opacity: 0.15, blur: 0 };
+    const getView = () => (config && config.view) || { opacity: 0.15, blur: 0 };
 
     /* ---------- 初始化 ---------- */
     const init = async () => {
@@ -1431,14 +1437,33 @@
 
   - 在 `WallpaperManager` 的 return 对象中确保暴露 `refresh`（M3-3 步骤 1 的 return 列表已含 `init/listSources/setCurrent/...`，需追加 `refresh: () => applyBackground(),`）。
 
-- [ ] **步骤 3：移除旧上传/移除处理（防双写）**
+- [ ] **步骤 2b：屏保"无壁纸"守卫改查 WallpaperManager**
 
-  - 删除 `handleImageFile` 与 `removeBackground` 函数体（第 377-409 行）——本地图片的写入改走 `WallpaperManager.uploadLocal`（UI 绑定在 M4-2 重做，M3 阶段旧面板上传按钮暂不动作，属可接受中间态）。
-  - `bindEvents` 中旧"背景图片上传/更换/移除"监听（原绑定到 `bg-upload-area`/`bg-input`/`bg-change-btn`/`bg-remove-btn`）与"透明度/模糊滑块"监听：**保留控件 id 与面板 HTML 不动**，仅将其回调改为 no-op + 注释"M4-2 接入 WallpaperManager"，避免 M3 阶段误写 localStorage 旧键。
+  `enterScreensaver`（原第 175-178 行）里 `if (!settings.backgroundImage) { alert('请先设置背景图片'); return; }` 已失效（旧字段已废弃）。改为查 WallpaperManager 是否有当前壁纸：
 
   ```js
-  // [M3-4] 旧背景控件暂置空，UI 于 M4-2 统一接入 WallpaperManager
-  // 背景上传/滑块在 M4-2 前不动作（localStorage 旧键已废弃）
+  const hasWallpaper = () =>
+    new Promise((res) => {
+      chrome.storage.local.get(["ywr-wallpaper"], (d) => {
+        const cfg = d["ywr-wallpaper"];
+        res(!!(cfg && cfg.current));
+      });
+    });
+  // enterScreensaver 开头：
+  const ok = await hasWallpaper();
+  if (!ok) { alert("请先设置背景图片"); return; }
+  ```
+
+  注意：`enterScreensaver` 改为 `async`（或在开头 `.then()` 内继续执行）。
+
+- [ ] **步骤 3：移除旧上传/移除处理（防双写）**
+
+  - 删除 `handleImageFile` 与 `removeBackground` 函数体（第 377-409 行）。
+  - `bindEvents` 中旧"背景图片上传/更换/移除"监听（原绑定到 `bg-upload-area`/`bg-input`/`bg-change-btn`/`bg-remove-btn`）与"透明度/模糊滑块"监听整块删除（它们引用已删函数且写废弃的 localStorage 旧键）。**控件 id 与面板 HTML 保留不动**——M3 阶段旧面板这些按钮暂不动作属可接受中间态，M4-2 会在 Tab 化面板中对同一批 id 重新绑定一次（避免重复监听）。
+
+  ```js
+  // [M3-4] 旧背景控件监听已移除；M4-2 在 Tab 化面板中对 bg-upload-area/bg-input/
+  // bg-change-btn/bg-remove-btn/bg-opacity-slider/bg-blur-slider 重新绑定 WallpaperManager
   ```
 
 - [ ] **步骤 4：Reload 验证**
@@ -1466,6 +1491,7 @@
 
   ```js
   const addOnline = async (url, provider) => {
+    if (!config) config = defaultConfig();
     const meta = {
       id: "online-" + Date.now(),
       type: "online",
@@ -1482,7 +1508,7 @@
     return meta;
   };
 
-  const getDaily = () => config.daily === true;
+  const getDaily = () => !!config && config.daily === true;
   ```
 
   return 对象追加 `addOnline` 与 `get daily() { return getDaily(); }`。
@@ -2173,7 +2199,7 @@
   - 点设置图标 → 380px 抽屉带 4 个 Tab；默认"外观"，动态内容已刷新。
   - "外观"：6 主题点选即时生效；壁纸源列表出现 12 渐变 + 上传项；点某源"✓"应用；♥ 收藏；✕ 删除（删除当前壁纸回退主题色）；"🎲 随机在线"/"📷 Bing 今日"可用（需联网）；滑块调节背景透明/模糊。
   - "布局"：小组件列表（M5 前显示"暂无小组件"提示）；右栏折叠按钮切换显示/折叠并同步状态。
-  - "组件"：工具组增删（M5 前 store 已可用）；"更多"：屏保/扩展选项可用。
+  - "组件"：工具组区显示为空（`$widgetStore` 于 M5-4 提供，M4 阶段操作按钮不报错即可）；"更多"：屏保/扩展选项可用。
   - Console 无报错（重点：无 `grid is not defined`、无 `openPanel` 赋值错误）；ESC 关闭面板正常。
 
 - [ ] **步骤 5：提交**
