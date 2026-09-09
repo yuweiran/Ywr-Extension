@@ -41,7 +41,9 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   overflow: hidden;
 }
+/* 显式列定位：左列隐藏(空)时中/右列不被 auto-flow 重排 */
 .shell-workbench .shell-widgets-left {
+  grid-column: 1;
   width: 15rem;
   min-width: 15rem;
   max-width: 19rem;
@@ -52,11 +54,15 @@
   display: none;
 }
 .shell-workbench .shell-workbench-center {
+  grid-column: 2;
   min-width: 0;
   display: flex;
   flex-direction: column;
   padding: 0.5rem 1rem;
   overflow: hidden;
+}
+.shell-workbench .ipage-body-right {
+  grid-column: 3;
 }
 
 /* 屏保模式下隐藏内容 */
