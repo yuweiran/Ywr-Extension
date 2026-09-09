@@ -28,3 +28,20 @@
 body.has-wallpaper .widget[data-widget="clock"] .clock-time,
 body.has-wallpaper .widget[data-widget="clock"] .clock-greeting,
 body.has-wallpaper .widget[data-widget="clock"] .clock-date { color: var(--on-image); }
+
+/* ========== 待办清单 ========== */
+.widget-head { padding: 0.6rem 0.75rem; font-size: 0.85rem; font-weight: 600; display:flex; align-items:center; gap:0.35rem; border-bottom: 1px solid var(--border-subtle); }
+.todo-count { font-size: 0.7rem; background: var(--accent-soft); color: var(--primary); border-radius: 999px; padding: 0.05rem 0.4rem; }
+.todo-list { list-style: none; max-height: 12rem; overflow-y: auto; }
+.todo-item { display: flex; align-items: center; gap: 0.45rem; padding: 0.4rem 0.75rem; font-size: 0.85rem; }
+.todo-item:hover { background: var(--surface-raised); }
+.todo-item.is-done .todo-text { text-decoration: line-through; color: var(--text-secondary); }
+.todo-check { accent-color: var(--primary); }
+.todo-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.todo-del { visibility: hidden; background: transparent; border: none; color: var(--muted); cursor: pointer; }
+.todo-item:hover .todo-del { visibility: visible; }
+.todo-form { display: flex; gap: 0.35rem; padding: 0.5rem 0.75rem; border-top: 1px solid var(--border-subtle); }
+.todo-input { flex: 1; min-width: 0; background: var(--surface-raised); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.35rem 0.5rem; color: var(--text); font-size: 0.85rem; outline: none; }
+.todo-input:focus { border-color: var(--primary); }
+.todo-add { background: var(--primary); color: #fff; border: none; border-radius: 8px; width: 1.9rem; cursor: pointer; }
+
