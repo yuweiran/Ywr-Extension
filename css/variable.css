@@ -20,6 +20,21 @@
   --shadow-md:   0 4px 16px rgba(var(--shadow-color), 0.10);
   --shadow-lg:   0 8px 28px rgba(var(--shadow-color), 0.14);
   --shadow-glow: 0 3px 10px rgba(var(--shadow-color), 0.35);
+
+  /* 毛玻璃 */
+  --glass-bg:        rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --glass-border:    rgba(255, 255, 255, 0.45);
+  --glass-blur:      14px;
+
+  /* 结构 */
+  --topbar-h: 3.25rem;
+  --hero-h:   11rem;
+
+  /* 动效 */
+  --dur-fast: 140ms;
+  --dur-med:  220ms;
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 /* ============================================================
@@ -39,6 +54,10 @@
   --border-subtle:  #e9ecef;
   --focus-ring:     #343a40;
   --shadow-color:   0, 0, 0;
+
+  --bg-deep:        rgba(15, 23, 36, 0.42);
+  --on-image:       #1e2430;
+  --accent-soft:    rgba(52, 58, 64, 0.10);
 
   /* 向后兼容别名 */
   --muted:           var(--text-secondary);
@@ -76,6 +95,10 @@
   --focus-ring:     #818cf8;
   --shadow-color:   99, 102, 241;
 
+  --bg-deep:        rgba(4, 6, 12, 0.55);
+  --on-image:       #f4f5fb;
+  --accent-soft:    rgba(99, 102, 241, 0.14);
+
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);
   --muted-surface:   var(--surface-raised);
@@ -110,6 +133,10 @@
   --border-subtle:  #ffe8dc;
   --focus-ring:     #ff6b6b;
   --shadow-color:   255, 107, 107;
+
+  --bg-deep:        rgba(92, 34, 14, 0.30);
+  --on-image:       #2b150c;
+  --accent-soft:    rgba(255, 107, 107, 0.12);
 
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);
@@ -146,6 +173,10 @@
   --focus-ring:     #4263eb;
   --shadow-color:   66, 99, 235;
 
+  --bg-deep:        rgba(20, 33, 90, 0.32);
+  --on-image:       #101a45;
+  --accent-soft:    rgba(66, 99, 235, 0.10);
+
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);
   --muted-surface:   var(--surface-raised);
@@ -181,6 +212,10 @@
   --focus-ring:     #7c3aed;
   --shadow-color:   124, 58, 237;
 
+  --bg-deep:        rgba(42, 12, 82, 0.32);
+  --on-image:       #1c0838;
+  --accent-soft:    rgba(124, 58, 237, 0.10);
+
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);
   --muted-surface:   var(--surface-raised);
@@ -215,6 +250,10 @@
   --border-subtle:  #fce4f3;
   --focus-ring:     #e91e8c;
   --shadow-color:   233, 30, 140;
+
+  --bg-deep:        rgba(84, 8, 45, 0.30);
+  --on-image:       #380621;
+  --accent-soft:    rgba(233, 30, 140, 0.10);
 
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);
