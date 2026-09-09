@@ -41,8 +41,8 @@ window.onload = () => {
   const engine = localStorage.getItem("engine");
   $searchEles.initEngineIcon(engine)
 
-  if (!localStorage.getItem("is-aside-fold")) {
-    localStorage.setItem("is-aside-fold", "0");
+  if (!localStorage.getItem("ywr-layout-right-fold")) {
+    localStorage.setItem("ywr-layout-right-fold", "0");
   }
   $aside.initFoldState()
   document.body.addEventListener("click", () => {
