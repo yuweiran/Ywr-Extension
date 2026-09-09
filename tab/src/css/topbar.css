@@ -10,7 +10,8 @@
   background: var(--surface);
   border-bottom: 1px solid var(--border-subtle);
   position: relative;
-  z-index: 50;
+  /* 注意：不要给顶栏设 z-index（否则形成层叠上下文，把内部主题下拉的
+     z-index 锁在局部层级，会被右栏折叠胶囊等更高层浮层压住） */
 }
 .shell-topbar-left,
 .shell-topbar-right {
