@@ -142,16 +142,16 @@ const SettingsManager = (function () {
             </div>
           </div>
           <div class="settings-item">
-            <label class="settings-item-label">内容区透明度</label>
-            <div class="settings-item-desc">右侧栏与中间收藏区底部的透出程度（仅壁纸存在时生效）</div>
+            <label class="settings-item-label">收藏区透明度</label>
+            <div class="settings-item-desc">每组收藏集合面板(容器)的透出程度（仅壁纸存在时生效，链接卡片保持清晰）</div>
             <div class="slider-row">
               <input type="range" class="settings-slider" id="panel-opacity-slider" min="0" max="100" value="50">
               <span class="slider-value" id="panel-opacity-value">50%</span>
             </div>
           </div>
           <div class="settings-item">
-            <label class="settings-item-label">内容区模糊</label>
-            <div class="settings-item-desc">玻璃感强度，越大越能透出壁纸色块</div>
+            <label class="settings-item-label">收藏区模糊</label>
+            <div class="settings-item-desc">玻璃感强度，越大壁纸透出越柔和</div>
             <div class="slider-row">
               <input type="range" class="settings-slider" id="panel-blur-slider" min="0" max="30" value="0">
               <span class="slider-value" id="panel-blur-value">0px</span>

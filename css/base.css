@@ -55,7 +55,7 @@ input[type="range"]::-webkit-slider-thumb {
   background: rgba(15,23,36,0.02);
 }
 
-/* ========== M6：减弱动态效果降级 ========== */
+/* ========== M6: reduced-motion fallback ========== */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

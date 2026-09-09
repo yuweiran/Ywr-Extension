@@ -419,7 +419,7 @@
   font-size: 0.85rem;
 }
 
-/* ========== 当前壁纸信息 + 收藏按钮（壁纸 v2） ========== */
+/* ========== current wallpaper info + fav button (wallpaper v2) ========== */
 .current-wallpaper-info{
   font-size: 0.9rem;
   color: var(--text);

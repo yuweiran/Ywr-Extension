@@ -127,21 +127,17 @@ body.screensaver-mode .content-area {
 
 
 /* ============================================================
-   内容区容器玻璃（壁纸态生效；设置面板可调透明度/模糊）
-   - .shell-workbench-center 中间收藏容器
-   - .ipage-body-right 右侧栏
-   规则：容器底 = 半透明 surface + backdrop blur（玻璃感），
-   卡片/集合头/组件保持不透明底 → 内容仍清晰。
+   Collection panel glass (wallpaper mode; opacity/blur from settings)
+   Applies to the .collection head + links panels only;
+   individual link cards keep an opaque surface for readability.
 ============================================================ */
-body.has-wallpaper .shell-workbench .shell-workbench-center,
-body.has-wallpaper .shell-workbench .ipage-body-right {
+body.has-wallpaper #ipage-collections .collection .collection-head,
+body.has-wallpaper #ipage-collections .collection .collection-links {
   background-color: color-mix(in srgb, var(--surface) calc(var(--panel-glass-opacity, 0.5) * 100%), transparent);
   -webkit-backdrop-filter: blur(var(--panel-glass-blur, 0px));
   backdrop-filter: blur(var(--panel-glass-blur, 0px));
 }
-/* 容器玻璃内不透明内容：保持可读（卡/头/组件底为 solid surface） */
-body.has-wallpaper .shell-workbench-center #ipage-tabs,
-body.has-wallpaper .shell-workbench-center .collection .collection-head,
-body.has-wallpaper .shell-workbench-center .collection .collection-links {
+/* link cards stay opaque (content layer always readable) */
+body.has-wallpaper #ipage-collections .collection-links .collection-link {
   background-color: var(--surface);
 }
