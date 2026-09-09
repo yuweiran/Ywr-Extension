@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>INIT — UI 预览（真实 CSS）</title>
+<link rel="stylesheet" href="tab/src/css/home.css" />
+<style>
+  /* ---- 预览控制条（非产品样式） ---- */
+  .pv-bar {
+    position: fixed; top: 0; right: 0; z-index: 99999;
+    display: flex; gap: 6px; padding: 8px 10px;
+    background: rgba(30,30,40,.85); border-radius: 0 0 0 12px;
+    font: 12px/1 system-ui; color: #fff; flex-wrap: wrap; max-width: 460px;
+  }
+  .pv-bar button {
+    font: 12px/1 system-ui; padding: 4px 8px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.12);
+    color: #fff; cursor: pointer;
+  }
+  .pv-bar button:hover { background: rgba(255,255,255,.25); }
+  #pv-bg {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-size: cover; background-position: center;
+    background-image: linear-gradient(135deg,#0f2027 0%,#203a43 40%,#2c5364 100%);
+    opacity: 0; transition: opacity .3s ease;
+  }
+  body.has-wallpaper #pv-bg { opacity: 1; }
+  .mock-ic {
+    width: 1.3rem; height: 1.3rem; border-radius: 5px; flex: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .8rem; color: #fff;
+  }
+</style>
+</head>
+<body style="height:100vh">
+
+<div id="pv-bg"></div>
+
+<div class="pv-bar">
+  <button id="pv-theme">主题：slate-light</button>
+  <button id="pv-wall">壁纸：关</button>
+  <button id="pv-left">左列：关</button>
+  <button id="pv-right">右栏：开</button>
+  <button id="pv-shot-help">隐藏控制条</button>
+</div>
+
+<template id="pv-leftmock">
+  <section class="widget" data-widget="todo">
+    <div class="widget-head">✓ 待办清单 <span class="todo-count">3</span></div>
+    <ul class="todo-list">
+      <li class="todo-item"><input type="checkbox" class="todo-check"><span class="todo-text">阅读周报</span><button class="todo-del">✕</button></li>
+      <li class="todo-item is-done"><input type="checkbox" class="todo-check" checked><span class="todo-text">整理书签</span><button class="todo-del">✕</button></li>
+      <li class="todo-item"><input type="checkbox" class="todo-check"><span class="todo-text">写周报</span><button class="todo-del">✕</button></li>
+    </ul>
+    <form class="todo-form"><input class="todo-input" placeholder="添加待办…"><button class="todo-add">＋</button></form>
+  </section>
+  <section class="widget" data-widget="quote">
+    <div class="quote-card"><div class="quote-mark">“</div><div class="quote-text">种一棵树最好的时间是十年前，其次是现在。</div><button class="quote-next">↻</button></div>
+  </section>
+  <section class="widget" data-widget="tools">
+    <div class="widget-head">🧭 常用工具</div>
+    <div class="tools-grid">
+      <a class="tools-item" href="#"><span class="mock-ic" style="background:#24292e">GH</span><span class="tools-name">GitHub</span></a>
+      <a class="tools-item" href="#"><span class="mock-ic" style="background:#0084ff">知</span><span class="tools-name">知乎</span></a>
+      <a class="tools-item" href="#"><span class="mock-ic" style="background:#ea4335">G</span><span class="tools-name">Gmail</span></a>
+      <a class="tools-item" href="#"><span class="mock-ic" style="background:#fb7299">B站</span><span class="tools-name">B站</span></a>
+      <a class="tools-item" href="#"><span class="mock-ic" style="background:#1a9fff">掘</span><span class="tools-name">掘金</span></a>
+      <a class="tools-item" href="#"><span class="mock-ic" style="background:#f90">邮</span><span class="tools-name">邮箱</span></a>
+    </div>
+  </section>
+</template>
+
+<div class="content-area">
+  <header class="shell-topbar">
+    <div class="shell-topbar-left">
+      <span class="shell-logo" id="shell-logo" title="INIT">❄</span>
+    </div>
+    <div class="shell-topbar-right">
+      <div class="shell-topbar-slot shell-zone-topbar" data-widget-zone="topbar"></div>
+      <div class="ipage-aside-theme">
+        <span class="icon-theme">◐</span>
+        <div class="theme-switcher dropdown" id="theme-switcher">
+          <div class="dropdown-item theme-option" data-theme="slate-light"><span class="dropdown-item-icon">◐</span><span>石墨浅调</span></div>
+          <div class="dropdown-item theme-option" data-theme="midnight-ink"><span class="dropdown-item-icon">🌑</span><span>深夜墨色</span></div>
+          <div class="dropdown-item theme-option" data-theme="coral-amber"><span class="dropdown-item-icon">🪸</span><span>珊瑚金橙</span></div>
+          <div class="dropdown-item theme-option" data-theme="indigo-mint"><span class="dropdown-item-icon">💎</span><span>靛蓝薄荷</span></div>
+          <div class="dropdown-item theme-option" data-theme="violet-amber"><span class="dropdown-item-icon">🔮</span><span>紫罗兰柠黄</span></div>
+          <div class="dropdown-item theme-option" data-theme="rose-sky"><span class="dropdown-item-icon">🌸</span><span>玫红天蓝</span></div>
+        </div>
+      </div>
+      <div class="ipage-aside-setting" id="shell-setting-btn"><span class="icon-setting">⚙</span></div>
+    </div>
+  </header>
+
+  <main class="shell-hero">
+    <div id="user_search_area">
+      <div id="user_input_area">
+        <button id="btn-retrieval-engine"><span class="icon-baidu">B</span></button>
+        <input type="text" spellcheck="false" id="user-content" placeholder="搜索…" value="" />
+        <button id="btn-retrieval-content"><span class="icon-search">⌕</span></button>
+      </div>
+      <div class="suggestion-list" id="suggestion-list"></div>
+    </div>
+    <div class="shell-zone-hero" data-widget-zone="hero"></div>
+  </main>
+
+  <section class="shell-workbench">
+    <div class="shell-widgets-left" data-widget-zone="left" id="pv-leftcol"></div>
+
+    <div class="shell-workbench-center">
+      <div id="ipage-tabs">
+        <button class="tab-btn-add-collection"><span class="icon-plus add-collection-icon">＋</span><span class="add-collection-text">ADD COLLECTION</span></button>
+      </div>
+      <div id="ipage-collections">
+        <div data-id="1" class="collection">
+          <div class="collection-head">
+            <div>开发工具</div>
+            <div class="collection-handle">
+              <button><span class="icon-delete link-collection-delete">🗑</span></button>
+              <button><span class="icon-edit-fill link-collection-edit">✎</span></button>
+              <button><span class="icon-add link-tool-add">＋</span></button>
+            </div>
+          </div>
+          <div data-id="1" class="collection-links">
+            <a data-id="11" class="collection-link" href="#" target="_blank">
+              <div class="collection-link-name"><span class="mock-ic" style="background:#e34c26">H</span><span class="collection-link-title">GitHub</span></div>
+              <div class="collection-link-remark">github.com</div>
+            </a>
+            <a data-id="12" class="collection-link" href="#" target="_blank">
+              <div class="collection-link-name"><span class="mock-ic" style="background:#0078d4">VS</span><span class="collection-link-title">Visual Studio Code</span></div>
+              <div class="collection-link-remark">code.visualstudio.com</div>
+            </a>
+            <a data-id="13" class="collection-link" href="#" target="_blank">
+              <div class="collection-link-name"><span class="mock-ic" style="background:#d7ff00;color:#333">JS</span><span class="collection-link-title">MDN Web Docs</span></div>
+              <div class="collection-link-remark">developer.mozilla.org</div>
+            </a>
+            <a data-id="14" class="collection-link" href="#" target="_blank">
+              <div class="collection-link-name"><span class="mock-ic" style="background:#47A248">N</span><span class="collection-link-title">Node.js</span></div>
+              <div class="collection-link-remark">nodejs.org</div>
+            </a>
+            <a data-id="15" class="collection-link" href="#" target="_blank">
+              <div class="collection-link-name"><span class="mock-ic" style="background:#f05032">G</span><span class="collection-link-title">GitLab</span></div>
+              <div class="collection-link-remark">about.gitlab.com</div>
+            </a>
+            <a data-id="16" class="collection-link" href="#" target="_blank">
+              <div class="collection-link-name"><span class="mock-ic" style="background:#FFA116">S</span><span class="collection-link-title">Stack Overflow</span></div>
+              <div class="collection-link-remark">stackoverflow.com</div>
+            </a>
+          </div>
+        </div>
+        <div data-id="2" class="collection">
+          <div class="collection-head">
+            <div>设计灵感</div>
+            <div class="collection-handle">
+              <button><span class="icon-delete link-collection-delete">🗑</span></button>
+              <button><span class="icon-edit-fill link-collection-edit">✎</span></button>
+              <button><span class="icon-add link-tool-add">＋</span></button>
+            </div>
+          </div>
+          <div data-id="2" class="collection-links">
+            <a data-id="21" class="collection-link" href="#" target="_blank">
+              <div class="collection-link-name"><span class="mock-ic" style="background:#FF4785">S</span><span class="collection-link-title">Storybook</span></div>
+              <div class="collection-link-remark">storybook.js.org</div>
+            </a>
+            <a data-id="22" class="collection-link" href="#" target="_blank">
+              <div class="collection-link-name"><span class="mock-ic" style="background:#0acf83">F</span><span class="collection-link-title">Figma</span></div>
+              <div class="collection-link-remark">figma.com</div>
+            </a>
+            <a data-id="23" class="collection-link" href="#" target="_blank">
+              <div class="collection-link-name"><span class="mock-ic" style="background:#ff3366">D</span><span class="collection-link-title">Dribbble</span></div>
+              <div class="collection-link-remark">dribbble.com</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ipage-body-right">
+      <div class="ipage-aside-header">
+        <button class="btn-aside-fold"><span class="icon-fold ipage-aside-fold">◀</span></button>
+      </div>
+      <div class="ipage-sections">
+        <div class="section">
+          <div class="section-title">Tabs</div>
+          <ul class="section-tabs-show">
+            <li class="section-item">新标签页 — INIT</li>
+            <li class="section-item">GitHub — 工作</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-title">History</div>
+          <ul class="section-history-show">
+            <li class="section-item">developer.mozilla.org</li>
+            <li class="section-item">stackoverflow.com</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  const THEMES = ['slate-light','midnight-ink','coral-amber','indigo-mint','violet-amber','rose-sky'];
+  const q = new URLSearchParams(location.search);
+  let wallOn = false, leftOn = false, rightOn = true;
+  const leftCol = document.getElementById('pv-leftcol');
+  const rightCol = document.querySelector('.ipage-body-right');
+  const pvBg = document.getElementById('pv-bg');
+  const mockHtml = document.getElementById('pv-leftmock').innerHTML;
+
+  const setLeft = (on) => { leftOn = on; leftCol.innerHTML = on ? mockHtml : ''; };
+  const setRight = (on) => { rightOn = on; rightCol.classList.toggle('is-fold', !on); };
+  const setTheme = (name) => {
+    document.documentElement.setAttribute('data-theme', name);
+    const b = document.getElementById('pv-theme');
+    if (b) b.textContent = '主题：' + name;
+  };
+
+  if (q.get('theme') && THEMES.includes(q.get('theme'))) setTheme(q.get('theme'));
+  if (q.get('wall') === '1') {
+    wallOn = true; document.body.classList.add('has-wallpaper');
+    pvBg.style.backgroundImage = q.get('bg') === 'img'
+      ? 'url(https://picsum.photos/1600/1000?seed=pv)'
+      : 'linear-gradient(135deg,#0f2027 0%,#203a43 45%,#2c5364 100%)';
+  }
+  if (q.get('left') === '1') setLeft(true);
+  if (q.get('right') === '0') setRight(false);
+  if (q.get('empty') === '1') {
+    // 空态：无任何收藏集合/快捷链接
+    const col = document.getElementById('ipage-collections');
+    if (col) col.innerHTML = '';
+  }
+  if (q.get('hidebar') === '1') document.querySelector('.pv-bar').style.display = 'none';
+
+  document.getElementById('pv-theme').onclick = () => {
+    const cur = document.documentElement.getAttribute('data-theme') || 'slate-light';
+    const next = THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length];
+    setTheme(next);
+  };
+  document.getElementById('pv-wall').onclick = () => {
+    wallOn = !wallOn;
+    document.body.classList.toggle('has-wallpaper', wallOn);
+    document.getElementById('pv-wall').textContent = '壁纸：' + (wallOn ? '开' : '关');
+    if (wallOn) pvBg.style.backgroundImage = 'linear-gradient(135deg,#0f2027 0%,#203a43 45%,#2c5364 100%)';
+  };
+  document.getElementById('pv-left').onclick = () => {
+    setLeft(!leftOn);
+    document.getElementById('pv-left').textContent = '左列：' + (leftOn ? '开' : '关');
+  };
+  document.getElementById('pv-right').onclick = () => {
+    setRight(!rightOn);
+    document.getElementById('pv-right').textContent = '右栏：' + (rightOn ? '开' : '关');
+  };
+  document.getElementById('pv-shot-help').onclick = () => {
+    document.querySelector('.pv-bar').style.display = 'none';
+  };
+</script>
+</body>
+</html>

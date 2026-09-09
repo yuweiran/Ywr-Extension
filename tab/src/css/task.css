@@ -46,33 +46,48 @@
   width: 0;
   overflow: visible;
 }
-.is-fold.ipage-body-right .ipage-aside-header .btn-aside-fold{
-  transform: rotate(0);
-}
-/* 折叠态：展开按钮改为右缘垂直居中的胶囊，避开顶部 ADD COLLECTION */
 .is-fold.ipage-body-right .ipage-aside-header{
+  /* 折叠后 header 不参与布局：absolute 收缩到仅包住按钮，垂直居中于右缘 */
   position: absolute;
   top: 50%;
   right: 0;
+  bottom: auto;
+  left: auto;
   transform: translateY(-50%);
-  height: auto;
-  line-height: normal;
   width: auto;
-  padding: 0.35rem 0.5rem 0.35rem 0.45rem;
+  height: auto;
+  min-height: 0;
+  line-height: normal;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  z-index: 90;
+}
+.is-fold.ipage-body-right .ipage-aside-header .btn-aside-fold{
+  transform: rotate(0);
+  margin-left: 0;
+  width: 2.1rem;
+  height: 3rem;
+  padding: 0;
   background-color: var(--surface);
   border: 1.5px solid var(--border-subtle);
   border-right: none;
   border-radius: var(--radius-md) 0 0 var(--radius-md);
-  box-shadow: var(--shadow-md);
-  z-index: 999;
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
 }
-.is-fold.ipage-body-right .ipage-aside-header .btn-aside-fold{
-  margin-left: 0;
-  background-color: transparent;
-  padding: 0.2rem;
-}
-.is-fold.ipage-body-right .ipage-aside-header:hover{
+.is-fold.ipage-body-right .ipage-aside-header .btn-aside-fold:hover{
+  background-color: var(--surface-raised);
   border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+.is-fold.ipage-body-right .ipage-aside-header .btn-aside-fold .ipage-aside-fold{
+  font-size: 1rem;
 }
 .is-fold .ipage-sections{
   display: none;
