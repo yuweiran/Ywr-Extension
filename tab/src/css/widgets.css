@@ -1,0 +1,30 @@
+/* ============================================================
+   Widgets 通用 + 各小组件样式（M5 起逐步追加）
+============================================================ */
+
+/* ========== widget 卡片通用形态 ==========
+   左列 .shell-widgets-left 停靠的组件呈卡片（todo/quote/tools）；
+   停靠 topbar/hero 的组件（clock/engines）由组件自身样式覆写为透明 */
+.shell-widgets-left .widget {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.shell-widgets-left .widget + .widget {
+  margin-top: 0.75rem;
+}
+
+/* ========== 时钟/问候 ========== */
+.widget[data-widget="clock"] { background: transparent; border: none; box-shadow: none; }
+.clock-greeting { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 0.1rem; }
+.clock-time { font-size: 3rem; font-weight: 700; line-height: 1.1; color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.clock-date { font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.2rem; }
+.shell-zone-topbar .widget[data-widget="clock"] { display: inline-flex; align-items: baseline; gap: 0.6rem; }
+.shell-zone-topbar .clock-greeting { font-size: 0.8rem; margin: 0; }
+.shell-zone-topbar .clock-time { font-size: 1.05rem; }
+.shell-zone-topbar .clock-date { font-size: 0.8rem; margin: 0; }
+body.has-wallpaper .widget[data-widget="clock"] .clock-time,
+body.has-wallpaper .widget[data-widget="clock"] .clock-greeting,
+body.has-wallpaper .widget[data-widget="clock"] .clock-date { color: var(--on-image); }

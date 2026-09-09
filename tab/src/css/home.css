@@ -12,6 +12,7 @@
 @import "./settings.css"; /*设置面板*/
 @import "./topbar.css"; /*顶栏*/
 @import "./hero.css"; /*Hero 搜索区*/
+@import "./widgets.css"; /*小组件*/
 
 .content-area {
   position: absolute;
