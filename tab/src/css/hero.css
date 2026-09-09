@@ -15,3 +15,10 @@
 .shell-zone-hero:empty {
   display: none;
 }
+
+/* ========== M6：入场动效 ========== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.shell-hero { animation: fadeUp var(--dur-med, 220ms) var(--ease-out, cubic-bezier(0.22, 0.61, 0.36, 1)) both; }

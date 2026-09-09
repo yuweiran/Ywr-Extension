@@ -93,3 +93,6 @@ body.has-wallpaper .widget[data-widget="clock"] .clock-date { color: var(--on-im
 
 
 
+
+/* ========== M6：小组件入场动效 ========== */
+.shell-widgets-left .widget { animation: fadeUp var(--dur-med, 220ms) var(--ease-out, cubic-bezier(0.22, 0.61, 0.36, 1)) both; }

@@ -54,3 +54,14 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 3px;
   background: rgba(15,23,36,0.02);
 }
+
+/* ========== M6：减弱动态效果降级 ========== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
