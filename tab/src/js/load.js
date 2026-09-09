@@ -48,11 +48,16 @@ window.onload = () => {
   document.body.addEventListener("click", () => {
     $dropdown.hidden()
   }, true)
-  initIndexedDB().then((db) => {
+  initIndexedDB().then(async (db) => {
     $indexedDB = db
-    initIndexedDBFunction(db, $indexedDBModel).then(() => {
-      refreshCollections()
-    })
+    await initIndexedDBFunction(db, $indexedDBModel)
+    if (typeof WallpaperManager !== "undefined") {
+      await WallpaperManager.init()
+    }
+    refreshCollections()
+    if (typeof WidgetRegistry !== "undefined") {
+      WidgetRegistry.init()
+    }
   })
 
 };
