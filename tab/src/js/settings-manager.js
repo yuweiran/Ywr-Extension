@@ -24,7 +24,6 @@ const SettingsManager = (function () {
   const init = () => {
     loadSettings();
     createSettingsPanel();
-    createPageBackground();
     createScreensaverLayer();
     bindEvents();
     applyBackground();
@@ -144,17 +143,6 @@ const SettingsManager = (function () {
   };
 
   /**
-   * 创建页面背景层
-   */
-  const createPageBackground = () => {
-    const bgEl = document.createElement('div');
-    bgEl.className = 'page-background';
-    bgEl.id = 'page-background';
-    bgEl.innerHTML = '<div class="page-background-overlay" id="page-background-overlay"></div>';
-    document.body.insertBefore(bgEl, document.body.firstChild);
-  };
-
-  /**
    * 创建屏保层
    */
   const createScreensaverLayer = () => {
@@ -169,14 +157,20 @@ const SettingsManager = (function () {
     document.body.appendChild(screensaverEl);
   };
 
+  const hasWallpaper = () =>
+    new Promise((res) => {
+      chrome.storage.local.get(["ywr-wallpaper"], (d) => {
+        const cfg = d["ywr-wallpaper"];
+        res(!!(cfg && cfg.current));
+      });
+    });
+
   /**
    * 进入屏保模式
    */
-  const enterScreensaver = () => {
-    if (!settings.backgroundImage) {
-      alert('请先设置背景图片');
-      return;
-    }
+  const enterScreensaver = async () => {
+    const ok = await hasWallpaper();
+    if (!ok) { alert("请先设置背景图片"); return; }
     isScreensaverActive = true;
     screensaverReady = false; // 先设为 false，防止立即退出
     closePanel();
@@ -235,17 +229,9 @@ const SettingsManager = (function () {
    * 应用背景设置
    */
   const applyBackground = () => {
-    const bgEl = document.getElementById('page-background');
-    const overlayEl = document.getElementById('page-background-overlay');
-
-    if (settings.backgroundImage) {
-      bgEl.style.backgroundImage = `url(${settings.backgroundImage})`;
-      bgEl.style.filter = settings.backgroundBlur > 0 ? `blur(${settings.backgroundBlur}px)` : 'none';
-      // 透明度: 值越大背景越明显，所以遮罩层透明度 = 1 - 背景透明度
-      overlayEl.style.opacity = 1 - settings.backgroundOpacity;
-    } else {
-      bgEl.style.backgroundImage = 'none';
-      overlayEl.style.opacity = 1;
+    // 背景层与壁纸状态由 WallpaperManager 统一持有
+    if (typeof WallpaperManager !== "undefined" && WallpaperManager.refresh) {
+      WallpaperManager.refresh();
     }
   };
 
@@ -263,73 +249,8 @@ const SettingsManager = (function () {
     document.getElementById('settings-close').addEventListener('click', closePanel);
     overlayEl.addEventListener('click', closePanel);
 
-    // 背景图片上传
-    const uploadArea = document.getElementById('bg-upload-area');
-    const fileInput = document.getElementById('bg-input');
-
-    uploadArea.addEventListener('click', (e) => {
-      if (e.target.closest('.bg-controls')) return;
-      fileInput.click();
-    });
-
-    uploadArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      uploadArea.style.borderColor = 'var(--primary)';
-    });
-
-    uploadArea.addEventListener('dragleave', () => {
-      uploadArea.style.borderColor = '';
-    });
-
-    uploadArea.addEventListener('drop', (e) => {
-      e.preventDefault();
-      uploadArea.style.borderColor = '';
-      const file = e.dataTransfer.files[0];
-      if (file && file.type.startsWith('image/')) {
-        handleImageFile(file);
-      }
-    });
-
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        handleImageFile(file);
-      }
-    });
-
-    // 更换按钮
-    document.getElementById('bg-change-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      fileInput.click();
-    });
-
-    // 移除按钮
-    document.getElementById('bg-remove-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      removeBackground();
-    });
-
-    // 透明度滑块
-    const opacitySlider = document.getElementById('bg-opacity-slider');
-    const opacityValue = document.getElementById('bg-opacity-value');
-    opacitySlider.addEventListener('input', (e) => {
-      const value = e.target.value / 100;
-      settings.backgroundOpacity = value;
-      opacityValue.textContent = `${e.target.value}%`;
-      applyBackground();
-      saveSettings();
-    });
-
-    // 模糊滑块
-    const blurSlider = document.getElementById('bg-blur-slider');
-    const blurValue = document.getElementById('bg-blur-value');
-    blurSlider.addEventListener('input', (e) => {
-      const value = parseInt(e.target.value);
-      settings.backgroundBlur = value;
-      blurValue.textContent = `${value}px`;
-      applyBackground();
-      saveSettings();
-    });
+    // [M3-4] 旧背景控件监听已移除；M4-2 在 Tab 化面板中对 bg-upload-area/bg-input/
+    // bg-change-btn/bg-remove-btn/bg-opacity-slider/bg-blur-slider 重新绑定 WallpaperManager
 
     // 屏保模式按钮
     document.getElementById('screensaver-btn').addEventListener('click', () => {
@@ -369,43 +290,6 @@ const SettingsManager = (function () {
         }, 100);
       }
     });
-  };
-
-  /**
-   * 处理图片文件
-   */
-  const handleImageFile = (file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64 = e.target.result;
-      settings.backgroundImage = base64;
-      saveSettings();
-      applyBackground();
-
-      // 更新预览
-      const preview = document.getElementById('bg-preview');
-      const uploadArea = document.getElementById('bg-upload-area');
-      preview.src = base64;
-      uploadArea.classList.add('has-image');
-    };
-    reader.readAsDataURL(file);
-  };
-
-  /**
-   * 移除背景
-   */
-  const removeBackground = () => {
-    settings.backgroundImage = null;
-    saveSettings();
-    applyBackground();
-
-    // 更新 UI
-    const preview = document.getElementById('bg-preview');
-    const uploadArea = document.getElementById('bg-upload-area');
-    const fileInput = document.getElementById('bg-input');
-    preview.src = '';
-    uploadArea.classList.remove('has-image');
-    fileInput.value = '';
   };
 
   /**

@@ -307,6 +307,7 @@ const WallpaperManager = (function () {
 
   return {
     init,
+    refresh: () => applyBackground(),
     listSources,
     setCurrent,
     addGradient,
