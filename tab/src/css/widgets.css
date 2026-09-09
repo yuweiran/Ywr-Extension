@@ -45,3 +45,11 @@ body.has-wallpaper .widget[data-widget="clock"] .clock-date { color: var(--on-im
 .todo-input:focus { border-color: var(--primary); }
 .todo-add { background: var(--primary); color: #fff; border: none; border-radius: 8px; width: 1.9rem; cursor: pointer; }
 
+/* ========== 语录 ========== */
+.quote-card { position: relative; padding: 0.9rem 1rem; }
+.quote-mark { position: absolute; top: 0.25rem; left: 0.6rem; font-size: 2rem; line-height: 1; color: var(--accent-soft); }
+.quote-text { font-size: 0.85rem; line-height: 1.6; color: var(--text); }
+.quote-next { position: absolute; right: 0.5rem; bottom: 0.5rem; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 0.9rem; border-radius: 6px; width: 1.6rem; height: 1.6rem; }
+.quote-next:hover { background: var(--surface-raised); color: var(--text); }
+
+
