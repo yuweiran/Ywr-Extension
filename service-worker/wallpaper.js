@@ -40,11 +40,13 @@ function picsumUrl(seed) {
 }
 
 /**
- * Bing 每日壁纸解析（唯一 fetch-and-parse 场景）
+ * Bing 壁纸解析（唯一 fetch-and-parse 场景）
+ * idx 从近 8 天随机取一天，避免每次都返回同一张“今日壁纸”
  */
 async function fetchBingUrl() {
+  const idx = Math.floor(Math.random() * 8);
   const res = await fetch(
-    "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN"
+    `https://www.bing.com/HPImageArchive.aspx?format=js&idx=${idx}&n=1&mkt=zh-CN`
   );
   if (!res.ok) throw new Error("bing http " + res.status);
   const json = await res.json();

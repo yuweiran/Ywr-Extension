@@ -489,10 +489,18 @@ const applyOnline = (kind) => {
       $notify.error({ message: "获取在线壁纸失败：" + detail, duration: 4000 });
       return;
     }
-    WallpaperManager.addOnline(res.url, kind).then(() => {
-      renderSourceList();
-      $notify.success({ message: "已应用在线壁纸", duration: 2000 });
-    });
+    // 先预载图片：成功才应用（避免静默失败/看起来没更新）
+    const probe = new Image();
+    probe.onload = () => {
+      WallpaperManager.addOnline(res.url, kind).then(() => {
+        renderSourceList();
+        $notify.success({ message: "已应用在线壁纸", duration: 2000 });
+      });
+    };
+    probe.onerror = () => {
+      $notify.error({ message: "在线图片加载失败（网络/跨域）", duration: 4000 });
+    };
+    probe.src = res.url;
   });
 };
 onlineBtn && onlineBtn.addEventListener("click", () => applyOnline("picsum"));
