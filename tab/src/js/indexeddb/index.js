@@ -148,7 +148,7 @@ class IndexedModel {
 const initIndexedDB = async () => {
   const database = await new Promise((resolve, reject) => {
     const dbName = "initDB";
-    const dbConnectHandle = indexedDB.open(dbName, 1);
+    const dbConnectHandle = indexedDB.open(dbName, 2);
     dbConnectHandle.onerror = (event) => {
       // 错误处理
       reject();
@@ -166,6 +166,7 @@ const initIndexedDB = async () => {
 
 const initIndexedDBStructure = async (db, models) => {
   for (let model in models) {
+    if (db.objectStoreNames.contains(model)) continue;
     const key = models[model].key;
     const modelStore = db.createObjectStore(model, { keyPath: key });
     for (let p of models[model].properties) {

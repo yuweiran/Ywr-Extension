@@ -83,10 +83,12 @@ class IndexedModel {
 }
 
 const DB_NAME = "initDB";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const MODELS = {
   collections: { key: "id", properties: ["id", "name", "order"] },
   links: { key: "id", properties: ["id", "name", "url", "remark", "order", "collection", "icon"] },
+  todos: { key: "id", properties: ["id", "text", "done", "createdAt"] },
+  wallpapers: { key: "id", properties: ["id", "type"] },
 };
 
 let _db = null;
