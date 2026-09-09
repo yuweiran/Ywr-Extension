@@ -49,12 +49,30 @@
 .is-fold.ipage-body-right .ipage-aside-header .btn-aside-fold{
   transform: rotate(0);
 }
-.is-fold .ipage-aside-header{
+/* 折叠态：展开按钮改为右缘垂直居中的胶囊，避开顶部 ADD COLLECTION */
+.is-fold.ipage-body-right .ipage-aside-header{
   position: absolute;
+  top: 50%;
   right: 0;
+  transform: translateY(-50%);
+  height: auto;
+  line-height: normal;
+  width: auto;
+  padding: 0.35rem 0.5rem 0.35rem 0.45rem;
+  background-color: var(--surface);
+  border: 1.5px solid var(--border-subtle);
+  border-right: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  box-shadow: var(--shadow-md);
   z-index: 999;
-  border-radius: 6px 0 0 6px;
-  box-shadow: var(--shadow-1);
+}
+.is-fold.ipage-body-right .ipage-aside-header .btn-aside-fold{
+  margin-left: 0;
+  background-color: transparent;
+  padding: 0.2rem;
+}
+.is-fold.ipage-body-right .ipage-aside-header:hover{
+  border-color: var(--primary);
 }
 .is-fold .ipage-sections{
   display: none;
