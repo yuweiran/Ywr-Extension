@@ -18,6 +18,11 @@ const $searchEles = (function () {
     engineBtn.innerHTML = `<span class="icon-${engine}"></span>`;
   };
 
+  const setEngine = (engine) => {
+    localStorage.setItem("engine", engine);
+    initEngineIcon(engine);
+  };
+
   const renderSuggestions = (items) => {
     cachedSuggestions = items;
     activeIndex = -1;
@@ -67,6 +72,7 @@ const $searchEles = (function () {
     engineBtn,
     suggestionList,
     initEngineIcon,
+    setEngine,
     renderSuggestions,
     showSuggestions,
     hideSuggestions,

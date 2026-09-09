@@ -23,23 +23,6 @@ const retrieveContent = (content) => {
   window.open(base_url + content);
 };
 
-$searchEles.contentArea.addEventListener("mouseover", (e) => {
-  if (e.target.classList[0] === "engine-item") {
-    e.target.onclick = () => {
-      let index = parseFloat(e.target.dataset.index);
-      $searchEles.engineItem.forEach((v, i) => {
-        if (index === i) {
-          v.classList.add("selected-engine-item");
-          let engine = v.getAttribute("data-engine");
-          localStorage.setItem("engine", engine);
-        } else {
-          v.classList.remove("selected-engine-item");
-        }
-      });
-    };
-  }
-});
-
 //执行检索
 $searchEles.btnRetrievalContent.addEventListener("click", (e) => {
   if ($searchEles.userContent.value.length > 0) {
@@ -128,8 +111,7 @@ $searchEles.engineBtn.addEventListener("click", () => {
       { id: "", icon: "bing", value: "bing", label: "Bing" },
     ],
     callback: (value) => {
-      localStorage.setItem("engine", value);
-      $searchEles.initEngineIcon(value)
+      $searchEles.setEngine(value)
     }
   })
 })
