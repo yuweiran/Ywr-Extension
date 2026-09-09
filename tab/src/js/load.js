@@ -51,12 +51,22 @@ window.onload = () => {
   initIndexedDB().then(async (db) => {
     $indexedDB = db
     await initIndexedDBFunction(db, $indexedDBModel)
-    if (typeof WallpaperManager !== "undefined") {
-      await WallpaperManager.init()
-    }
+    // 收藏为主体：先渲染，避免被壁纸引擎初始化阻塞/中断
     refreshCollections()
+    // 壁纸引擎：独立容错，失败仅降级，不影响收藏/搜索等主流程
+    if (typeof WallpaperManager !== "undefined") {
+      try {
+        await WallpaperManager.init()
+      } catch (e) {
+        console.warn("WallpaperManager init failed (degraded):", e)
+      }
+    }
     if (typeof WidgetRegistry !== "undefined") {
-      WidgetRegistry.init()
+      try {
+        WidgetRegistry.init()
+      } catch (e) {
+        console.warn("WidgetRegistry init failed (degraded):", e)
+      }
     }
   })
 
