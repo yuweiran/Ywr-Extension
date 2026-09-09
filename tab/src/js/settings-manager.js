@@ -142,6 +142,22 @@ const SettingsManager = (function () {
             </div>
           </div>
           <div class="settings-item">
+            <label class="settings-item-label">内容区透明度</label>
+            <div class="settings-item-desc">右侧栏与中间收藏区底部的透出程度（仅壁纸存在时生效）</div>
+            <div class="slider-row">
+              <input type="range" class="settings-slider" id="panel-opacity-slider" min="0" max="100" value="50">
+              <span class="slider-value" id="panel-opacity-value">50%</span>
+            </div>
+          </div>
+          <div class="settings-item">
+            <label class="settings-item-label">内容区模糊</label>
+            <div class="settings-item-desc">玻璃感强度，越大越能透出壁纸色块</div>
+            <div class="slider-row">
+              <input type="range" class="settings-slider" id="panel-blur-slider" min="0" max="30" value="0">
+              <span class="slider-value" id="panel-blur-value">0px</span>
+            </div>
+          </div>
+          <div class="settings-item">
             <label class="settings-item-label">每日自动换壁纸</label>
             <button class="settings-link-btn" id="bg-daily-btn">
               <span id="bg-daily-label">○ 已关闭</span>
@@ -586,6 +602,10 @@ const opacitySlider = document.getElementById("bg-opacity-slider");
 const opacityValue = document.getElementById("bg-opacity-value");
 const blurSlider = document.getElementById("bg-blur-slider");
 const blurValue = document.getElementById("bg-blur-value");
+const panelOpacitySlider = document.getElementById("panel-opacity-slider");
+const panelOpacityValue = document.getElementById("panel-opacity-value");
+const panelBlurSlider = document.getElementById("panel-blur-slider");
+const panelBlurValue = document.getElementById("panel-blur-value");
 let _viewTimer = null;
 const queueView = (patch) => {
   if (_viewTimer) clearTimeout(_viewTimer);
@@ -597,6 +617,10 @@ const syncSliders = () => {
   if (opacityValue) opacityValue.textContent = Math.round(view.opacity * 100) + "%";
   if (blurSlider) blurSlider.value = view.blur;
   if (blurValue) blurValue.textContent = view.blur + "px";
+  if (panelOpacitySlider) panelOpacitySlider.value = Math.round((view.panelOpacity ?? 0.5) * 100);
+  if (panelOpacityValue) panelOpacityValue.textContent = Math.round((view.panelOpacity ?? 0.5) * 100) + "%";
+  if (panelBlurSlider) panelBlurSlider.value = view.panelBlur ?? 0;
+  if (panelBlurValue) panelBlurValue.textContent = (view.panelBlur ?? 0) + "px";
 };
 opacitySlider && opacitySlider.addEventListener("input", (e) => {
   if (opacityValue) opacityValue.textContent = e.target.value + "%";
@@ -605,6 +629,14 @@ opacitySlider && opacitySlider.addEventListener("input", (e) => {
 blurSlider && blurSlider.addEventListener("input", (e) => {
   if (blurValue) blurValue.textContent = e.target.value + "px";
   queueView({ blur: Number(e.target.value) });
+});
+panelOpacitySlider && panelOpacitySlider.addEventListener("input", (e) => {
+  if (panelOpacityValue) panelOpacityValue.textContent = e.target.value + "%";
+  queueView({ panelOpacity: Number(e.target.value) / 100 });
+});
+panelBlurSlider && panelBlurSlider.addEventListener("input", (e) => {
+  if (panelBlurValue) panelBlurValue.textContent = e.target.value + "px";
+  queueView({ panelBlur: Number(e.target.value) });
 });
 syncSliders();
 

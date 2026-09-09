@@ -30,7 +30,12 @@ const WallpaperManager = (function () {
     current: null,
     favorites: [],
     daily: false,
-    view: { opacity: 0.15, blur: 0 },
+    view: {
+      opacity: 0.15, // 壁纸蒙层（值越大背景越明显）
+      blur: 0,       // 壁纸本身模糊
+      panelOpacity: 0.5, // 内容区(右栏/中间收藏区)容器玻璃的不透明度 0~1
+      panelBlur: 8,      // 内容区容器玻璃模糊 px
+    },
   });
 
   const loadConfig = () =>
@@ -95,7 +100,11 @@ const WallpaperManager = (function () {
     ensureBackgroundLayer();
     const css = await itemToCss(config.current);
     const isImage = config.current && config.current.kind === "online";
-    const view = config.view || { opacity: 0.15, blur: 0 };
+    const view = config.view || { opacity: 0.15, blur: 0, panelOpacity: 0.5, panelBlur: 8 };
+    // 内容区(右栏/中间收藏容器)玻璃参数 -> CSS 变量（仅在 has-wallpaper 时被 CSS 使用）
+    const root = document.documentElement.style;
+    root.setProperty("--panel-glass-opacity", String(view.panelOpacity ?? 0.5));
+    root.setProperty("--panel-glass-blur", (view.panelBlur ?? 0) + "px");
     if (css) {
       bgEl.style.backgroundImage = css;
       // 模糊时轻微放大背景层：避免 filter:blur 在元素边缘外采样透明而产生白边/晕边
@@ -301,12 +310,16 @@ const WallpaperManager = (function () {
 
   const setView = async (patch) => {
     if (!config) return;
-    config.view = Object.assign({}, config.view || { opacity: 0.15, blur: 0 }, patch);
+    const base = { opacity: 0.15, blur: 0, panelOpacity: 0.5, panelBlur: 8 };
+    config.view = Object.assign({}, base, config.view || {}, patch);
     await saveConfig(config);
     await applyBackground();
   };
 
-  const getView = () => (config && config.view) || { opacity: 0.15, blur: 0 };
+  const getView = () => {
+    const base = { opacity: 0.15, blur: 0, panelOpacity: 0.5, panelBlur: 8 };
+    return Object.assign({}, base, config && config.view ? config.view : {});
+  };
 
   /* ---------- 旧数据迁移（v1：library + favorites id 数组 / 字符串） ---------- */
   const migrateLegacy = async () => {
