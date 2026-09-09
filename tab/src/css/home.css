@@ -10,6 +10,8 @@
 @import "./tabs.css"; /*tab区*/
 @import "./dropdown.css"; /*drowpdown区*/
 @import "./settings.css"; /*设置面板*/
+@import "./topbar.css"; /*顶栏*/
+@import "./hero.css"; /*Hero 搜索区*/
 
 .content-area {
   position: absolute;
@@ -20,40 +22,48 @@
   display: flex;
 }
 
+/* ========== 三段式布局（顶栏/Hero/工作区） ========== */
+.content-area {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.content-area .shell-topbar {
+  flex: none;
+}
+.content-area .shell-hero {
+  flex: none;
+}
+.content-area .shell-workbench {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+.shell-workbench .shell-widgets-left {
+  width: 15rem;
+  min-width: 15rem;
+  max-width: 19rem;
+  overflow-y: auto;
+  padding: 0.75rem 0.5rem 0.75rem 0.75rem;
+}
+.shell-workbench .shell-widgets-left:empty {
+  display: none;
+}
+.shell-workbench .shell-workbench-center {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1rem;
+  overflow: hidden;
+}
+
 /* 屏保模式下隐藏内容 */
 body.screensaver-mode .content-area {
   display: none !important;
 }
 
-.content-area .ipage-aside {
-  display: flex;
-  flex-direction: column;
-  padding: 0.75rem 0.6rem;
-  border-right: 1px solid var(--border-subtle);
-  background-color: var(--surface);
-  gap: 0.3rem;
-  min-width: 52px;
-}
-
-.ipage-aside .ipage-aside-setting {
-  margin-top: auto;
-  text-align: center;
-  font-size: 20px;
-  padding: 0.4rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  border-radius: var(--radius-md);
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 140ms ease, color 140ms ease;
-}
-.ipage-aside .ipage-aside-setting:hover {
-  background-color: var(--surface-raised);
-  color: var(--text);
-}
 .ipage-aside-tab .tab-item{
   font-size: 16px;
   padding: 0.5rem;
@@ -85,22 +95,6 @@ body.screensaver-mode .content-area {
   background-color: var(--primary);
   color: #fff;
 }
-.content-area .ipage-body {
-  flex: 1;
-  display: flex;
-}
-.ipage-body .ipage-body-left {
-  width: 24rem;
-  padding: 0.5rem;
-  display: flex;
-}
-.ipage-body .ipage-body-center {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 1rem 0;
-}
-
 .ipage-aside-avatar{
   display: flex;
   align-items: center;
@@ -124,61 +118,3 @@ body.screensaver-mode .content-area {
   box-shadow: var(--shadow-1);
 }
 
-/* ========== 主题切换器样式 ========== */
-.ipage-aside-theme {
-  position: relative;
-  text-align: center;
-  font-size: 20px;
-  padding: 0.4rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  border-radius: var(--radius-md);
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 140ms ease, color 140ms ease;
-}
-.ipage-aside-theme:hover {
-  background-color: var(--surface-raised);
-  color: var(--text);
-}
-.theme-switcher{
-  position: absolute;
-  left: calc(100% + 0.5rem);
-  top: 0;
-  bottom: auto;
-  transform: translateX(-8px);
-  min-width: 9rem;
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
-}
-.theme-switcher.is-visible{
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(0);
-}
-.theme-switcher .theme-option{
-  white-space: nowrap;
-}
-.theme-switcher .theme-option.is-active{
-  background-color: var(--muted-surface);
-  color: var(--primary);
-  font-weight: 500;
-}
-.theme-switcher .theme-option .dropdown-item-icon{
-  background: transparent;
-  font-size: 1rem;
-}
-
-/* 侧边栏分隔线 */
-.ipage-aside-sep {
-  height: 1px;
-  background: var(--border-subtle);
-  margin: 0.2rem 0;
-  border-radius: 1px;
-}

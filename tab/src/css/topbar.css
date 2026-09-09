@@ -1,0 +1,103 @@
+/* ============================================================
+   顶栏 .shell-topbar
+============================================================ */
+.shell-topbar {
+  height: var(--topbar-h, 3.25rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+  z-index: 50;
+}
+.shell-topbar-left,
+.shell-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.shell-logo {
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 2.125rem;
+  height: 2.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: background-color 140ms ease, color 140ms ease;
+  user-select: none;
+}
+.shell-logo:hover {
+  background-color: var(--surface-raised);
+  color: var(--text);
+}
+/* 主题与设置入口：沿用 .ipage-aside-theme / .ipage-aside-setting 钩子的形态 */
+.ipage-aside-theme,
+.ipage-aside-setting {
+  font-size: 1.25rem;
+  padding: 0;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  width: 2.125rem;
+  height: 2.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+.ipage-aside-theme:hover,
+.ipage-aside-setting:hover {
+  background-color: var(--surface-raised);
+  color: var(--text);
+}
+/* 主题下拉：改从顶栏按钮向右下展开 */
+.ipage-aside-theme .theme-switcher {
+  left: auto;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  transform: translateX(8px);
+}
+.ipage-aside-theme .theme-switcher.is-visible {
+  transform: translateX(0);
+}
+/* 顶栏小组件槽位（clock widget 渲染位，M5 启用） */
+.shell-zone-topbar:empty {
+  display: none;
+}
+
+/* ============================================================
+   主题下拉基础形态（随 .ipage-aside-theme/#theme-switcher 钩子
+   自 home.css 迁入；可见性门控保持原行为，避免 M1 回归）
+============================================================ */
+.theme-switcher {
+  position: absolute;
+  min-width: 9rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+}
+.theme-switcher.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+.theme-switcher .theme-option {
+  white-space: nowrap;
+}
+.theme-switcher .theme-option.is-active {
+  background-color: var(--muted-surface);
+  color: var(--primary);
+  font-weight: 500;
+}
+.theme-switcher .theme-option .dropdown-item-icon {
+  background: transparent;
+  font-size: 1rem;
+}
