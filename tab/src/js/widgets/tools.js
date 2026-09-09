@@ -1,13 +1,27 @@
 (function () {
   if (typeof WidgetRegistry === "undefined") return;
-  const FAVICON = "https://www.google.com/s2/favicons?domain=";
 
-  const faviconOf = (url) => {
+  // 取站点名首字符（去 www.），并依据主机名 hash 生成稳定的随机背景色
+  const letterOf = (name, url) => {
+    const raw = (name && name.trim()) || "";
+    if (raw) return Array.from(raw)[0].toUpperCase();
     let host = "";
     try {
-      host = new URL(url).hostname;
+      host = new URL(url).hostname.replace(/^www\./, "");
     } catch (e) { /* ignore */ }
-    return host ? FAVICON + host : "";
+    return host ? Array.from(host)[0].toUpperCase() : "?";
+  };
+
+  const colorOf = (url) => {
+    let s = url || "x";
+    let hash = 0;
+    for (let i = 0; i < s.length; i++) {
+      hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
+    }
+    const hue = hash % 360;
+    const sat = 62 + (hash % 23); // 62%–84%
+    const lig = 48 + (hash % 14); // 48%–61%
+    return `hsl(${hue}, ${sat}%, ${lig}%)`;
   };
 
   const render = (slot) => {
@@ -18,7 +32,7 @@
           ${items
             .map(
               (it, i) => `<a class="tools-item" href="${it.url}" target="_blank" rel="noopener" data-i="${i}">
-                <img class="tools-icon" src="${faviconOf(it.url)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+                <span class="tools-icon tools-letter" style="background:${colorOf(it.url)}">${letterOf(it.name, it.url)}</span>
                 <span class="tools-name">${it.name}</span>
               </a>`
             )

@@ -51,8 +51,10 @@ const WidgetRegistry = (function () {
   };
 
   const renderAll = (layout) => {
-    // 先清除全部已挂载 widget 槽位，避免组件换 zone 后旧节点残留
-    document.querySelectorAll("[data-widget-id]").forEach((el) => el.remove());
+    // 只清除真正的 widget 挂载槽（section.widget[data-widget-id]）。
+    // 不能用裸 [data-widget-id]：设置面板布局行(.widget-layout-row[data-widget-id])
+    // 也带该属性，会被误删导致面板组件列表消失
+    document.querySelectorAll(".widget[data-widget-id]").forEach((el) => el.remove());
     widgets.forEach((w, id) => {
       const cfg = layout[id] || { zone: "off", enabled: false };
       const zoneName = cfg.enabled === false ? "off" : cfg.zone || "off";
@@ -74,7 +76,7 @@ const WidgetRegistry = (function () {
   const refresh = (id) => {
     const def = widgets.get(id);
     if (!def || !def.refresh) return;
-    document.querySelectorAll(`[data-widget-id="${id}"]`).forEach((slot) => {
+    document.querySelectorAll(`.widget[data-widget-id="${id}"]`).forEach((slot) => {
       try {
         def.refresh(slot);
       } catch (e) {

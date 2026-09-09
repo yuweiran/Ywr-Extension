@@ -113,11 +113,13 @@ export async function handleWallpaperMessage(message) {
     const kind = message.kind || "picsum";
     try {
       if (kind === "bing") {
+        // Bing 需解析 JSON 提取图片 URL，必须经 SW fetch
         const url = await fetchBingUrl();
         return { success: true, url };
       }
-      const url = await spikePicsum();
-      return { success: true, url };
+      // Picsum：纯 URL 构造即终态（CSS background-image 直接加载，
+      // 不依赖 SW fetch / 302 权限链），无需网络验证
+      return { success: true, url: picsumUrl(await daySeed()) };
     } catch (err) {
       return { success: false, error: err.message || "wallpaper fetch failed" };
     }
