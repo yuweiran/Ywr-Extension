@@ -101,3 +101,11 @@
   background: transparent;
   font-size: 1rem;
 }
+
+/* 壁纸模式下顶栏毛玻璃（有背景时 body 加 .has-wallpaper） */
+body.has-wallpaper .shell-topbar {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  border-bottom-color: var(--glass-border);
+}

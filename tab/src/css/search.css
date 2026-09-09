@@ -132,3 +132,11 @@
 .selected-engine-item {
   box-shadow: var(--inset-subtle), var(--inset-highlight) !important;
 }
+
+/* ========== Hero 毛玻璃形态 ========== */
+body.has-wallpaper #user_input_area {
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  border-color: var(--glass-border);
+}
