@@ -98,12 +98,15 @@ const WallpaperManager = (function () {
     const view = config.view || { opacity: 0.15, blur: 0 };
     if (css) {
       bgEl.style.backgroundImage = css;
+      // 模糊时轻微放大背景层：避免 filter:blur 在元素边缘外采样透明而产生白边/晕边
+      bgEl.style.transform = view.blur > 0 ? "scale(1.06)" : "none";
       bgEl.style.filter = view.blur > 0 ? `blur(${view.blur}px)` : "none";
       // 图片蒙层透明度：渐变可透 35%，图片按 view.opacity（越小越明显）
       overlayEl.style.opacity = isImage ? 1 - view.opacity : 0.35;
       document.body.classList.add("has-wallpaper");
     } else {
       bgEl.style.backgroundImage = "none";
+      bgEl.style.transform = "none";
       bgEl.style.filter = "none";
       overlayEl.style.opacity = 1;
       document.body.classList.remove("has-wallpaper");
