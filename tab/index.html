@@ -12,87 +12,74 @@
 </head>
 
 <body style="height: 100vh">
-  <!-- <div id="clock"></div> -->
   <!-- -------------------------内容区域 -------------------------------->
   <div class="content-area">
-    <div class="ipage-aside">
-      <!-- <div class="ipage-aside-tab">
-        <div class="tab-item">
-          <div class="icon-collections tab-icon"></div>
-          <div class="tab-text"></div>
+    <!-- 顶栏 -->
+    <header class="shell-topbar">
+      <div class="shell-topbar-left">
+        <span class="shell-logo" id="shell-logo" title="INIT">❄</span>
+      </div>
+      <div class="shell-topbar-right">
+        <div class="shell-topbar-slot shell-zone-topbar" data-widget-zone="topbar"></div>
+        <!-- 主题切换器（由左侧竖条迁入，保留全部 class/id 钩子） -->
+        <div class="ipage-aside-theme">
+          <span class="icon-theme"></span>
+          <div class="theme-switcher dropdown" id="theme-switcher">
+            <div class="dropdown-item theme-option" data-theme="slate-light">
+              <span class="dropdown-item-icon">◐</span>
+              <span>石墨浅调</span>
+            </div>
+            <div class="dropdown-item theme-option" data-theme="midnight-ink">
+              <span class="dropdown-item-icon">🌑</span>
+              <span>深夜墨色</span>
+            </div>
+            <div class="dropdown-item theme-option" data-theme="coral-amber">
+              <span class="dropdown-item-icon">🪸</span>
+              <span>珊瑚金橙</span>
+            </div>
+            <div class="dropdown-item theme-option" data-theme="indigo-mint">
+              <span class="dropdown-item-icon">💎</span>
+              <span>靛蓝薄荷</span>
+            </div>
+            <div class="dropdown-item theme-option" data-theme="violet-amber">
+              <span class="dropdown-item-icon">🔮</span>
+              <span>紫罗兰柠黄</span>
+            </div>
+            <div class="dropdown-item theme-option" data-theme="rose-sky">
+              <span class="dropdown-item-icon">🌸</span>
+              <span>玫红天蓝</span>
+            </div>
+          </div>
         </div>
-        <div class="tab-item">
-          <div class="icon-codelibrary tab-icon"></div>
-          <div class="tab-text"></div>
-        </div>
-      </div> -->
-      <div class="ipage-aside-theme">
-        <span class="icon-theme"></span>
-        <div class="theme-switcher dropdown" id="theme-switcher">
-          <div class="dropdown-item theme-option" data-theme="slate-light">
-            <span class="dropdown-item-icon">◐</span>
-            <span>石墨浅调</span>
-          </div>
-          <div class="dropdown-item theme-option" data-theme="midnight-ink">
-            <span class="dropdown-item-icon">🌑</span>
-            <span>深夜墨色</span>
-          </div>
-          <div class="dropdown-item theme-option" data-theme="coral-amber">
-            <span class="dropdown-item-icon">🪸</span>
-            <span>珊瑚金橙</span>
-          </div>
-          <div class="dropdown-item theme-option" data-theme="indigo-mint">
-            <span class="dropdown-item-icon">💎</span>
-            <span>靛蓝薄荷</span>
-          </div>
-          <div class="dropdown-item theme-option" data-theme="violet-amber">
-            <span class="dropdown-item-icon">🔮</span>
-            <span>紫罗兰柠黄</span>
-          </div>
-          <div class="dropdown-item theme-option" data-theme="rose-sky">
-            <span class="dropdown-item-icon">🌸</span>
-            <span>玫红天蓝</span>
-          </div>
+        <!-- 设置入口（保留 class 钩子） -->
+        <div class="ipage-aside-setting" id="shell-setting-btn">
+          <span class="icon-setting"></span>
         </div>
       </div>
-      <div class="ipage-aside-sep"></div>
-      <div class="ipage-aside-setting">
-        <span class="icon-setting"></span>
-      </div>
-    </div>
-    <div class="ipage-body">
-      <div class="ipage-body-center">
-        <div id="user_search_area">
-          <div id="user_input_area">
-            <button id="btn-retrieval-engine">
-              <span class="icon-baidu"></span>
-            </button>
-            <input type="text" spellcheck="false" id="user-content" />
-            <button id="btn-retrieval-content">
-              <span class="icon-search"></span>
-            </button>
-          </div>
-          <div class="suggestion-list" id="suggestion-list"></div>
+    </header>
+    <!-- Hero 搜索区 -->
+    <main class="shell-hero">
+      <div id="user_search_area">
+        <div id="user_input_area">
+          <button id="btn-retrieval-engine">
+            <span class="icon-baidu"></span>
+          </button>
+          <input type="text" spellcheck="false" id="user-content" />
+          <button id="btn-retrieval-content">
+            <span class="icon-search"></span>
+          </button>
         </div>
+        <div class="suggestion-list" id="suggestion-list"></div>
+      </div>
+      <div class="shell-zone-hero" data-widget-zone="hero"></div>
+    </main>
+    <!-- 工作区（三列 grid） -->
+    <section class="shell-workbench">
+      <div class="shell-widgets-left" data-widget-zone="left">
+        <div class="shell-widgets-left-inner"></div>
+      </div>
+      <div class="shell-workbench-center">
         <div id="ipage-tabs">
-          <!-- <div class="tab-item btn-tool-layout">
-            <span class="icon-layout"></span><span class="tab-item-text">LAYOUT</span>
-          </div>
-          <div class="tab-item btn-tool-history">
-            <span class="icon-history"></span><span class="tab-item-text">HISTORY</span>
-          </div>
-          <div class="tab-item btn-tool-tabs">
-            <span class="icon-tabs"></span><span class="tab-item-text">TAB</span>
-          </div>
-          <div class="tab-item btn-tool-theme">
-            <span class="icon-theme"></span><span class="tab-item-text">THEME</span>
-          </div>
-          <div class="tab-item btn-tool-task">
-            <span class="icon-task"></span><span class="tab-item-text">TASK</span>
-          </div> -->
-          <!-- <div class="tab-item btn-tool-more">
-            <span class="icon-more"></span><span class="tab-item-text">MORE</span>
-          </div> -->
           <button class="tab-btn-add-collection">
             <span class="icon-plus add-collection-icon"></span><span class="add-collection-text">ADD COLLECTION</span>
           </button>
@@ -110,14 +97,13 @@
             <div class="section-title">Tabs</div>
             <ul class="section-tabs-show"></ul>
           </div>
-          <!-- <div><input-file id="test-file"></input-file></div> -->
           <div class="section">
             <div class="section-title">History</div>
             <ul class="section-history-show"></ul>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   </div>
   <!-- 引入第三方库 -->
   <script src="../vender/sortablejs.js"></script>
@@ -154,6 +140,8 @@
   <script src="./src/js/apis/index.js"></script>
   <!-- load -->
   <script src="./src/js/load.js"></script>
+  <!-- widgets registry -->
+  <script src="./src/js/widgets/registry.js"></script>
 </body>
 
 </html>
