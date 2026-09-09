@@ -641,8 +641,9 @@ todoClearBtn &&
 const quoteNextBtn = document.getElementById("quote-next-btn");
 quoteNextBtn &&
   quoteNextBtn.addEventListener("click", () => {
-    WidgetRegistry.refresh("quote");
-    $notify.success({ message: "已换一条", duration: 1200 });
+    // 推进主页语录到下一条（registry.invoke 会作用于已挂载的 quote 槽）
+    const ran = WidgetRegistry.invoke("quote", "next");
+    if (ran) $notify.success({ message: "已换一条", duration: 1200 });
   });
 
 const renderToolsEdit = () => {

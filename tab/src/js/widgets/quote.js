@@ -76,6 +76,14 @@
     return used;
   };
 
+  // 换到下一条并持久化当日（卡内 ↻ 与设置面板"换一条"共用）
+  const advance = (slot) => {
+    const state = loadState();
+    state.idx = nextIndex(state.idx);
+    saveState(state);
+    render(slot);
+  };
+
   const render = (slot) => {
     let state = loadState();
     if (state.idx < 0 || state.idx >= QUOTES.length) {
@@ -92,10 +100,7 @@
     if (btn) {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
-        state = loadState();
-        state.idx = nextIndex(state.idx);
-        saveState(state);
-        render(slot);
+        advance(slot);
       });
     }
   };
@@ -115,5 +120,6 @@
     zones: ["left"],
     render,
     refresh: render,
+    next: advance,
   });
 })();

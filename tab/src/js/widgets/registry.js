@@ -85,10 +85,27 @@ const WidgetRegistry = (function () {
     });
   };
 
+  // 调用组件自定义动作（如 quote.next）；对每个已挂载槽执行 def[action](slot)
+  const invoke = (id, action, ...args) => {
+    const def = widgets.get(id);
+    if (!def || typeof def[action] !== "function") return false;
+    let ran = false;
+    document.querySelectorAll(`.widget[data-widget-id="${id}"]`).forEach((slot) => {
+      ran = true;
+      try {
+        def[action](slot, ...args);
+      } catch (e) {
+        console.error(`WidgetRegistry: invoke ${id}.${action} failed`, e);
+      }
+    });
+    return ran;
+  };
+
   return {
     register,
     init,
     refresh,
+    invoke,
     getLayout,
     saveLayout,
     get widgets() {
