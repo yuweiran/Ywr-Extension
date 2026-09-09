@@ -290,6 +290,26 @@ const WallpaperManager = (function () {
 
   const getView = () => (config && config.view) || { opacity: 0.15, blur: 0 };
 
+  const addOnline = async (url, provider) => {
+    if (!config) config = defaultConfig();
+    const meta = {
+      id: "online-" + Date.now(),
+      type: "online",
+      provider: provider || "picsum",
+      url,
+      label: provider === "bing" ? "Bing 每日壁纸" : "Picsum 随机",
+      addedAt: Date.now(),
+    };
+    config.library = config.library || [];
+    config.library.push(meta);
+    config.current = { id: meta.id, type: "online" };
+    await saveConfig(config);
+    await applyBackground();
+    return meta;
+  };
+
+  const getDaily = () => !!config && config.daily === true;
+
   /* ---------- 初始化 ---------- */
   const init = async () => {
     await loadConfig();
@@ -318,5 +338,9 @@ const WallpaperManager = (function () {
     setDaily,
     setView,
     getView,
+    addOnline,
+    get daily() {
+      return getDaily();
+    },
   };
 })();
