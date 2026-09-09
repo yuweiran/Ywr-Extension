@@ -18,7 +18,10 @@
     "history"
   ],
   "host_permissions": [
-    "https://suggestion.baidu.com/*"
+    "https://suggestion.baidu.com/*",
+    "https://picsum.photos/*",
+    "https://fastly.picsum.photos/*",
+    "https://www.bing.com/*"
   ],
   "chrome_url_overrides": {
     "newtab": "/tab/index.html"

@@ -1,4 +1,5 @@
 import { getDB } from "./db.js";
+import { handleWallpaperMessage } from "./wallpaper.js";
 
 function broadcastDataChanged() {
   chrome.runtime.sendMessage({ type: "dataChanged" }).catch(() => {});
@@ -48,6 +49,13 @@ export async function restoreSavedIcon() {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "wallpaper:fetch" || message.type === "wallpaper:setDaily") {
+    handleWallpaperMessage(message).then((result) => {
+      if (result) sendResponse(result);
+    });
+    return true;
+  }
+
   if (message.type === "suggest") {
     const keyword = message.keyword;
     fetch(`https://suggestion.baidu.com/su?wd=${encodeURIComponent(keyword)}&action=opensearch`)
