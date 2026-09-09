@@ -92,26 +92,41 @@ const SettingsManager = (function () {
 
         <div class="settings-section">
           <div class="settings-section-title">壁纸</div>
+
           <div class="settings-item">
-            <label class="settings-item-label">壁纸源</label>
-            <div class="settings-item-desc">本地图片 / 渐变 / 在线图库，均可收藏</div>
-            <div class="wallpaper-source-list" id="wallpaper-source-list"></div>
+            <label class="settings-item-label">当前壁纸</label>
+            <div class="current-wallpaper-info" id="current-wallpaper-info">无（纯主题色）</div>
           </div>
+
           <div class="settings-item">
-            <div class="settings-item-desc">或从本地上传新图片（JPG/PNG/WebP）</div>
+            <div class="settings-item-desc">本地图片 / 在线图库 / 随机渐变 —— 应用即设为当前壁纸，不产生记录</div>
             <div class="bg-upload-area" id="bg-upload-area">
               <div class="bg-upload-icon">🖼️</div>
-              <div class="bg-upload-text">点击上传或拖拽图片</div>
+              <div class="bg-upload-text">点击上传或拖拽本地图片</div>
               <img class="bg-upload-preview" id="bg-preview" alt="背景预览">
               <input type="file" class="bg-upload-input" id="bg-input" accept="image/*">
             </div>
             <div class="bg-controls">
+              <button class="bg-control-btn" id="bg-gradient-btn">🎨 随机渐变</button>
               <button class="bg-control-btn" id="bg-online-btn">🎲 随机在线</button>
               <button class="bg-control-btn" id="bg-bing-btn">📷 Bing 今日</button>
-              <button class="bg-control-btn" id="bg-change-btn">更换</button>
               <button class="bg-control-btn danger" id="bg-remove-btn">移除</button>
             </div>
           </div>
+
+          <div class="settings-item">
+            <button class="settings-link-btn" id="bg-fav-current-btn">
+              <span id="bg-fav-current-label">♥ 收藏当前壁纸</span>
+              <span class="settings-link-arrow">→</span>
+            </button>
+          </div>
+
+          <div class="settings-item">
+            <label class="settings-item-label">我的收藏</label>
+            <div class="settings-item-desc">仅收藏过才会出现在这里</div>
+            <div class="wallpaper-source-list" id="favorites-list"></div>
+          </div>
+
           <div class="settings-item">
             <label class="settings-item-label">背景透明度</label>
             <div class="slider-row">
@@ -320,8 +335,7 @@ const SettingsManager = (function () {
     document.getElementById('settings-close').addEventListener('click', closePanel);
     overlayEl.addEventListener('click', closePanel);
 
-    // [M3-4] 旧背景控件监听已移除；M4-2 在 Tab 化面板中对 bg-upload-area/bg-input/
-    // bg-change-btn/bg-remove-btn/bg-opacity-slider/bg-blur-slider 重新绑定 WallpaperManager
+    // 背景控件（上传/随机渐变/在线/收藏/滑块）绑定见下方 M4-2 外观 Tab 区块
 
     // 屏保模式按钮
     document.getElementById('screensaver-btn').addEventListener('click', () => {
@@ -368,7 +382,8 @@ const SettingsManager = (function () {
 /* ---- 面板打开后刷新动态内容（第二个监听器，运行在 openPanel 之后） ---- */
 const refreshDynamicPanels = () => {
   renderThemeGrid();
-  renderSourceList();
+  renderCurrentInfo();
+  renderFavorites();
   renderDailyLabel();
   renderWidgetLayout();
   renderRightFoldLabel();
@@ -418,70 +433,98 @@ themeGrid &&
     renderThemeGrid();
   });
 
-/* ---- 外观：壁纸源列表 ---- */
-const readWallpaperCfg = () =>
-  new Promise((res) => chrome.storage.local.get(["ywr-wallpaper"], (d) => res(d["ywr-wallpaper"] || null)));
-const sourceListEl = document.getElementById("wallpaper-source-list");
-const renderSourceList = async () => {
-  if (!sourceListEl) return;
-  const cfg = await readWallpaperCfg();
-  const sources = (cfg && cfg.library) || [];
-  const favs = (cfg && cfg.favorites) || [];
-  const curId = cfg && cfg.current ? cfg.current.id : null;
-  if (sources.length === 0) {
-    sourceListEl.innerHTML = '<div class="settings-item-desc">暂无壁纸，上传或生成一张吧</div>';
+/* ---- 外观：当前壁纸信息 ---- */
+const currentInfoEl = document.getElementById("current-wallpaper-info");
+const favCurrentBtn = document.getElementById("bg-fav-current-btn");
+const favCurrentLabel = document.getElementById("bg-fav-current-label");
+
+const renderCurrentInfo = () => {
+  const info = WallpaperManager.getCurrentInfo();
+  if (!info) {
+    if (currentInfoEl) currentInfoEl.textContent = "无（纯主题色）";
+  } else {
+    if (currentInfoEl) currentInfoEl.textContent = info.icon + (info.label || info.kind);
+  }
+  if (favCurrentBtn) {
+    const isFav = WallpaperManager.isCurrentFavorite();
+    favCurrentBtn.classList.toggle("is-faved", isFav);
+    if (favCurrentLabel) favCurrentLabel.textContent = isFav ? "♥ 已在收藏中" : "♥ 收藏当前壁纸";
+  }
+};
+
+favCurrentBtn &&
+  favCurrentBtn.addEventListener("click", async () => {
+    if (WallpaperManager.isCurrentFavorite()) {
+      $notify.info && $notify.info();
+      return;
+    }
+    const added = await WallpaperManager.favoriteCurrent();
+    if (added) {
+      renderFavorites();
+      renderCurrentInfo();
+      $notify.success({ message: "已收藏当前壁纸", duration: 1500 });
+    } else {
+      $notify.warning({ message: "当前没有可收藏的壁纸", duration: 2000 });
+    }
+  });
+
+/* ---- 外观：我的收藏 ---- */
+const favoritesListEl = document.getElementById("favorites-list");
+const renderFavorites = async () => {
+  if (!favoritesListEl) return;
+  const favs = WallpaperManager.listFavorites();
+  if (!favs || favs.length === 0) {
+    favoritesListEl.innerHTML = '<div class="settings-item-desc">暂无收藏——应用壁纸后点「♥ 收藏当前壁纸」</div>';
     return;
   }
-  sourceListEl.innerHTML = sources
-    .map((s) => {
-      const active = s.id === curId ? " is-active" : "";
-      const fav = favs.includes(s.id) ? "♥" : "♡";
-      const label = s.type === "online" ? "🌐 " : s.type === "gradient" ? "🎨 " : "🖼️ ";
-      return `<div class="wallpaper-source-item${active}" data-id="${s.id}">
-        <span class="wallpaper-source-name">${label}${s.label || s.id}</span>
+  favoritesListEl.innerHTML = favs
+    .map((f) => {
+      const icon = f.kind === "online" ? "🌐 " : f.kind === "gradient" ? "🎨 " : "🖼️ ";
+      return `<div class="wallpaper-source-item" data-fid="${f.fid}">
+        <span class="wallpaper-source-name">${icon}${f.label || f.fid}</span>
         <span class="wallpaper-source-actions">
-          <button class="ws-btn ws-fav" data-id="${s.id}" title="收藏">${fav}</button>
-          <button class="ws-btn ws-use" data-id="${s.id}" title="应用">✓</button>
-          <button class="ws-btn ws-del" data-id="${s.id}" title="删除">✕</button>
+          <button class="ws-btn ws-use" data-fid="${f.fid}" title="应用">✓</button>
+          <button class="ws-btn ws-del" data-fid="${f.fid}" title="取消收藏">✕</button>
         </span>
       </div>`;
     })
     .join("");
 };
-sourceListEl &&
-  sourceListEl.addEventListener("click", async (e) => {
+favoritesListEl &&
+  favoritesListEl.addEventListener("click", async (e) => {
     const btn = e.target.closest(".ws-btn");
     if (!btn) return;
-    const id = btn.dataset.id;
+    const fid = btn.dataset.fid;
+    if (!fid) return;
     if (btn.classList.contains("ws-use")) {
-      await WallpaperManager.setCurrent(id);
-    } else if (btn.classList.contains("ws-fav")) {
-      await WallpaperManager.toggleFavorite(id);
+      await WallpaperManager.applyFavorite(fid);
+      $notify.success({ message: "已应用收藏壁纸", duration: 1500 });
     } else if (btn.classList.contains("ws-del")) {
-      await WallpaperManager.removeSource(id);
+      await WallpaperManager.removeFavorite(fid);
+      $notify.success({ message: "已取消收藏", duration: 1200 });
     }
-    await renderSourceList();
+    await renderFavorites();
+    renderCurrentInfo();
     renderDailyLabel();
   });
 
 /* ---- 外观：每日轮换 ---- */
-const renderDailyLabel = async () => {
-  const cfg = await readWallpaperCfg();
-  const daily = !!(cfg && cfg.daily);
+const renderDailyLabel = () => {
+  const daily = WallpaperManager.daily === true;
   const label = document.getElementById("bg-daily-label");
   if (label) label.textContent = daily ? "● 已开启" : "○ 已关闭";
 };
 const dailyBtn = document.getElementById("bg-daily-btn");
 dailyBtn &&
   dailyBtn.addEventListener("click", async () => {
-    const cfg = await readWallpaperCfg();
-    const next = !(cfg && cfg.daily);
+    const next = !(WallpaperManager.daily === true);
     WallpaperManager.setDaily(next).then(renderDailyLabel);
   });
 
-/* ---- 外观：在线壁纸 / 上传 / 滑块（委托 WallpaperManager） ---- */
+/* ---- 外观：在线壁纸 / 随机渐变 / 上传 / 移除（委托 WallpaperManager） ---- */
 const onlineBtn = document.getElementById("bg-online-btn");
 const bingBtn = document.getElementById("bg-bing-btn");
+const gradientBtn = document.getElementById("bg-gradient-btn");
 const applyOnline = (kind) => {
   chrome.runtime.sendMessage({ type: "wallpaper:fetch", kind }, (res) => {
     if (chrome.runtime.lastError || !res || !res.success) {
@@ -492,8 +535,8 @@ const applyOnline = (kind) => {
     // 先预载图片：成功才应用（避免静默失败/看起来没更新）
     const probe = new Image();
     probe.onload = () => {
-      WallpaperManager.addOnline(res.url, kind).then(() => {
-        renderSourceList();
+      WallpaperManager.applyOnline(res.url, kind).then(() => {
+        renderCurrentInfo();
         $notify.success({ message: "已应用在线壁纸", duration: 2000 });
       });
     };
@@ -505,12 +548,17 @@ const applyOnline = (kind) => {
 };
 onlineBtn && onlineBtn.addEventListener("click", () => applyOnline("picsum"));
 bingBtn && bingBtn.addEventListener("click", () => applyOnline("bing"));
+gradientBtn &&
+  gradientBtn.addEventListener("click", () => {
+    WallpaperManager.applyRandomGradient().then(() => {
+      renderCurrentInfo();
+      $notify.success({ message: "已应用随机渐变", duration: 1500 });
+    });
+  });
 
 const fileInput2 = document.getElementById("bg-input");
-const changeBtn = document.getElementById("bg-change-btn");
 const removeBtn = document.getElementById("bg-remove-btn");
 const uploadArea2 = document.getElementById("bg-upload-area");
-changeBtn && changeBtn.addEventListener("click", (e) => { e.stopPropagation(); fileInput2 && fileInput2.click(); });
 uploadArea2 &&
   uploadArea2.addEventListener("click", (e) => {
     if (e.target.closest(".bg-controls")) return;
@@ -521,19 +569,17 @@ fileInput2 &&
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       WallpaperManager.uploadLocal(file)
-        .then(() => { renderSourceList(); $notify.success({ message: "已添加壁纸", duration: 1500 }); })
+        .then(() => { renderCurrentInfo(); $notify.success({ message: "已应用本地图片", duration: 1500 }); })
         .catch((err) => $notify.error({ message: err.message, duration: 3000 }));
     }
   });
 removeBtn &&
   removeBtn.addEventListener("click", async (e) => {
     e.stopPropagation();
-    const cfg = await readWallpaperCfg();
-    const id = cfg && cfg.current ? cfg.current.id : null;
-    if (id) {
-      await WallpaperManager.removeSource(id);
-      renderSourceList();
-    }
+    await WallpaperManager.clearCurrent();
+    renderCurrentInfo();
+    renderFavorites();
+    $notify.success({ message: "已移除当前壁纸", duration: 1500 });
   });
 
 const opacitySlider = document.getElementById("bg-opacity-slider");

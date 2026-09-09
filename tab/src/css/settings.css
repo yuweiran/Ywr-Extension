@@ -127,11 +127,13 @@
 /* èƒŒæ™¯æŽ§åˆ¶æŒ‰é’®ç»„ */
 .bg-controls{
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.75rem;
 }
 .bg-control-btn{
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--borderGrey);
   background: var(--surface);
@@ -415,4 +417,24 @@
   padding: 0.4rem 0.5rem;
   border-bottom: 1px solid var(--border-subtle);
   font-size: 0.85rem;
+}
+
+/* ========== µ±Ç°±ÚÖ½ÐÅÏ¢ + ÊÕ²Ø°´Å¥£¨±ÚÖ½ v2£© ========== */
+.current-wallpaper-info{
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--muted-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+}
+#bg-fav-current-btn.is-faved{
+  border-color: var(--primary);
+  background: var(--muted-surface);
+}
+#bg-fav-current-btn.is-faved .settings-link-arrow{
+  color: var(--primary);
 }

@@ -18,7 +18,7 @@ function getConfig() {
 
 async function writeConfig(mutator) {
   const cfg = await getConfig();
-  const next = mutator(cfg || { current: null, library: [], favorites: [], daily: false, view: { opacity: 0.15, blur: 0 } });
+  const next = mutator(cfg || { current: null, favorites: [], daily: false, view: { opacity: 0.15, blur: 0 } });
   await new Promise((resolve) => chrome.storage.local.set({ [WALLPAPER_KEY]: next }, resolve));
   return next;
 }
@@ -56,41 +56,29 @@ async function fetchBingUrl() {
 }
 
 /**
- * 验证 Picsum 重定向链可达（M3 spike；成功后只返回 URL，不存字节）
- */
-async function spikePicsum() {
-  const url = picsumUrl(await daySeed());
-  const res = await fetch(url, { method: "HEAD" });
-  if (!res.ok && res.status !== 302) throw new Error("picsum http " + res.status);
-  return url;
-}
-
-/**
- * 更新在线源条目 url（用于每日轮换）
+ * 每日轮换：仅在「当前壁纸是 online」时把 URL 换成新一天的在线图；
+ * 若当前是本地/渐变或没有壁纸则不动（收藏项不自动改动）。
  */
 async function rotateOnline() {
-  return writeConfig((cfg) => {
-    const online = (cfg.library || []).find((it) => it.type === "online");
-    if (!online) return cfg;
-    // Picsum 直连优先；若库中 bing 标记则走 Bing 解析
-    if (online.provider === "bing") {
-      online.url = null; // 置空由调用方补齐——rotate 使用 async 解析
-    } else {
-      online.url = picsumUrl(new Date().toISOString().slice(0, 10));
+  const cfg0 = await getConfig();
+  if (!cfg0 || !cfg0.current || cfg0.current.kind !== "online") return cfg0;
+  const provider = cfg0.current.provider === "bing" ? "bing" : "picsum";
+  if (provider === "bing") {
+    const bingUrl = await fetchBingUrl();
+    return writeConfig((c) => {
+      if (c.current && c.current.kind === "online") {
+        c.current.url = bingUrl;
+        c.current.provider = "bing";
+      }
+      return c;
+    });
+  }
+  return writeConfig((c) => {
+    if (c.current && c.current.kind === "online") {
+      c.current.url = picsumUrl(new Date().toISOString().slice(0, 10));
+      c.current.provider = "picsum";
     }
-    return cfg;
-  }).then(async (cfg) => {
-    // 二次处理 Bing 源（需要在写库前拿到 URL）
-    const online = (cfg.library || []).find((it) => it.type === "online");
-    if (online && online.provider === "bing") {
-      const bingUrl = await fetchBingUrl();
-      await writeConfig((c) => {
-        const it = (c.library || []).find((x) => x.type === "online");
-        if (it) it.url = bingUrl;
-        return c;
-      });
-    }
-    return cfg;
+    return c;
   });
 }
 

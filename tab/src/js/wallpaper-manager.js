@@ -1,29 +1,24 @@
 /**
- * WallpaperManager — 多源壁纸引擎
- * 数据分层：
- *   - 二进制/渐变字符串  -> IndexedDB 表 wallpapers（tab 直接读写）
- *   - 配置(current/library/favorites/daily/view/seeded) -> chrome.storage.local['ywr-wallpaper']
- *     （SW 的 alarm 需要写，故配置不落 localStorage）
- * 能力 API（供 settings-manager 面板调用）：listSources/applySource/addGradient/
- *   uploadLocal/toggleFavorite/setCurrent/setDaily/getView/setView/removeSource/migrateLegacy
+ * WallpaperManager — 壁纸引擎（v2 模型）
+ *
+ * 数据模型（用户确认）：
+ *   - current   当前壁纸（持久显示，但「不产生源列表记录」）
+ *   - favorites 收藏列表 —— 只有用户点「收藏当前壁纸」才写入；可重新应用/删除
+ *   - 渐变：仅「随机渐变」一个入口（无 12 组预设库）
+ *   - 在线/本地/渐变均只落 current；重复应用不累积记录
+ *
+ * 存储分层：
+ *   - local 图片二进制 -> IndexedDB 表 wallpapers（dataId 引用，收藏与当前可共享同一行；
+ *     引用清理规则见各删除函数）
+ *   - 配置 {current, favorites, daily, view} -> chrome.storage.local['ywr-wallpaper']
+ *     （SW 的每日轮换 alarm 需要写，故配置不落 localStorage）
+ *
+ * 兼容：旧配置含 library/seeded —— 首次加载时迁移：library 丢弃；
+ *   favorites 若为旧 id 数组则按 id 展开为完整对象（dataId 复用原 IDB 行）。
  */
 const WallpaperManager = (function () {
   const CONFIG_KEY = "ywr-wallpaper";
   const LEGACY_SETTINGS_KEY = "ywr-extension-settings";
-  const PRESET_GRADIENTS = [
-    { label: "晨雾", gradient: "linear-gradient(135deg,#e0eafc 0%,#cfdef3 100%)" },
-    { label: "暮光", gradient: "linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)" },
-    { label: "深海", gradient: "linear-gradient(135deg,#2b5876 0%,#4e4376 100%)" },
-    { label: "极光", gradient: "linear-gradient(135deg,#56ab2f 0%,#a8e063 100%)" },
-    { label: "日落", gradient: "linear-gradient(135deg,#f83600 0%,#f9d423 100%)" },
-    { label: "紫夜", gradient: "linear-gradient(135deg,#41295a 0%,#2f0743 100%)" },
-    { label: "薄荷", gradient: "linear-gradient(135deg,#43cea2 0%,#185a9d 100%)" },
-    { label: "蜜桃", gradient: "linear-gradient(135deg,#ff758c 0%,#ff7eb3 100%)" },
-    { label: "天空", gradient: "linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)" },
-    { label: "柠檬", gradient: "linear-gradient(135deg,#f6d365 0%,#fda085 100%)" },
-    { label: "石墨", gradient: "linear-gradient(135deg,#232526 0%,#414345 100%)" },
-    { label: "晚霞", gradient: "linear-gradient(135deg,#ff9a9e 0%,#fecfef 100%)" },
-  ];
   const MAX_UPLOAD_BYTES = 1024 * 1024; // 1MB
 
   let config = null;
@@ -33,11 +28,9 @@ const WallpaperManager = (function () {
   /* ---------- 配置读写 ---------- */
   const defaultConfig = () => ({
     current: null,
-    library: [],
     favorites: [],
     daily: false,
     view: { opacity: 0.15, blur: 0 },
-    // seeded 仅在播种完成后补写，初始态不含
   });
 
   const loadConfig = () =>
@@ -60,14 +53,12 @@ const WallpaperManager = (function () {
   const dbAddWallpaper = async (record) => {
     const t = dbTable();
     if (!t) throw new Error("wallpapers table not ready");
-    // IndexedModel.add 会覆写 id = Date.now()
-    return await t.add(record);
+    return await t.add(record); // IndexedModel.add 覆写 id = Date.now()
   };
 
   const dbGetWallpaper = (id) => {
     const t = dbTable();
     if (!t) return Promise.resolve(null);
-    // list 走 getAll，此处按需从全部中取（数据量小）
     return t.list().then((rows) => rows.find((r) => r.id === id) || null);
   };
 
@@ -87,103 +78,84 @@ const WallpaperManager = (function () {
     overlayEl = bgEl.querySelector(".page-background-overlay");
   };
 
-  const resolveSourceCss = async (src) => {
-    if (!src) return null;
-    if (src.type === "local") {
-      const row = await dbGetWallpaper(src.id);
+  /** 把单个壁纸项解析为 CSS 背景值 */
+  const itemToCss = async (item) => {
+    if (!item) return null;
+    if (item.kind === "local") {
+      const row = await dbGetWallpaper(item.dataId);
       return row ? `url(${row.data})` : null;
     }
-    if (src.type === "gradient") {
-      const row = await dbGetWallpaper(src.id);
-      return row ? row.data : null;
-    }
-    if (src.type === "online") {
-      const meta = (config.library || []).find((it) => it.id === src.id);
-      // URL 含 & 等字符时需加引号包裹，否则 CSS url() 解析会被截断
-      return meta && meta.url ? `url("${meta.url}")` : null;
-    }
+    if (item.kind === "gradient") return item.css || null;
+    if (item.kind === "online") return item.url ? `url("${item.url}")` : null;
     return null;
   };
 
   const applyBackground = async () => {
     if (!config) return; // init() 前（config 仍为 null）安全跳过
     ensureBackgroundLayer();
-    const src = config.current;
-    const css = await resolveSourceCss(src);
-    const isImage = src && (src.type === "local" || src.type === "online");
+    const css = await itemToCss(config.current);
+    const isImage = config.current && config.current.kind === "online";
     const view = config.view || { opacity: 0.15, blur: 0 };
     if (css) {
       bgEl.style.backgroundImage = css;
       bgEl.style.filter = view.blur > 0 ? `blur(${view.blur}px)` : "none";
+      // 图片蒙层透明度：渐变可透 35%，图片按 view.opacity（越小越明显）
       overlayEl.style.opacity = isImage ? 1 - view.opacity : 0.35;
       document.body.classList.add("has-wallpaper");
     } else {
       bgEl.style.backgroundImage = "none";
+      bgEl.style.filter = "none";
       overlayEl.style.opacity = 1;
       document.body.classList.remove("has-wallpaper");
     }
   };
 
-  /* ---------- 生命周期：播种/迁移 ---------- */
-  const seedPresetGradients = async () => {
-    if (config.seeded === true) return;
-    if (config.library && config.library.length > 0) return;
-    const presets = [];
-    for (const p of PRESET_GRADIENTS) {
-      const row = await dbAddWallpaper({ type: "gradient", data: p.gradient });
-      presets.push({ id: row.id, type: "gradient", label: p.label, addedAt: Date.now() });
-    }
-    config.library = presets;
-    config.seeded = true;
-    await saveConfig(config);
+  /* ---------- 内部工具 ---------- */
+  const itemLabel = (item) => {
+    if (!item) return "";
+    if (item.kind === "local") return item.label || "本地图片";
+    if (item.kind === "gradient") return item.label || "随机渐变";
+    if (item.kind === "online") return (item.provider === "bing" ? "Bing 壁纸" : "Picsum 壁纸") + (item.label ? " · " + item.label : "");
+    return "";
   };
 
-  const migrateLegacy = async () => {
-    try {
-      const raw = localStorage.getItem(LEGACY_SETTINGS_KEY);
-      if (!raw) return;
-      const legacy = JSON.parse(raw);
-      const oldImage = legacy && legacy.backgroundImage;
-      if (!oldImage) return;
-      const row = await dbAddWallpaper({ type: "local", data: oldImage });
-      config.library = config.library || [];
-      config.library.push({ id: row.id, type: "local", label: "我的壁纸", addedAt: Date.now() });
-      config.current = { id: row.id, type: "local" };
-      delete legacy.backgroundImage;
-      localStorage.setItem(LEGACY_SETTINGS_KEY, JSON.stringify(legacy));
-      await saveConfig(config);
-    } catch (e) {
-      console.warn("WallpaperManager: legacy migrate failed", e);
+  const kindIcon = (kind) => (kind === "online" ? "🌐 " : kind === "gradient" ? "🎨 " : "🖼️ ");
+
+  /** local 行是否仍被收藏或当前引用 */
+  const isLocalIdReferenced = (dataId) => {
+    if (!config || !dataId) return false;
+    if (config.current && config.current.kind === "local" && config.current.dataId === dataId) return true;
+    return (config.favorites || []).some((f) => f.kind === "local" && f.dataId === dataId);
+  };
+
+  /** 旧 local current 更换前清理无引用行 */
+  const gcOldLocal = async (oldItem) => {
+    if (oldItem && oldItem.kind === "local" && !isLocalIdReferenced(oldItem.dataId)) {
+      await dbDeleteWallpaper(oldItem.dataId);
     }
   };
 
-  /* ---------- 能力 API（config 在 init() 前为 null，所有读操作必须空安全） ---------- */
-  const listSources = () => (config && config.library) || [];
-
-  const setCurrent = async (id) => {
-    if (!config) return false;
-    const meta = (config.library || []).find((it) => it.id === id);
-    if (!meta) return false;
-    config.current = { id: meta.id, type: meta.type };
+  /** 应用新 current（覆盖前先清理旧 local 无引用行） */
+  const setCurrentItem = async (item) => {
+    if (!config) config = defaultConfig();
+    await gcOldLocal(config.current);
+    config.current = item;
     await saveConfig(config);
     await applyBackground();
-    return true;
   };
 
-  const addGradient = async () => {
-    // 随机生成渐变
+  /* ========== 能力 API（config 在 init() 前为 null，读操作空安全） ========== */
+
+  /** 随机渐变（唯一渐变入口；直接设为当前，不记录） */
+  const applyRandomGradient = async () => {
     const hue1 = Math.floor(Math.random() * 360);
     const hue2 = (hue1 + 40 + Math.floor(Math.random() * 140)) % 360;
-    const gradient = `linear-gradient(135deg, hsl(${hue1},70%,60%) 0%, hsl(${hue2},70%,55%) 100%)`;
-    const row = await dbAddWallpaper({ type: "gradient", data: gradient });
-    const meta = { id: row.id, type: "gradient", label: "随机渐变", addedAt: Date.now() };
-    if (!config) config = defaultConfig();
-    config.library = config.library || [];
-    config.library.push(meta);
-    await saveConfig(config);
-    return meta;
+    const css = `linear-gradient(135deg, hsl(${hue1},70%,62%) 0%, hsl(${hue2},70%,55%) 100%)`;
+    await setCurrentItem({ kind: "gradient", css, label: "随机渐变" });
+    return { kind: "gradient", css };
   };
 
+  /** 本地上传（压缩后入 IDB 并设为当前；不记录列表） */
   const uploadLocal = (file) =>
     new Promise((resolve, reject) => {
       if (!file || !file.type.startsWith("image/")) {
@@ -196,17 +168,14 @@ const WallpaperManager = (function () {
         img.onload = async () => {
           try {
             const data = await compressImage(img);
-            const bytes = data.length * 0.75; // base64 近似字节数
+            const bytes = data.length * 0.75;
             if (bytes > MAX_UPLOAD_BYTES) {
               reject(new Error("图片过大（>1MB），请压缩后重试"));
               return;
             }
             const row = await dbAddWallpaper({ type: "local", data });
-            const meta = { id: row.id, type: "local", label: file.name, addedAt: Date.now() };
-            config.library = config.library || [];
-            config.library.push(meta);
-            await saveConfig(config);
-            resolve(meta);
+            await setCurrentItem({ kind: "local", dataId: row.id, label: file.name });
+            resolve({ kind: "local", dataId: row.id, label: file.name });
           } catch (e) {
             reject(e);
           }
@@ -218,57 +187,102 @@ const WallpaperManager = (function () {
       reader.readAsDataURL(file);
     });
 
-  const compressImage = (img) =>
-    new Promise((resolve) => {
-      const MAX_SIDE = 1920;
-      let { width, height } = img;
-      if (width > MAX_SIDE || height > MAX_SIDE) {
-        const ratio = MAX_SIDE / Math.max(width, height);
-        width = Math.round(width * ratio);
-        height = Math.round(height * ratio);
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, width, height);
-      const qualities = [0.85, 0.6, 0.4, 0.2];
-      let out = canvas.toDataURL("image/jpeg", 0.85);
-      for (const q of qualities) {
-        const data = canvas.toDataURL("image/jpeg", q);
-        if (data.length * 0.75 <= MAX_UPLOAD_BYTES) {
-          out = data;
-          break;
-        }
-      }
-      resolve(out);
-    });
+  /** 在线壁纸（Picsum/Bing 已由 SW 给终态 URL；设为当前不记录） */
+  const applyOnline = async (url, provider) => {
+    const item = {
+      kind: "online",
+      url,
+      provider: provider || "picsum",
+      label: provider === "bing" ? "Bing 今日" : "Picsum 随机",
+    };
+    await setCurrentItem(item);
+    return item;
+  };
 
-  const removeSource = async (id) => {
+  /** 移除当前壁纸（回退纯主题色；local 行若无引用则清理） */
+  const clearCurrent = async () => {
     if (!config) return;
-    config.library = (config.library || []).filter((it) => it.id !== id);
-    config.favorites = (config.favorites || []).filter((f) => f !== id);
-    if (config.current && config.current.id === id) {
-      config.current = null; // 回退主题色，不隐式跳转
+    const old = config.current;
+    if (old && old.kind === "local" && !isLocalIdReferenced(old.dataId)) {
+      await dbDeleteWallpaper(old.dataId);
     }
-    await dbDeleteWallpaper(id);
+    config.current = null;
     await saveConfig(config);
     await applyBackground();
   };
 
-  const toggleFavorite = async (id) => {
-    if (!config) return false;
-    const favs = config.favorites || [];
-    const idx = favs.indexOf(id);
-    if (idx === -1) favs.push(id);
-    else favs.splice(idx, 1);
-    config.favorites = favs;
-    await saveConfig(config);
-    return config.favorites;
+  /* ========== 收藏 ========== */
+
+  /** 当前壁纸是否已在收藏中（gradient/online 按内容、local 按 dataId） */
+  const isCurrentFavorite = () => {
+    if (!config || !config.current) return false;
+    const c = config.current;
+    return (config.favorites || []).some((f) => {
+      if (f.kind !== c.kind) return false;
+      if (f.kind === "local") return f.dataId === c.dataId;
+      if (f.kind === "online") return f.url === c.url;
+      return f.css === c.css;
+    });
   };
 
-  const isFavorite = (id) => !!config && (config.favorites || []).includes(id);
+  /** 收藏当前壁纸（幂等：已收藏则返回 false 不重复） */
+  const favoriteCurrent = async () => {
+    if (!config || !config.current) return false;
+    if (isCurrentFavorite()) return false;
+    const c = config.current;
+    const fav = { fid: "fav-" + Date.now(), kind: c.kind, addedAt: Date.now() };
+    if (c.kind === "local") fav.dataId = c.dataId; // 共享 IDB 行
+    if (c.kind === "gradient") fav.css = c.css;
+    if (c.kind === "online") {
+      fav.url = c.url;
+      fav.provider = c.provider;
+    }
+    fav.label = itemLabel(c);
+    config.favorites = config.favorites || [];
+    config.favorites.push(fav);
+    await saveConfig(config);
+    return true;
+  };
 
+  /** 取消收藏/删除收藏项 */
+  const removeFavorite = async (fid) => {
+    if (!config) return;
+    const idx = (config.favorites || []).findIndex((f) => f.fid === fid);
+    if (idx === -1) return;
+    const f = config.favorites[idx];
+    config.favorites.splice(idx, 1);
+    // local 收藏行仅在无人引用时清理
+    if (f.kind === "local" && !isLocalIdReferenced(f.dataId)) {
+      await dbDeleteWallpaper(f.dataId);
+    }
+    await saveConfig(config);
+  };
+
+  /** 应用某收藏项为当前壁纸（local 共享行不复制） */
+  const applyFavorite = async (fid) => {
+    if (!config) return false;
+    const f = (config.favorites || []).find((x) => x.fid === fid);
+    if (!f) return false;
+    const item = { kind: f.kind, label: f.label };
+    if (f.kind === "local") item.dataId = f.dataId;
+    if (f.kind === "gradient") item.css = f.css;
+    if (f.kind === "online") {
+      item.url = f.url;
+      item.provider = f.provider;
+    }
+    await setCurrentItem(item);
+    return true;
+  };
+
+  const listFavorites = () => (config && config.favorites) || [];
+
+  const getCurrentInfo = () => {
+    if (!config || !config.current) return null;
+    const c = config.current;
+    return { kind: c.kind, label: itemLabel(c), icon: kindIcon(c.kind), isFav: isCurrentFavorite() };
+  };
+
+  /* ---------- 每日轮换 / 视图 ---------- */
   const setDaily = async (enabled) => {
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ type: "wallpaper:setDaily", enabled }, (res) => {
@@ -291,31 +305,71 @@ const WallpaperManager = (function () {
 
   const getView = () => (config && config.view) || { opacity: 0.15, blur: 0 };
 
-  const addOnline = async (url, provider) => {
-    if (!config) config = defaultConfig();
-    const meta = {
-      id: "online-" + Date.now(),
-      type: "online",
-      provider: provider || "picsum",
-      url,
-      label: provider === "bing" ? "Bing 每日壁纸" : "Picsum 随机",
-      addedAt: Date.now(),
-    };
-    config.library = config.library || [];
-    config.library.push(meta);
-    config.current = { id: meta.id, type: "online" };
-    await saveConfig(config);
-    await applyBackground();
-    return meta;
-  };
+  /* ---------- 旧数据迁移（v1：library + favorites id 数组 / 字符串） ---------- */
+  const migrateLegacy = async () => {
+    try {
+      // 新模型特征：无 library 且 favorites 是含 fid 的对象数组 → 已是新结构
+      const isNewModel =
+        !config.library &&
+        Array.isArray(config.favorites) &&
+        config.favorites.every((f) => f && typeof f === "object" && typeof f.fid === "string");
+      if (isNewModel) return;
 
-  const getDaily = () => !!config && config.daily === true;
+      const oldLib = config.library || [];
+      const oldFavIds = (config.favorites || [])
+        .map((x) => (typeof x === "string" ? x : x && x.id))
+        .filter((x) => x != null);
+      const favs = [];
+      for (const id of oldFavIds) {
+        const src = oldLib.find((s) => String(s.id) === String(id));
+        if (!src) continue;
+        const fav = { fid: "fav-" + Date.now() + "-" + favs.length, kind: src.type, addedAt: Date.now() };
+        if (src.type === "local") {
+          const row = await dbGetWallpaper(src.id);
+          if (row) {
+            // 迁移复制一份独立数据行，避免共享引用在收藏删除时的清理歧义
+            const copy = await dbAddWallpaper({ type: "local", data: row.data });
+            fav.dataId = copy.id;
+          } else continue;
+        } else if (src.type === "gradient") {
+          const row = await dbGetWallpaper(src.id);
+          fav.css = row ? row.data : null;
+          if (!fav.css) continue;
+        } else if (src.type === "online") {
+          fav.url = src.url || null;
+          fav.provider = src.provider || "picsum";
+          if (!fav.url) continue;
+        }
+        fav.label = src.label || src.id;
+        favs.push(fav);
+      }
+      config.favorites = favs;
+      // 旧 current 若指向旧 library 项，尽量还原为内联描述（否则置空）
+      const oldCur = config.current;
+      if (oldCur && oldCur.id != null && oldLib.length > 0) {
+        const src = oldLib.find((s) => String(s.id) === String(oldCur.id));
+        if (src && src.type === "gradient") {
+          const row = await dbGetWallpaper(src.id);
+          config.current = row ? { kind: "gradient", css: row.data, label: src.label || "渐变" } : null;
+        } else if (src && src.type === "online") {
+          config.current = src.url ? { kind: "online", url: src.url, provider: src.provider || "picsum", label: src.label || "在线" } : null;
+        } else {
+          // local 或未识别：不强行还原
+          config.current = null;
+        }
+      }
+      delete config.library;
+      delete config.seeded;
+      await saveConfig(config);
+    } catch (e) {
+      console.warn("WallpaperManager: legacy migrate failed", e);
+    }
+  };
 
   /* ---------- 初始化 ---------- */
   const init = async () => {
     await loadConfig();
     await migrateLegacy();
-    await seedPresetGradients();
     ensureBackgroundLayer();
     await applyBackground();
     // 响应 SW 广播：每日轮换 / 状态变化
@@ -329,19 +383,24 @@ const WallpaperManager = (function () {
   return {
     init,
     refresh: () => applyBackground(),
-    listSources,
-    setCurrent,
-    addGradient,
+    // current
+    getCurrentInfo,
+    applyRandomGradient,
     uploadLocal,
-    removeSource,
-    toggleFavorite,
-    isFavorite,
+    applyOnline,
+    clearCurrent,
+    // favorites
+    listFavorites,
+    favoriteCurrent,
+    isCurrentFavorite,
+    removeFavorite,
+    applyFavorite,
+    // view / daily
     setDaily,
     setView,
     getView,
-    addOnline,
     get daily() {
-      return getDaily();
+      return !!config && config.daily === true;
     },
   };
 })();
