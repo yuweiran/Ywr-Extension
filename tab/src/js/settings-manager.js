@@ -589,10 +589,21 @@ layoutListEl &&
     if (!layout[id]) layout[id] = { zone: "off", enabled: false };
     if (e.target.classList.contains("widget-toggle")) {
       layout[id].enabled = e.target.checked;
-      if (!e.target.checked) layout[id].zone = "off";
+      if (e.target.checked) {
+        // 重新打开：若 zone 仍是 off（关闭时被置 off），恢复默认 zone，否则无法渲染
+        if (!layout[id].zone || layout[id].zone === "off") {
+          const def = WidgetRegistry.widgets.get(id);
+          layout[id].zone = def && def.zones && def.zones[0] ? def.zones[0] : "off";
+        }
+      } else {
+        layout[id].zone = "off";
+      }
       const row = e.target.closest(".widget-layout-row");
       const sel = row && row.querySelector(".widget-zone");
-      if (sel) sel.disabled = !e.target.checked;
+      if (sel) {
+        sel.disabled = !e.target.checked;
+        sel.value = layout[id].zone || "off";
+      }
     } else if (e.target.classList.contains("widget-zone")) {
       layout[id].zone = e.target.value;
       layout[id].enabled = e.target.value !== "off";
