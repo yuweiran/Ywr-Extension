@@ -59,5 +59,26 @@ body.has-wallpaper .widget[data-widget="clock"] .clock-date { color: var(--on-im
 .tools-icon { width: 1.4rem; height: 1.4rem; border-radius: 4px; }
 .tools-name { font-size: 0.68rem; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 
+/* ========== 引擎 chips ========== */
+.engine-chips { display: inline-flex; gap: 0.45rem; }
+.engine-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  background: var(--glass-bg-strong);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.engine-chip:hover { color: var(--text); border-color: var(--primary); }
+.engine-chip.is-active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+
 
 
