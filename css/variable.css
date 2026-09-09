@@ -99,6 +99,11 @@
   --on-image:       #f4f5fb;
   --accent-soft:    rgba(99, 102, 241, 0.14);
 
+  /* 深色毛玻璃（覆写 :root 浅色玻璃，壁纸态深色主题可读） */
+  --glass-bg:        rgba(23, 26, 38, 0.62);
+  --glass-bg-strong: rgba(30, 34, 50, 0.78);
+  --glass-border:    rgba(168, 178, 224, 0.16);
+
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);
   --muted-surface:   var(--surface-raised);
