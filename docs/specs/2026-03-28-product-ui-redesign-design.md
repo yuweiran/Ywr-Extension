@@ -123,67 +123,68 @@ widgets/
 
 ### 3.1 现状与目标
 
-现状：`SettingsManager` 仅支持本地 base64 上传（`FileReader.readAsDataURL` 原样读入，**无压缩管线**）+ 透明度 + 模糊 + 屏保。目标：多源壁纸（本地/渐变/在线）+ 收藏 + 每日轮换，保留透明度/模糊/屏保能力。
+现状：`SettingsManager` 仅支持本地 base64 上传（`FileReader.readAsDataURL` 原样读入，**无压缩管线**）+ 透明度 + 模糊 + 屏保。目标（v2 模型，经用户确认）：多源壁纸（本地/随机渐变/在线）**只作用于"当前壁纸"、不累积源记录**；**仅当用户收藏当前壁纸时才写入收藏列表**；每日轮换仅作用于在线型当前壁纸。保留透明度/模糊/屏保能力。
 
-### 3.2 存储架构（关键决策）
+### 3.2 存储架构（关键决策，v2）
 
-**壁纸数据按类型分两层存储，规避 localStorage 5MB 配额风险：**
+**壁纸数据分层存储，规避 localStorage 5MB 配额风险：**
 
 | 内容 | 存储位置 | 理由 |
 |------|----------|------|
-| 本地图片二进制、渐变字符串（可 MB 级）| IndexedDB 表 `wallpapers` | 配额大；避免每次滑块输入都整包序列化 base64 |
-| 壁纸配置 `{current, library(元数据), favorites, daily, view, seeded}` | **`chrome.storage.local` 键 `'ywr-wallpaper'`** | **SW 的 alarm 必须能写**（SW 无 tab 页 localStorage）；tab 与 SW 共享可读 |
+| 本地图片二进制（可 MB 级）| IndexedDB 表 `wallpapers` | 配额大；local 当前壁纸与收藏共享同一行（引用清理见不变量）|
+| 壁纸配置 `{current, favorites, daily, view}` | **`chrome.storage.local` 键 `'ywr-wallpaper'`** | **SW 的 alarm 必须能写**（SW 无 tab 页 localStorage）；tab 与 SW 共享可读 |
 | 透明度/模糊滑块值 | 并入配置 `view` 字段（见下），debounce ~200ms 整包写回 | 单一数据源；避免每次滑动都全量 IO |
+| 渐变 css 字符串 / 在线 URL | **内联存于配置**（短，无需 IDB）| 渐变无预设库；在线 URL 即终态 |
 
 **配置 schema（chrome.storage.local）：**
 
 ```json
 {
-  "current":   { "id": "1750000000000", "type": "local" },
-  "library":   [
-    { "id": "1750000000000", "type": "local", "label": "我的壁纸", "addedAt": 1750000000000 },
-    { "id": "1750000000001", "type": "gradient", "label": "极光", "addedAt": 1750000000001 },
-    { "id": "1750000000002", "type": "online", "url": "https://picsum.photos/1920/1080?seed=2026-03-28", "label": "每日随机", "addedAt": 1750000000002 }
+  "current": null,
+  "favorites": [
+    {
+      "fid": "fav-1750000000000",
+      "kind": "local",
+      "dataId": 1750000000001,
+      "label": "我的壁纸",
+      "addedAt": 1750000000002
+    }
   ],
-  "favorites": ["1750000000000"],
-  "daily":     false,
-  "view":      { "opacity": 0.15, "blur": 0 },
-  "seeded":    true
+  "daily": false,
+  "view":  { "opacity": 0.15, "blur": 0 }
 }
 ```
 
-- **`id` 来源（唯一实现路径）**：tab 侧 `IndexedModel.add()` 会无条件覆写 `record.id = Date.now()`（`tab/src/js/indexeddb/index.js`），**不采用预设 slug/预计算 id**。所有 `local`/`gradient` 项的 `id` 一律取 **DB 写入后返回的真实 id**（时间戳），并回填到配置 library 条目；`current`/`favorites` 引用同一 id。渐变预设可预先写入 DB 得到稳定 id 后回填。
-- **`online` 项的 URL 归属（明确）**：URL 作为 `url` 字段存在 **library 条目自身**（如上示例）；`current` 只存 `{id, type}`，渲染时按 id 从 library 解析出 URL。每日轮换时 SW 按日 seed 重算 URL → 更新对应 library 条目 `url` 字段 → 广播。
-- `favorites` 只存 id 索引，**绝不复制二进制**。
-- 渲染时按 `current.type` 解析：`local`/`gradient` → 查 IndexedDB `wallpapers` 取 `data`；`online` → 从 library 条目取 `url`。
-- **旧数据迁移（一次、幂等）**：`WallpaperManager` 初始化时读旧 `localStorage['ywr-extension-settings'].backgroundImage`，若有 base64 → 写入 IndexedDB + 生成 library 项 → 置为 current → 移除旧字段。同时 `SettingsManager.saveSettings()` 的 try/catch 不再吞 `QuotaExceededError`（改为上报 `$notify`）。
+- **`current` 是完整壁纸项（无列表记录）**，三项之一：
+  - `{ kind: "local", dataId, label }` → dataId 指向 IndexedDB `wallpapers` 行
+  - `{ kind: "gradient", css, label }` → css 内联
+  - `{ kind: "online", url, provider, label }` → url 内联（终态，不存字节）
+- **`favorites[]` 只在收藏时产生**；收藏项与 `current` 同构，仅多 `fid`/`addedAt`。local 收藏**共享 dataId 行**（不复制二进制），靠 `isLocalIdReferenced()` 判断引用清理。
+- **渲染**：`local` → 查 IDB 行取 `data`；`gradient`/`online` → 直接用内联 css/url。
+- **渐变唯一入口为"随机渐变"**（HSL 双色），无 12 组预设、无播种。
+- **旧数据迁移（v1 → v2，一次、幂等）**：旧配置含 `library`/`seeded` → 迁移时 library 丢弃；旧 `favorites`（id 数组/字符串）按 id 从 library 展开为完整对象（local 复制独立 IDB 行，避免共享清理歧义）；旧 `current` 尽量还原（gradient/online 内联；local 置空）。同时旧 `localStorage['ywr-extension-settings'].backgroundImage` 若有值 → 写入 IDB + 置为 current + 移除旧字段。
 
-**生命周期不变量（明确，M3 必须实现）：**
+**生命周期不变量（明确，已实现）：**
 
-1. **首次运行默认态**：`chrome.storage.local['ywr-wallpaper']` 不存在时初始化为 `{ current: null, library: [], favorites: [], daily: false, view: { opacity: 0.15, blur: 0 } }`；`current: null` 时背景层回退到纯 `--bg` 主题色（无壁纸空态）。
-2. **透明度/模糊唯一存放（全局，无逐壁纸覆盖）**：并入配置的 `view` 字段（见上），滑块输入 **debounce ~200ms 后整包写回** `'ywr-wallpaper'`——**不设第二个 localStorage 暂存位**，保持单一数据源。`library`/`current` 条目**不含** opacity/blur 成员；逐壁纸覆盖属 v3+ 需求（需加 schema 字段并处理删除/轮换生命周期），本轮不做。
-3. **删除语义**：从 library 删除某壁纸时，同步清理——若它是 `current` → `current` 置为 null（回退主题色）或改指 library 首项（取前者：null，避免隐式跳转）；同时从 `favorites` 移除该 id。**不留悬空 id**。
-4. **收藏操作幂等**：收藏重复 id 不产生重复项；取消收藏不存在 id 为 no-op。
-5. **12 组渐变一次性播种**：仅在 `seeded !== true` 且 `library` 为空且无旧数据待迁移时执行播种（写入 IndexedDB + 回填 library + 置 `seeded: true`）。默认初始化（不变量 1）**不写** `seeded` 字段，播种完成后补写；后续加载因 `seeded: true` 幂等跳过。
-6. **单写者约束**：tab（上传/收藏/切 current）与 SW（每日轮换改写 url）都会写 `'ywr-wallpaper'`。无构建环境下两上下文**无法共享同一函数**，因此在 tab 与 SW 各实现**语义相同的 read-modify-write helper**（`chrome.storage.local.get` → 修改 → `set`），SW 侧 alarm 触发路径串行调用该 helper，避免日切竞态丢更新。
+1. **首次运行默认态**：配置不存在时初始化为 `{ current: null, favorites: [], daily: false, view: { opacity: 0.15, blur: 0 } }`；`current: null` 时背景层回退纯 `--bg` 主题色。
+2. **透明度/模糊唯一存放（全局）**：并入 `view` 字段，滑块 debounce ~200ms 整包写回；`current`/`favorites` 项**不含** opacity/blur。
+3. **当前壁纸可被替换/移除且不产生记录**：`clearCurrent()` 置 `current=null` 回退主题色；替换前对旧 local current 做 `gcOldLocal`（无收藏引用才删 IDB 行）。
+4. **收藏幂等**：`favoriteCurrent()` 若当前已在收藏（local 按 dataId、online 按 url、gradient 按 css 判重）返回 false 不重复；无当前壁纸不可收藏。
+5. **删除收藏项**：从 `favorites` 移除；local 项仅在 `isLocalIdReferenced(dataId)` 为假（无人再引用）时删除 IDB 行——**不留悬空、不误删共享**。
+6. **单写者约束**：tab（上传/收藏/切 current）与 SW（每日轮换改写 current.url）都会写 `'ywr-wallpaper'`；两上下文各实现语义相同的 read-modify-write helper，SW alarm 路径串行调用，避免日切竞态。
 
-### 3.3 四类壁纸能力
+### 3.3 壁纸能力（均只作用于 current；收藏是唯一记录路径）
 
-1. **本地上传（新增真实压缩管线，替代不存在的旧假设）**：
-   - `FileReader` 读入 → `canvas` 等比缩放到最长边 ≤ 1920px → `toDataURL('image/jpeg', 0.85)`，若 > 300KB 降质量档重压（0.85→0.6→0.4→0.2），上限默认 1MB（可配置）。
-   - **超限处理（明确）**：若降到 0.2 质量仍 > 1MB，**拒绝入库**，经 `$notify` 提示"图片过大"，不存储。
-   - 结果写入 IndexedDB `wallpapers` + library 元数据入配置；预览即时反馈。
-2. **渐变生成器**：预设 12 组渐变 + 随机渐变（HSL 双色），字符串入 IndexedDB，label 入配置。
+1. **本地上传**：`FileReader` → `canvas` 等比缩放最长边 ≤1920px → `toDataURL('image/jpeg', 0.85)`，>300KB 降档（0.85→0.6→0.4→0.2），>1MB 拒绝入库（`$notify` 提示）。结果写 IndexedDB `wallpapers`，`current={kind:'local', dataId, label}`。**不产生源记录**。
+2. **随机渐变**（唯一渐变入口）：HSL 双色生成 css 内联，`current={kind:'gradient', css}`。无预设库、无播种。
 3. **在线壁纸（字节永不跨扩展，URL 即终态）**：
-   - 主：**Picsum Photos** `https://picsum.photos/1920/1080?seed=<dayKey>`（免费、无需 key、稳定）。**纯 URL 构造，无 fetch、无字节传输**：tab 直接把它写入 library 条目的 `url` 并用于 CSS `background-image`。
-   - 备：Bing 每日壁纸（`https://www.bing.com/HPImageArchive.aspx`），**这是唯一需要 SW fetch 字节解析的场景**：SW fetch 返回 JSON → 提取图片 URL → 写入 library 条目 `url` → 广播。
-   - **SW fetch 的完整职责清单（明确，避免实现出字节管线）**：(a) Bing archive 解析（fetch → 提取 URL）；(b) M3 的 Picsum 重定向链 spike 验证（fetch picsum URL 确认 302 目标可达，验证后即弃，不存字节）；(c) 可选"手动刷新当前在线壁纸"消息（重新解析 Bing 或重写 Picsum seed）。**任何路径都不把图片字节写入 storage 或广播**——图片由 tab 页 CSS 直连加载。
-4. **收藏与每日轮换**：
-   - 当前壁纸可收藏/取消收藏（操作 `favorites` id 索引）。
-   - 每日轮换开关开启后注册 `chrome.alarms`（`wallpaperDaily`，24h 周期）→ SW 触发 → **仅重写在线 library 条目的 `url` 字段**（Picsum 按日 seed 构造 / Bing 走 fetch 解析）→ 更新 `chrome.storage.local['ywr-wallpaper']` → 广播 `wallpaperChanged`。
-   - **alarm 生命周期（明确，跨上下文编排）**：`chrome.alarms` **仅 SW 可访问**，外观 Tab 的每日轮换开关（tab 侧 `WallpaperManager` 能力）不能直接注册/清除，必须经消息通道：新增 SW 路由 **`wallpaper:setDaily`**（payload `{enabled: boolean}`）→ `service-worker/wallpaper.js` 内 `chrome.alarms.create/clear('wallpaperDaily', ...)`。alarm 触发回调**先守卫**：读 `chrome.storage.local['ywr-wallpaper'].daily`，为 `false` 则清除 alarm 并直接返回（防陈旧 alarm）。同路由也用于 M3 spike 之外的"手动刷新"消息。
-   - **端到端通道（明确）**：alarm 在 SW 触发 → SW 写 `chrome.storage.local` → `chrome.runtime.sendMessage({type:'wallpaperChanged'})` → tab 页监听后读 `chrome.storage.local` 刷新背景层。Picsum 用**按日 seed**（如 `new Date().toISOString().slice(0,10)`），保证同日多次触发结果一致。
-   - 这是 alarms 的合规用途（有明确目的）。
+   - 主：**Picsum Photos** `https://picsum.photos/1920/1080?seed=<seed>`。"随机在线"按钮用**真随机 seed**；纯 URL 构造无 fetch。
+   - 备：**Bing** `https://www.bing.com/HPImageArchive.aspx?format=js&idx=<0..7>&n=1&mkt=zh-CN` —— **唯一需要 SW fetch 解析的场景**，`idx` 近 8 天随机取一天（避免每次同一张）。
+   - 应用前 tab 侧 `new Image()` **预载确认**：成功才 `current={kind:'online', url, provider}` 并提示；失败 Toast 明确报错（消除"没反应/不更新"）。
+4. **收藏**：`favoriteCurrent()` 幂等收藏当前（判重：local 按 dataId、online 按 url、gradient 按 css）；`removeFavorite(fid)` 取消收藏（local 行无人引用才删）；`applyFavorite(fid)` 复用收藏为当前。**不点收藏即无任何记录**。
+5. **每日轮换**：alarm 24h → SW **仅当 `current.kind==='online'` 时**替换 URL（Picsum 按日 seed / Bing fetch 解析），本地/渐变当前不动 → 广播 `wallpaperChanged`。
+   - **alarm 生命周期**：`wallpaper:setDaily {enabled}` 消息 → SW `chrome.alarms.create/clear('wallpaperDaily', ...)`；触发回调先守卫 `config.daily`，为 false 清 alarm 返回（防陈旧 alarm）。
+   - **端到端通道**：alarm → SW 写 `chrome.storage.local` → `sendMessage({type:'wallpaperChanged'})` → tab 重读并刷新背景层。
 
 ### 3.4 manifest 与 SW 变更
 
@@ -233,14 +234,14 @@ Token 双层体系（`css/variable.css`）**根基不动**，追加增强：
 
 | Tab | 内容 |
 |-----|------|
-| 外观 | 主题选择（6 套）；壁纸源管理：本地/渐变/在线/收藏 + 预览切换、透明度/模糊、每日轮换开关 |
+| 外观 | 主题选择（6 套）；壁纸：当前壁纸信息 + 上传/随机渐变/随机在线/Bing/移除 + ♥收藏当前 + 我的收藏列表 + 透明度/模糊 + 每日轮换开关 |
 | 布局 | widget 开关 + 位置下拉；右栏折叠开关 |
 | 组件 | 待办数据管理、快捷工具组编辑、语录偏好 |
 | 更多 | 屏保、扩展选项入口（沿用）|
 
 - 抽屉宽度 320px → **380px**；保留 `.settings-panel` / `.settings-overlay` 命名与开合机制（`.ipage-aside-setting` 打开入口保留），内部 body 改 Tab 容器。
 - 该面板 HTML 目前由 `settings-manager.js` 的 `createSettingsPanel()` 字符串生成 → 本轮**按 Tab 分区重构该字符串模板**（倾向控制改动面，不引入 declare/execute 拆分）。
-- **职责归属（明确，消除 M4 冲突风险）**：`settings-manager.js` 是面板**唯一 owner**——负责抽屉外壳、Tab 切换与各分区模板；"外观"Tab 内壁纸源相关事件委托给 `WallpaperManager`、"布局"Tab 委托 `WidgetRegistry`（读/写 `ywr-widget-layout`）、主题选择复用 `ThemeSwitcher`。`wallpaper-manager.js` 只暴露能力 API（源 CRUD/切 current/收藏/每日开关/透明度模糊），**不持有面板 DOM**。
+- **职责归属（明确，消除 M4 冲突风险）**：`settings-manager.js` 是面板**唯一 owner**——负责抽屉外壳、Tab 切换与各分区模板；"外观"Tab 内壁纸相关事件委托给 `WallpaperManager`（applyRandomGradient/uploadLocal/applyOnline/clearCurrent/favoriteCurrent/removeFavorite/applyFavorite/getCurrentInfo/setDaily/setView）、"布局"Tab 委托 `WidgetRegistry`（读/写 `ywr-widget-layout`）、主题选择复用 `ThemeSwitcher`。`wallpaper-manager.js` 只暴露能力 API，**不持有面板 DOM**。
 
 ---
 
