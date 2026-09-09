@@ -99,7 +99,8 @@ const WallpaperManager = (function () {
     }
     if (src.type === "online") {
       const meta = (config.library || []).find((it) => it.id === src.id);
-      return meta && meta.url ? `url(${meta.url})` : null;
+      // URL 含 & 等字符时需加引号包裹，否则 CSS url() 解析会被截断
+      return meta && meta.url ? `url("${meta.url}")` : null;
     }
     return null;
   };

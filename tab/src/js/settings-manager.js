@@ -485,7 +485,8 @@ const bingBtn = document.getElementById("bg-bing-btn");
 const applyOnline = (kind) => {
   chrome.runtime.sendMessage({ type: "wallpaper:fetch", kind }, (res) => {
     if (chrome.runtime.lastError || !res || !res.success) {
-      $notify.error({ message: "获取在线壁纸失败", duration: 3000 });
+      const detail = res && res.error ? res.error : chrome.runtime.lastError ? chrome.runtime.lastError.message : "unknown";
+      $notify.error({ message: "获取在线壁纸失败：" + detail, duration: 4000 });
       return;
     }
     WallpaperManager.addOnline(res.url, kind).then(() => {

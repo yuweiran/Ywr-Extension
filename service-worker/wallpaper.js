@@ -27,6 +27,11 @@ async function daySeed() {
   return new Date().toISOString().slice(0, 10);
 }
 
+// 真随机 seed（供“随机在线”按钮；每日轮换才用 daySeed）
+async function randomSeed() {
+  return "r" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
 /**
  * Picsum 按日 URL（纯构造，无 fetch）
  */
@@ -118,8 +123,8 @@ export async function handleWallpaperMessage(message) {
         return { success: true, url };
       }
       // Picsum：纯 URL 构造即终态（CSS background-image 直接加载，
-      // 不依赖 SW fetch / 302 权限链），无需网络验证
-      return { success: true, url: picsumUrl(await daySeed()) };
+      // 不依赖 SW fetch / 302 权限链）；“随机”用真随机 seed
+      return { success: true, url: picsumUrl(await randomSeed()) };
     } catch (err) {
       return { success: false, error: err.message || "wallpaper fetch failed" };
     }
