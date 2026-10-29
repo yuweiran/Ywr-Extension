@@ -2,6 +2,7 @@ const $sections = (() => {
   const sectionContainer = $el.__(".ipage-sections");
   const sectionTabsShow = $el.__(".section-tabs-show");
   const sectionHistoryShow = $el.__(".section-history-show");
+  const sectionHistoryViewport = $el.__(".section-history-viewport");
   const sectionWindowItem = "section-window-item";
   const sectionTabsItem = "section-tab-item";
   const sectionTabsFavicon = "tab-item-favicon";
@@ -12,6 +13,100 @@ const $sections = (() => {
   const sectionHistoryFavicon = "history-item-favicon";
   const sectionHistoryTitle = "history-item-title";
   const sectionHistoryClose = "history-item-close";
+  const sectionHistoryClearAll = "section-history-clear-all";
+  const historyPageBtnPrev = "history-page-prev";
+  const historyPageBtnNext = "history-page-next";
+
+  const sectionHistoryClearAllEle = $el.__(`.${sectionHistoryClearAll}`);
+  const historyPagePrevEle = $el.__(`.${historyPageBtnPrev}`);
+  const historyPageNextEle = $el.__(`.${historyPageBtnNext}`);
+  const historyPageInfoEle = $el.__(".history-page-info");
+
+  const historyMaxCount = 100;
+  const historyPageState = {
+    pageSize: 20,
+    currentPage: 1,
+    totalPages: 1,
+  };
+  let historyList = [];
+
+  const escapeHtml = (text) => {
+    if (text === undefined || text === null) return "";
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  };
+
+  const syncHistoryPageState = () => {
+    const totalCount = historyList.length;
+    historyPageState.totalPages = Math.max(
+      1,
+      Math.ceil(totalCount / historyPageState.pageSize),
+    );
+    historyPageState.currentPage = Math.min(
+      historyPageState.currentPage,
+      historyPageState.totalPages,
+    );
+    historyPageState.currentPage = Math.max(1, historyPageState.currentPage);
+  };
+
+  const updateHistoryPageInfo = () => {
+    historyPageInfoEle.innerText = `${historyPageState.currentPage} / ${historyPageState.totalPages}`;
+    historyPagePrevEle.disabled = historyPageState.currentPage <= 1;
+    historyPageNextEle.disabled =
+      historyPageState.currentPage >= historyPageState.totalPages;
+  };
+
+  const renderHistoryPage = () => {
+    const startIndex =
+      (historyPageState.currentPage - 1) * historyPageState.pageSize;
+    const historyInCurrentPage = historyList.slice(
+      startIndex,
+      startIndex + historyPageState.pageSize,
+    );
+
+    if (historyInCurrentPage.length === 0) {
+      sectionHistoryShow.innerHTML = `<li class="section-history-empty">No history entries</li>`;
+      updateHistoryPageInfo();
+      return;
+    }
+
+    const hList = historyInCurrentPage.reduce((pre, cur) => {
+      let faviconTemplate = `<img data-id="${cur.id}" class="${sectionHistoryFavicon}" src="${cur.favIconUrl}" />`;
+      if (!cur.favIconUrl) {
+        faviconTemplate = `<div data-id="${cur.id}" class="icon-favicon ${sectionHistoryFavicon}"></div>`;
+      }
+      const displayText = cur.title || cur.url || "(untitled)";
+      const safeDisplayText = escapeHtml(displayText);
+      const safeTitle = escapeHtml(displayText);
+      const hTemplate = `
+        <li data-id="${cur.id}" class="${sectionHistoryItem}">
+          <div class="history-item-prefixer">
+            ${faviconTemplate}
+            <div data-id="${cur.id}" class="${sectionHistoryTitle}" title="${safeTitle}">${safeDisplayText}</div>
+          </div>
+          <div data-id="${cur.id}" class="icon-close ${sectionHistoryClose}"></div>
+        </li>
+      `;
+      pre.push(hTemplate);
+      return pre;
+    }, []);
+
+    sectionHistoryShow.innerHTML = hList.join("");
+    if (sectionHistoryViewport) {
+      sectionHistoryViewport.scrollTop = 0;
+    }
+    updateHistoryPageInfo();
+  };
+
+  const setHistoryPage = (nextPage) => {
+    historyPageState.currentPage = nextPage;
+    syncHistoryPageState();
+    renderHistoryPage();
+  };
 
   const updateTabsList = () => {
     $store.tabs = {};
@@ -83,32 +178,34 @@ const $sections = (() => {
     });
   };
   const updateHistoryList = () => {
-    chrome.history.search({ text: "", maxResults: 10 }, function (data) {
-      $store.history = {};
-      const hList = data.reduce((pre, cur) => {
-        $store.history[cur.id] = cur.url;
-        let faviconTemplate = `<img data-id="${cur.id}" class="${sectionHistoryFavicon}" src="${cur.favIconUrl}" />`;
-        if (!cur.favIconUrl) {
-          faviconTemplate = `<div data-id="${cur.id}" class="icon-favicon ${sectionHistoryFavicon}"></div>`;
-        }
-        let hTemplate = `
-        <div data-id="${cur.id}" class="${sectionHistoryItem}">
-          <div class="history-item-prefixer">
-            <div data-id="${cur.id}" class="${sectionHistoryTitle}">${
-          cur.title || cur.url
-        }</div>
-          </div>
-          <div data-id="${
-            cur.id
-          }" class="icon-close ${sectionHistoryClose}"></div>
-        </div>
-        `;
-        pre.push(hTemplate);
-        return pre;
-      }, []);
-      sectionHistoryShow.innerHTML = hList.join("");
+    chrome.history.search(
+      { text: "", maxResults: historyMaxCount },
+      function (data) {
+        $store.history = {};
+        historyList = data.slice(0, historyMaxCount);
+        historyList.forEach((cur) => {
+          $store.history[cur.id] = cur.url;
+        });
+        syncHistoryPageState();
+        renderHistoryPage();
+      },
+    );
+  };
+
+  const deleteHistoryById = (historyId) => {
+    const url = $store.history[historyId];
+    if (!url) return;
+    chrome.history.deleteUrl({ url: url }, function () {
+      updateHistoryList();
     });
   };
+
+  const clearHistoryAll = () => {
+    chrome.history.deleteAll(function () {
+      updateHistoryList();
+    });
+  };
+
   return {
     sectionContainer,
     sectionWindowItem,
@@ -122,7 +219,18 @@ const $sections = (() => {
     sectionHistoryFavicon,
     sectionHistoryTitle,
     sectionHistoryClose,
+    sectionHistoryClearAll,
+    historyPageBtnPrev,
+    historyPageBtnNext,
+    sectionHistoryClearAllEle,
+    historyPagePrevEle,
+    historyPageNextEle,
+    historyPageInfoEle,
     updateTabsList,
     updateHistoryList,
+    setHistoryPage,
+    historyPageState,
+    deleteHistoryById,
+    clearHistoryAll,
   };
 })();

@@ -39,7 +39,7 @@ window.onload = () => {
     localStorage.setItem("engine", "baidu");
   }
   const engine = localStorage.getItem("engine");
-  $searchEles.initEngineIcon(engine)
+  $searchEles.initEngineIcon(engine);
 
   if (!localStorage.getItem("ywr-layout-right-fold")) {
     localStorage.setItem("ywr-layout-right-fold", "0");
@@ -110,9 +110,12 @@ chrome.storage.local.get(["extension_icon"], (data) => {
 });
 
 chrome.tabs.onUpdated.addListener(() => {
-  $sections.updateTabsList()
-  $sections.updateHistoryList()
+  $sections.updateTabsList();
+  $sections.updateHistoryList();
 });
 chrome.tabs.onRemoved.addListener($sections.updateTabsList);
 chrome.tabs.onMoved.addListener($sections.updateTabsList);
 chrome.windows.onRemoved.addListener($sections.updateTabsList);
+
+$sections.updateTabsList();
+$sections.updateHistoryList();

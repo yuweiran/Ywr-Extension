@@ -114,13 +114,13 @@ const $modal = (function () {
       <button
         class="edit-button edit-cancel-button"
       >
-        取消
+        Cancel
       </button>
       <button
         style="margin-left: auto"
         class="edit-button edit-confirm-button"
       >
-        确定
+        Confirm
       </button>
     </ >
   </div >
