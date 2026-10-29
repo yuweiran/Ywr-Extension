@@ -54,6 +54,7 @@ const $sections = (() => {
   };
 
   const updateHistoryPageInfo = () => {
+    if (!historyPageInfoEle || !historyPagePrevEle || !historyPageNextEle) return;
     historyPageInfoEle.innerText = `${historyPageState.currentPage} / ${historyPageState.totalPages}`;
     historyPagePrevEle.disabled = historyPageState.currentPage <= 1;
     historyPageNextEle.disabled =
@@ -69,7 +70,7 @@ const $sections = (() => {
     );
 
     if (historyInCurrentPage.length === 0) {
-      sectionHistoryShow.innerHTML = `<li class="section-history-empty">No history entries</li>`;
+      sectionHistoryShow.innerHTML = `<li class="section-history-empty">暂无最近浏览记录</li>`;
       updateHistoryPageInfo();
       return;
     }
@@ -110,6 +111,12 @@ const $sections = (() => {
 
   const updateTabsList = () => {
     $store.tabs = {};
+    if (typeof chrome === "undefined" || !chrome.windows?.getAll) {
+      if (sectionTabsShow) {
+        sectionTabsShow.innerHTML = `<li class="section-history-empty">暂无活跃标签页</li>`;
+      }
+      return;
+    }
     chrome.windows.getAll({ populate: true }, (windows) => {
       const windowsList = [];
       windows.forEach((window, winInd) => {
@@ -141,7 +148,7 @@ const $sections = (() => {
         if (tabsList.length > 0) {
           windowsList.push(`
           <li data-id="${window.id}" class="${sectionWindowItem}">
-            <div class="window-item-title">window${winInd + 1}</div>
+            <div class="window-item-title">窗口 ${winInd + 1}</div>
             <div class="window-item-tabs">
               ${tabsList.join("")}
             </div>
@@ -178,6 +185,12 @@ const $sections = (() => {
     });
   };
   const updateHistoryList = () => {
+    if (typeof chrome === "undefined" || !chrome.history?.search) {
+      historyList = [];
+      syncHistoryPageState();
+      renderHistoryPage();
+      return;
+    }
     chrome.history.search(
       { text: "", maxResults: historyMaxCount },
       function (data) {

@@ -6,8 +6,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1rem;
-  background: var(--surface);
+  padding: 0 1.25rem;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-subtle);
   position: relative;
   /* 注意：不要给顶栏设 z-index（否则形成层叠上下文，把内部主题下拉的
@@ -17,45 +19,56 @@
 .shell-topbar-right {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.45rem;
 }
 .shell-logo {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   line-height: 1;
-  color: var(--text-secondary);
+  color: var(--primary);
+  background: var(--accent-soft);
   cursor: pointer;
-  width: 2.125rem;
-  height: 2.125rem;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
-  transition: background-color 140ms ease, color 140ms ease;
+  transition: transform 180ms ease, background-color 140ms ease, color 140ms ease;
   user-select: none;
 }
 .shell-logo:hover {
-  background-color: var(--surface-raised);
+  background-color: var(--primary);
+  color: #fff;
+  transform: rotate(30deg);
+}
+.shell-brand-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   color: var(--text);
+  opacity: 0.85;
 }
 /* 主题与设置入口：沿用 .ipage-aside-theme / .ipage-aside-setting 钩子的形态 */
 .ipage-aside-theme,
 .ipage-aside-setting {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   padding: 0;
   color: var(--text-secondary);
   cursor: pointer;
   border-radius: var(--radius-md);
-  width: 2.125rem;
-  height: 2.125rem;
+  width: 2.15rem;
+  height: 2.15rem;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  transition: background-color 140ms ease, color 140ms ease;
+  border: 1px solid transparent;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
 }
 .ipage-aside-theme:hover,
 .ipage-aside-setting:hover {
   background-color: var(--surface-raised);
+  border-color: var(--border-subtle);
   color: var(--text);
 }
 /* 主题下拉：改从顶栏按钮向右下展开 */
@@ -63,12 +76,17 @@
   left: auto;
   right: 0;
   top: calc(100% + 0.5rem);
-  transform: translateX(8px);
+  transform: translateY(-4px);
 }
 .ipage-aside-theme .theme-switcher.is-visible {
-  transform: translateX(0);
+  transform: translateY(0);
 }
 /* 顶栏小组件槽位（clock widget 渲染位，M5 启用） */
+.shell-zone-topbar {
+  margin-right: 0.35rem;
+  padding-right: 0.65rem;
+  border-right: 1px solid var(--border-subtle);
+}
 .shell-zone-topbar:empty {
   display: none;
 }
@@ -79,12 +97,12 @@
 ============================================================ */
 .theme-switcher {
   position: absolute;
-  min-width: 9rem;
+  min-width: 9.5rem;
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+  transition: opacity 160ms ease, transform 160ms ease, visibility 160ms ease;
 }
 .theme-switcher.is-visible {
   opacity: 1;
@@ -94,9 +112,9 @@
   white-space: nowrap;
 }
 .theme-switcher .theme-option.is-active {
-  background-color: var(--muted-surface);
+  background-color: var(--accent-soft);
   color: var(--primary);
-  font-weight: 500;
+  font-weight: 600;
 }
 .theme-switcher .theme-option .dropdown-item-icon {
   background: transparent;

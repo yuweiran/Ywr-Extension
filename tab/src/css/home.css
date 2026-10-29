@@ -14,17 +14,13 @@
 @import "./hero.css"; /*Hero 搜索区*/
 @import "./widgets.css"; /*小组件*/
 
+/* ========== 三段式布局（顶栏/Hero/工作区） ========== */
 .content-area {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-}
-
-/* ========== 三段式布局（顶栏/Hero/工作区） ========== */
-.content-area {
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -41,15 +37,18 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   overflow: hidden;
+  max-width: 1720px;
+  width: 100%;
+  margin: 0 auto;
 }
 /* 显式列定位：左列隐藏(空)时中/右列不被 auto-flow 重排 */
 .shell-workbench .shell-widgets-left {
   grid-column: 1;
-  width: 15rem;
-  min-width: 15rem;
+  width: 16.5rem;
+  min-width: 16.5rem;
   max-width: 19rem;
   overflow-y: auto;
-  padding: 0.75rem 0.5rem 0.75rem 0.75rem;
+  padding: 0.75rem 0.5rem 1.25rem 1.25rem;
 }
 .shell-workbench .shell-widgets-left:empty {
   display: none;
@@ -59,7 +58,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.25rem 1.25rem;
   overflow: hidden;
 }
 .shell-workbench .ipage-body-right {
@@ -71,73 +70,103 @@ body.screensaver-mode .content-area {
   display: none !important;
 }
 
-.ipage-aside-tab .tab-item{
-  font-size: 16px;
-  padding: 0.5rem;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 140ms ease;
-}
-.ipage-aside-tab .tab-item .tab-icon{
-  font-size: 1.1rem;
-  text-align: center;
-  color: var(--muted);
-  background: var(--muted-surface);
-  width: 2.2rem;
-  height: 2.2rem;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 140ms ease, color 140ms ease;
-}
-.ipage-aside-tab .tab-item:hover{
-  background-color: var(--muted-surface);
-}
-.ipage-aside-tab .tab-item:hover .tab-icon{
-  background-color: var(--surface);
-  color: var(--text);
-}
-.ipage-aside-tab .tab-item.active .tab-icon{
-  background-color: var(--primary);
-  color: #fff;
-}
-.ipage-aside-avatar{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 0;
-  margin-bottom: 0.5rem;
-}
-.avatar {
-  height: 2.6rem;
-  width: 2.6rem;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid var(--borderGrey);
-  box-shadow: 0 2px 8px rgba(15, 23, 36, 0.08);
-  transition: border-color 180ms ease, box-shadow 180ms ease;
-  cursor: pointer;
-  object-fit: cover;
-}
-.avatar:hover{
-  border-color: var(--muted);
-  box-shadow: var(--shadow-1);
-}
-
-
 /* ============================================================
    Collection panel glass (wallpaper mode; opacity/blur from settings)
-   Applies to the .collection head + links panels only;
-   individual link cards keep an opaque surface for readability.
+   Applies to the .collection container in wallpaper mode;
+   individual link cards keep an opaque/elevated surface for readability.
 ============================================================ */
-body.has-wallpaper #ipage-collections .collection .collection-head,
-body.has-wallpaper #ipage-collections .collection .collection-links {
+body.has-wallpaper #ipage-collections .collection {
   background-color: color-mix(in srgb, var(--surface) calc(var(--panel-glass-opacity, 0.5) * 100%), transparent);
   -webkit-backdrop-filter: blur(var(--panel-glass-blur, 0px));
   backdrop-filter: blur(var(--panel-glass-blur, 0px));
+  border-color: var(--glass-border);
+}
+body.has-wallpaper #ipage-collections .collection .collection-head,
+body.has-wallpaper #ipage-collections .collection .collection-links {
+  background-color: transparent;
 }
 /* link cards stay opaque (content layer always readable) */
 body.has-wallpaper #ipage-collections .collection-links .collection-link {
   background-color: var(--surface);
+}
+body.has-wallpaper .shell-widgets-left .widget {
+  background-color: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  border-color: var(--glass-border);
+}
+body.has-wallpaper .shell-workbench .ipage-body-right {
+  background-color: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  border-left-color: var(--glass-border);
+}
+
+/* ========== 响应式布局适配 ========== */
+@media (max-width: 1120px) {
+  .shell-workbench .shell-widgets-left {
+    width: 14.5rem;
+    min-width: 14.5rem;
+    padding-left: 0.85rem;
+  }
+  .shell-workbench .ipage-body-right:not(.is-fold) {
+    width: 14.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .content-area {
+    overflow-y: auto;
+  }
+  .content-area .shell-workbench {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    flex: none;
+  }
+  .shell-workbench .shell-widgets-left {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    padding: 0.5rem 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.75rem;
+    overflow: visible;
+  }
+  .shell-workbench .shell-widgets-left .widget + .widget {
+    margin-top: 0;
+  }
+  .shell-workbench .shell-workbench-center {
+    padding: 0.5rem 1rem 1.5rem;
+    overflow: visible;
+  }
+  #ipage-collections {
+    overflow: visible;
+  }
+  .shell-workbench .ipage-body-right {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .shell-workbench .ipage-body-right.is-fold {
+    width: 100%;
+    height: auto;
+  }
+  .is-fold.ipage-body-right .ipage-aside-header {
+    position: fixed;
+    top: auto;
+    bottom: 1.25rem;
+    right: 0;
+    transform: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .workbench-header-subtitle {
+    display: none;
+  }
+  .shell-topbar {
+    padding: 0 0.75rem;
+  }
 }

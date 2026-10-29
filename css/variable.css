@@ -5,7 +5,8 @@
   /* 圆角 */
   --radius-sm:   6px;
   --radius-md:   10px;
-  --radius-lg:   16px;
+  --radius-lg:   14px;
+  --radius-xl:   18px;
   --radius-full: 9999px;
 
   /* 间距 */
@@ -16,20 +17,20 @@
   --space-xl: 2rem;
 
   /* 阴影（引用 --shadow-color，由各主题定义为裸 RGB 三元组） */
-  --shadow-sm:   0 1px 4px rgba(var(--shadow-color), 0.06);
-  --shadow-md:   0 4px 16px rgba(var(--shadow-color), 0.10);
-  --shadow-lg:   0 8px 28px rgba(var(--shadow-color), 0.14);
-  --shadow-glow: 0 3px 10px rgba(var(--shadow-color), 0.35);
+  --shadow-sm:   0 1px 2px rgba(var(--shadow-color), 0.04), 0 1px 4px rgba(var(--shadow-color), 0.04);
+  --shadow-md:   0 4px 12px -2px rgba(var(--shadow-color), 0.08), 0 2px 6px -1px rgba(var(--shadow-color), 0.04);
+  --shadow-lg:   0 12px 28px -4px rgba(var(--shadow-color), 0.12), 0 4px 10px -2px rgba(var(--shadow-color), 0.06);
+  --shadow-glow: 0 0 0 3px rgba(var(--shadow-color), 0.16);
 
   /* 毛玻璃 */
-  --glass-bg:        rgba(255, 255, 255, 0.55);
-  --glass-bg-strong: rgba(255, 255, 255, 0.72);
-  --glass-border:    rgba(255, 255, 255, 0.45);
-  --glass-blur:      14px;
+  --glass-bg:        rgba(255, 255, 255, 0.65);
+  --glass-bg-strong: rgba(255, 255, 255, 0.82);
+  --glass-border:    rgba(255, 255, 255, 0.55);
+  --glass-blur:      16px;
 
   /* 结构 */
   --topbar-h: 3.25rem;
-  --hero-h:   8.75rem;
+  --hero-h:   7.75rem;
 
   /* 动效 */
   --dur-fast: 140ms;
@@ -42,22 +43,22 @@
 ============================================================ */
 :root,
 [data-theme="slate-light"] {
-  --bg:             #f1f3f5;
+  --bg:             #f4f5f7;
   --surface:        #ffffff;
-  --surface-raised: #ffffff;
-  --text:           #212529;
-  --text-secondary: #6c757d;
-  --primary:        #343a40;
-  --primary-hover:  #495057;
-  --accent:         #6c757d;
-  --border:         #dee2e6;
-  --border-subtle:  #e9ecef;
-  --focus-ring:     #343a40;
-  --shadow-color:   0, 0, 0;
+  --surface-raised: #f8f9fb;
+  --text:           #18181b;
+  --text-secondary: #64748b;
+  --primary:        #27272a;
+  --primary-hover:  #3f3f46;
+  --accent:         #475569;
+  --border:         #e2e8f0;
+  --border-subtle:  #edf1f5;
+  --focus-ring:     #3f3f46;
+  --shadow-color:   15, 23, 42;
 
-  --bg-deep:        rgba(15, 23, 36, 0.42);
-  --on-image:       #1e2430;
-  --accent-soft:    rgba(52, 58, 64, 0.10);
+  --bg-deep:        rgba(15, 23, 42, 0.42);
+  --on-image:       #18181b;
+  --accent-soft:    rgba(39, 39, 42, 0.08);
 
   /* 向后兼容别名 */
   --muted:           var(--text-secondary);
@@ -72,8 +73,8 @@
   --deep-dark:       var(--bg);
   --shadow-1:        var(--shadow-md);
   --shadow-2:        var(--shadow-lg);
-  --inset-subtle:    inset 0.1rem 0.1rem 0.25rem rgba(var(--shadow-color), 0.08);
-  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255,255,255,0.05);
+  --inset-subtle:    inset 0.1rem 0.1rem 0.25rem rgba(var(--shadow-color), 0.06);
+  --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255,255,255,0.6);
   --primary-light:   var(--primary-hover);
   --primary-dark:    var(--primary);
 }
@@ -82,33 +83,33 @@
    主题 2：深夜墨色 midnight-ink（深色基础款）
 ============================================================ */
 [data-theme="midnight-ink"] {
-  --bg:             #0f1117;
-  --surface:        #1a1d27;
-  --surface-raised: #22253a;
-  --text:           #e8eaf6;
-  --text-secondary: #8b8fc0;
+  --bg:             #0d0f14;
+  --surface:        #161922;
+  --surface-raised: #1e2230;
+  --text:           #f1f5f9;
+  --text-secondary: #94a3b8;
   --primary:        #6366f1;
   --primary-hover:  #818cf8;
   --accent:         #a5b4fc;
-  --border:         #2d3048;
-  --border-subtle:  #252836;
+  --border:         #272c3d;
+  --border-subtle:  #1f2433;
   --focus-ring:     #818cf8;
-  --shadow-color:   99, 102, 241;
+  --shadow-color:   2, 6, 23;
 
-  --bg-deep:        rgba(4, 6, 12, 0.55);
-  --on-image:       #f4f5fb;
-  --accent-soft:    rgba(99, 102, 241, 0.14);
+  --bg-deep:        rgba(4, 6, 12, 0.58);
+  --on-image:       #f8fafc;
+  --accent-soft:    rgba(99, 102, 241, 0.16);
 
   /* 深色毛玻璃（覆写 :root 浅色玻璃，壁纸态深色主题可读） */
-  --glass-bg:        rgba(23, 26, 38, 0.62);
-  --glass-bg-strong: rgba(30, 34, 50, 0.78);
-  --glass-border:    rgba(168, 178, 224, 0.16);
+  --glass-bg:        rgba(22, 25, 34, 0.68);
+  --glass-bg-strong: rgba(30, 34, 48, 0.84);
+  --glass-border:    rgba(148, 163, 184, 0.16);
 
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);
   --muted-surface:   var(--surface-raised);
   --greyLight-1:     var(--surface-raised);
-  --greyLight-2:     rgba(var(--shadow-color), 0.08);
+  --greyLight-2:     rgba(var(--shadow-color), 0.18);
   --greyLight-3:     var(--border);
   --greyDark:        var(--text-secondary);
   --white:           var(--surface);
@@ -116,7 +117,7 @@
   --deep-dark:       var(--bg);
   --shadow-1:        var(--shadow-md);
   --shadow-2:        var(--shadow-lg);
-  --inset-subtle:    inset 0.1rem 0.1rem 0.25rem rgba(var(--shadow-color), 0.08);
+  --inset-subtle:    inset 0.1rem 0.1rem 0.25rem rgba(var(--shadow-color), 0.2);
   --inset-highlight: inset -0.1rem -0.1rem 0.25rem rgba(255,255,255,0.03);
   --primary-light:   var(--primary-hover);
   --primary-dark:    var(--primary);
@@ -126,22 +127,22 @@
    主题 3：珊瑚×金橙 coral-amber（暖调彩色）
 ============================================================ */
 [data-theme="coral-amber"] {
-  --bg:             #fff8f5;
+  --bg:             #faf6f3;
   --surface:        #ffffff;
-  --surface-raised: #fff3ee;
-  --text:           #3d1f14;
-  --text-secondary: #a0522d;
-  --primary:        #ff6b6b;
-  --primary-hover:  #fa5252;
-  --accent:         #ffa94d;
-  --border:         #ffd6c4;
-  --border-subtle:  #ffe8dc;
-  --focus-ring:     #ff6b6b;
-  --shadow-color:   255, 107, 107;
+  --surface-raised: #fdf3ee;
+  --text:           #2c1810;
+  --text-secondary: #8c5a44;
+  --primary:        #e85d44;
+  --primary-hover:  #d9482f;
+  --accent:         #f59f00;
+  --border:         #f2dcd2;
+  --border-subtle:  #f7e9e2;
+  --focus-ring:     #e85d44;
+  --shadow-color:   120, 45, 25;
 
   --bg-deep:        rgba(92, 34, 14, 0.30);
-  --on-image:       #2b150c;
-  --accent-soft:    rgba(255, 107, 107, 0.12);
+  --on-image:       #2c1810;
+  --accent-soft:    rgba(232, 93, 68, 0.11);
 
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);
@@ -165,22 +166,22 @@
    主题 4：靛蓝×薄荷 indigo-mint（冷调彩色）
 ============================================================ */
 [data-theme="indigo-mint"] {
-  --bg:             #eef2ff;
+  --bg:             #f2f5fc;
   --surface:        #ffffff;
-  --surface-raised: #f5f7ff;
-  --text:           #1e2a6e;
-  --text-secondary: #5c6bc0;
-  --primary:        #4263eb;
-  --primary-hover:  #3451d1;
-  --accent:         #20c997;
-  --border:         #c7d2fe;
-  --border-subtle:  #dde4ff;
-  --focus-ring:     #4263eb;
-  --shadow-color:   66, 99, 235;
+  --surface-raised: #f7f9fe;
+  --text:           #172144;
+  --text-secondary: #566594;
+  --primary:        #3b5bdb;
+  --primary-hover:  #304bc2;
+  --accent:         #12b886;
+  --border:         #d8e1f8;
+  --border-subtle:  #e6ecfc;
+  --focus-ring:     #3b5bdb;
+  --shadow-color:   30, 50, 130;
 
   --bg-deep:        rgba(20, 33, 90, 0.32);
   --on-image:       #101a45;
-  --accent-soft:    rgba(66, 99, 235, 0.10);
+  --accent-soft:    rgba(59, 91, 219, 0.10);
 
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);
@@ -204,22 +205,22 @@
    主题 5：紫罗兰×柠黄 violet-amber（分裂互补色）
 ============================================================ */
 [data-theme="violet-amber"] {
-  --bg:             #f5f3ff;
+  --bg:             #f6f4fc;
   --surface:        #ffffff;
-  --surface-raised: #ede9fe;
-  --text:           #2e1065;
-  --text-secondary: #9d72d4;
-  --primary:        #7c3aed;
-  --primary-hover:  #6d28d9;
-  --accent:         #fbbf24;
-  --border:         #ddd6fe;
-  --border-subtle:  #ede9fe;
-  --focus-ring:     #7c3aed;
-  --shadow-color:   124, 58, 237;
+  --surface-raised: #f3effc;
+  --text:           #261447;
+  --text-secondary: #6e5996;
+  --primary:        #6d28d9;
+  --primary-hover:  #5b21b6;
+  --accent:         #f59e0b;
+  --border:         #e2daf5;
+  --border-subtle:  #ede8f9;
+  --focus-ring:     #6d28d9;
+  --shadow-color:   76, 29, 149;
 
   --bg-deep:        rgba(42, 12, 82, 0.32);
   --on-image:       #1c0838;
-  --accent-soft:    rgba(124, 58, 237, 0.10);
+  --accent-soft:    rgba(109, 40, 217, 0.10);
 
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);
@@ -243,22 +244,22 @@
    主题 6：玫红×天蓝 rose-sky（分裂互补色）
 ============================================================ */
 [data-theme="rose-sky"] {
-  --bg:             #fef0f8;
+  --bg:             #fbf4f8;
   --surface:        #ffffff;
-  --surface-raised: #fce4f3;
-  --text:           #5c0a32;
-  --text-secondary: #b5408a;
-  --primary:        #e91e8c;
-  --primary-hover:  #d81b7a;
-  --accent:         #00b4d8;
-  --border:         #f9c0e2;
-  --border-subtle:  #fce4f3;
-  --focus-ring:     #e91e8c;
-  --shadow-color:   233, 30, 140;
+  --surface-raised: #faedf4;
+  --text:           #3d1227;
+  --text-secondary: #8c4f6e;
+  --primary:        #d61f69;
+  --primary-hover:  #b91859;
+  --accent:         #0ea5e9;
+  --border:         #f1d4e3;
+  --border-subtle:  #f7e5ef;
+  --focus-ring:     #d61f69;
+  --shadow-color:   131, 24, 67;
 
   --bg-deep:        rgba(84, 8, 45, 0.30);
   --on-image:       #380621;
-  --accent-soft:    rgba(233, 30, 140, 0.10);
+  --accent-soft:    rgba(214, 31, 105, 0.10);
 
   --muted:           var(--text-secondary);
   --borderGrey:      var(--border);

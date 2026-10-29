@@ -2,16 +2,15 @@
    Hero 搜索区 .shell-hero
 ============================================================ */
 .shell-hero {
-  min-height: var(--hero-h, 8.75rem);
+  min-height: var(--hero-h, 7.75rem);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.5rem 0.4rem;
+  gap: 0.65rem;
+  padding: 1.15rem 1.25rem 0.6rem;
   position: relative;
 }
-/* 搜索区与建议列表容器维持原有行为（#user_search_area 原有 600px 居中） */
 .shell-zone-hero:empty {
   display: none;
 }

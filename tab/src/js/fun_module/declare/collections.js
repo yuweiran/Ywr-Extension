@@ -23,52 +23,93 @@ const $collections = (function () {
   const getCollections = async () => {
     collections = await $apis.getCollectionsAndLinks();
   };
+  const escapeHtml = (str) => {
+    if (str === undefined || str === null) return "";
+    return String(str).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[c]));
+  };
+
+  const getDomainOrRemark = (link) => {
+    if (link.remark && link.remark.trim() && link.remark.trim() !== link.name.trim()) {
+      return link.remark.trim();
+    }
+    try {
+      const u = new URL(link.url);
+      return u.hostname.replace(/^www\./, "");
+    } catch (e) {
+      return link.remark || link.url || "";
+    }
+  };
+
   const renderCollections = async () => {
     await getCollections();
     //collections渲染列表
     let render_arr = [];
+    if (!collections || collections.length === 0) {
+      collectionsContainer.innerHTML = `
+        <div class="collections-empty-state">
+          <div class="collections-empty-icon">✦</div>
+          <div class="collections-empty-title">还没有任何收藏分组</div>
+          <div class="collections-empty-desc">点击右上角「新建分组」创建你的第一个常用网站集合，或从右侧活跃标签页拖入链接</div>
+        </div>
+      `;
+      return;
+    }
     //得保证有order
     for (let ind = 0; ind < collections.length; ind++) {
       let collection = collections[ind];
       if (collection) {
+        const count = Array.isArray(collection.children) ? collection.children.length : 0;
         render_arr.push(`<div data-id="${collection.id}" class="collection">
         <div class="collection-head">
-          <div>${collection.name}</div>
+          <div class="collection-title-group">
+            <span class="collection-title-text">${escapeHtml(collection.name)}</span>
+            <span class="collection-count">${count}</span>
+          </div>
           <div class="collection-handle">
-            <button><span data-id="${
-              collection.id
-            }" class="icon-delete ${btnCollectionDelete}"></span></button>
-            <button><span data-id="${
-              collection.id
-            }" class="icon-edit-fill ${btnCollectionEdit}"></span></button>
-            <button><span data-id="${
+            <button title="添加链接" data-id="${collection.id}" class="${btnLinkAdd}"><span data-id="${
               collection.id
             }" class="icon-add ${btnLinkAdd}"></span></button>
+            <button title="编辑分组" data-id="${collection.id}" class="${btnCollectionEdit}"><span data-id="${
+              collection.id
+            }" class="icon-edit-fill ${btnCollectionEdit}"></span></button>
+            <button title="删除分组" data-id="${collection.id}" class="btn-collection-danger ${btnCollectionDelete}"><span data-id="${
+              collection.id
+            }" class="icon-delete ${btnCollectionDelete}"></span></button>
           </div>
         </div>
-        <div data-id="${collection.id}" class="collection-links">
+        <div data-id="${collection.id}" class="collection-links${count === 0 ? " is-empty" : ""}">
           ${collection.children
             .map((link) => {
               let iconTemplate = `<span class="icon-favicon collection-link-icon"></span>`;
               if (link.icon) {
-                iconTemplate = `<img class="collection-link-icon" src="${link.icon}" />`;
+                iconTemplate = `<img class="collection-link-icon" src="${escapeHtml(link.icon)}" alt="" onerror="this.outerHTML='<span class=\\'icon-favicon collection-link-icon\\'></span>'" />`;
               }
+              const subText = getDomainOrRemark(link);
               return `
-            <a data-id="${link.id}" class= "collection-link" href="${link.url}" target="_blank">
+            <a data-id="${link.id}" class="collection-link" href="${escapeHtml(link.url)}" target="_blank" title="${escapeHtml(link.name)}${link.remark ? " — " + escapeHtml(link.remark) : ""}">
               <div class="collection-link-name">
-                ${iconTemplate}<span class="collection-link-title">${link.name}</span>
+                ${iconTemplate}
+                <div class="collection-link-meta">
+                  <span class="collection-link-title">${escapeHtml(link.name)}</span>
+                  <div class="collection-link-remark">${escapeHtml(subText)}</div>
+                </div>
               </div>
-              <div class="collection-link-remark">${link.remark}</div>
               <div class="collection-link-handle">
-                <div data-id="${link.id}"  class="icon-fill-delete  ${btnLinkDelete}"></div>
-                <div data-id="${link.id}"  class="icon-fill-edit ${btnLinkEdit}"></div>
+                <div data-id="${link.id}" title="编辑链接" class="icon-fill-edit ${btnLinkEdit}"></div>
+                <div data-id="${link.id}" title="删除链接" class="icon-fill-delete ${btnLinkDelete}"></div>
               </div>
             </a>
             `;
             })
             .join("")}
-        </div >
-      </div > `);
+        </div>
+      </div>`);
       }
     }
     collectionsContainer.innerHTML = render_arr.join("");

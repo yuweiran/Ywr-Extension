@@ -72,24 +72,26 @@ window.onload = () => {
 
 };
 
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.type === "dataChanged") {
-    refreshCollections();
-  }
-  if (message.type === "profileChanged") {
-    chrome.storage.sync.get(["profile_signature"], (data) => {
-      document.title = data.profile_signature || "新标签页";
-    });
-  }
-  if (message.type === "tab:iconChanged") {
-    chrome.storage.local.get(["extension_icon"], (data) => {
-      if (data.extension_icon) applyFavicon(data.extension_icon);
-    });
-  }
-  if (message.type === "tab:iconReset") {
-    resetFavicon();
-  }
-});
+if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage) {
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message.type === "dataChanged") {
+      refreshCollections();
+    }
+    if (message.type === "profileChanged") {
+      chrome.storage?.sync?.get(["profile_signature"], (data) => {
+        document.title = data?.profile_signature || "新标签页";
+      });
+    }
+    if (message.type === "tab:iconChanged") {
+      chrome.storage?.local?.get(["extension_icon"], (data) => {
+        if (data?.extension_icon) applyFavicon(data.extension_icon);
+      });
+    }
+    if (message.type === "tab:iconReset") {
+      resetFavicon();
+    }
+  });
+}
 
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {
@@ -98,24 +100,32 @@ document.addEventListener("visibilitychange", () => {
 });
 
 // 初始加载签名到标题
-chrome.storage.sync.get(["profile_signature"], (data) => {
-  if (data.profile_signature) {
-    document.title = data.profile_signature;
-  }
-});
+if (typeof chrome !== "undefined" && chrome.storage?.sync) {
+  chrome.storage.sync.get(["profile_signature"], (data) => {
+    if (data?.profile_signature) {
+      document.title = data.profile_signature;
+    }
+  });
+}
 
 // 初始加载自定义图标到 favicon
-chrome.storage.local.get(["extension_icon"], (data) => {
-  if (data.extension_icon) applyFavicon(data.extension_icon);
-});
+if (typeof chrome !== "undefined" && chrome.storage?.local) {
+  chrome.storage.local.get(["extension_icon"], (data) => {
+    if (data?.extension_icon) applyFavicon(data.extension_icon);
+  });
+}
 
-chrome.tabs.onUpdated.addListener(() => {
-  $sections.updateTabsList();
-  $sections.updateHistoryList();
-});
-chrome.tabs.onRemoved.addListener($sections.updateTabsList);
-chrome.tabs.onMoved.addListener($sections.updateTabsList);
-chrome.windows.onRemoved.addListener($sections.updateTabsList);
+if (typeof chrome !== "undefined" && chrome.tabs) {
+  chrome.tabs.onUpdated.addListener(() => {
+    $sections.updateTabsList();
+    $sections.updateHistoryList();
+  });
+  chrome.tabs.onRemoved.addListener($sections.updateTabsList);
+  chrome.tabs.onMoved.addListener($sections.updateTabsList);
+}
+if (typeof chrome !== "undefined" && chrome.windows) {
+  chrome.windows.onRemoved.addListener($sections.updateTabsList);
+}
 
 $sections.updateTabsList();
 $sections.updateHistoryList();

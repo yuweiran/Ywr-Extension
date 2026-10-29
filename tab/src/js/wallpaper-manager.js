@@ -40,6 +40,16 @@ const WallpaperManager = (function () {
 
   const loadConfig = () =>
     new Promise((resolve) => {
+      if (typeof chrome === "undefined" || !chrome.storage?.local) {
+        try {
+          const raw = localStorage.getItem(CONFIG_KEY);
+          config = raw ? JSON.parse(raw) : defaultConfig();
+        } catch (e) {
+          config = defaultConfig();
+        }
+        resolve(config);
+        return;
+      }
       chrome.storage.local.get([CONFIG_KEY], (data) => {
         config = data[CONFIG_KEY] || defaultConfig();
         resolve(config);
@@ -49,6 +59,13 @@ const WallpaperManager = (function () {
   const saveConfig = (next) =>
     new Promise((resolve) => {
       config = next;
+      if (typeof chrome === "undefined" || !chrome.storage?.local) {
+        try {
+          localStorage.setItem(CONFIG_KEY, JSON.stringify(next));
+        } catch (e) { /* ignore */ }
+        resolve();
+        return;
+      }
       chrome.storage.local.set({ [CONFIG_KEY]: next }, resolve);
     });
 
