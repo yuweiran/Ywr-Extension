@@ -7,13 +7,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 1.25rem;
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: var(--surface);
   border-bottom: 1px solid var(--border-subtle);
   position: relative;
-  /* 注意：不要给顶栏设 z-index（否则形成层叠上下文，把内部主题下拉的
-     z-index 锁在局部层级，会被右栏折叠胶囊等更高层浮层压住） */
+  z-index: 500;
+  /* backdrop-filter 已创建层叠上下文，需显式赋予高于主工作区的 z-index，
+     确保内部 #theme-switcher 下拉面板高于下方的 hero / collection / 侧栏区域 */
 }
 .shell-topbar-left,
 .shell-topbar-right {
